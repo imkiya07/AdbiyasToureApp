@@ -1,3 +1,17 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "node16",
+    "module": "Node16",
+    "baseUrl": ".",
+    "paths": {
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@config/*": ["./src/config/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@screens/*": ["./src/screens/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@store/*": ["./src/store/*"]
+    }
+  }
 }
