@@ -8,11 +8,11 @@ module.exports = function (api) {
         'module-resolver',
         {
           alias: {
-            '@app': './app',
-            '@assets': './assets',
-            '@components': './components',
-            '@constants': './constants',
-            '@hooks': './hooks',
+            '@/components': './app/components',
+            '@/constants': './app/constants',
+            '@/hooks': './app/hooks',
+            '@/screen': './app/Screen',
+            '@/visa': './app/Vcreen',
           },
         },
       ],

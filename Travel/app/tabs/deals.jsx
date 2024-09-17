@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Image, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
@@ -7,30 +13,34 @@ const deals = [
   {
     id: 1,
     title: 'ALASKA KENAI & DENALI ADVENTURE',
-    description: 'Everything was great organized, our CEO Megan was so kind and well prepared!',
+    description:
+      'Everything was great organized, our CEO Megan was so kind and well prepared!',
     price: '$2,397',
-    image: require('@/assets/images/bail.jpeg'), 
+    image: require('@/assets/images/bail.jpeg'),
   },
   {
     id: 2,
     title: 'ALASKA KENAI & DENALI ADVENTURE',
-    description: 'Everything was great organized, our CEO Megan was so kind and well prepared!',
+    description:
+      'Everything was great organized, our CEO Megan was so kind and well prepared!',
     price: '$2,397',
-    image: require('@/assets/images/paris.jpg'), 
+    image: require('@/assets/images/paris.jpg'),
   },
   {
     id: 3,
     title: 'ALASKA KENAI & DENALI ADVENTURE',
-    description: 'Everything was great organized, our CEO Megan was so kind and well prepared!',
+    description:
+      'Everything was great organized, our CEO Megan was so kind and well prepared!',
     price: '$2,397',
-    image: require('@/assets/images/bail.jpeg'), 
+    image: require('@/assets/images/bail.jpeg'),
   },
   {
     id: 4,
     title: 'ALASKA KENAI & DENALI ADVENTURE',
-    description: 'Everything was great organized, our CEO Megan was so kind and well prepared!',
+    description:
+      'Everything was great organized, our CEO Megan was so kind and well prepared!',
     price: '$2,397',
-    image: require('@/assets/images/bail.jpeg'), 
+    image: require('@/assets/images/bail.jpeg'),
   },
   // Add more deals as needed
 ];
@@ -50,16 +60,20 @@ const DealsScreen = () => {
 
       {/* Deals List */}
       <ScrollView contentContainerStyle={styles.dealsContainer}>
-        {deals.map(deal => (
+        {deals.map((deal) => (
           <View key={deal.id} style={styles.dealCard}>
             <Image source={deal.image} style={styles.dealImage} />
             <View style={styles.dealInfo}>
               <ThemedText style={styles.dealTitle}>{deal.title}</ThemedText>
-              <ThemedText style={styles.dealDescription}>{deal.description}</ThemedText>
+              <ThemedText style={styles.dealDescription}>
+                {deal.description}
+              </ThemedText>
               <View style={styles.dealFooter}>
                 <ThemedText style={styles.dealPrice}>{deal.price}</ThemedText>
                 <TouchableOpacity style={styles.bookButton}>
-                  <ThemedText style={styles.bookButtonText}>BOOK NOW</ThemedText>
+                  <ThemedText style={styles.bookButtonText}>
+                    BOOK NOW
+                  </ThemedText>
                 </TouchableOpacity>
               </View>
             </View>
@@ -79,7 +93,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0F4F8',
-
   },
   header: {
     flexDirection: 'row',
@@ -101,7 +114,6 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     fontSize: 16,
-    
   },
   tabTextInactive: {
     color: '#B0C4DE',

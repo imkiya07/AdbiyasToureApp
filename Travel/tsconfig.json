@@ -4,13 +4,21 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/app/*": ["app/*"],
-      "@/assets/*": ["assets/*"],
-      "@/components/*": ["components/*"],
-      "@/constants/*": ["constants/*"],
-      "@/hooks/*": ["hooks/*"]
+      "@/components/*": ["app/components/*"],
+      "@/constants/*": ["app/constants/*"],
+      "@/hooks/*": ["app/hooks/*"],
+      "@/navigation/*": ["app/navigation/*"],
+      "@/screens/*": ["app/Screens/*"],
+      "@/tabs/*": ["app/tabs/*"],
+      "@/visa/*": ["app/Visa/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "app/constants/icons.js"
+  ]
 }
 
