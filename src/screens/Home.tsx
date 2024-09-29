@@ -23,35 +23,61 @@ const App = () => {
 
       {/* Menu Section */}
       <View style={styles.menuSection}>
-        <TouchableOpacity style={styles.menuItem}>
+        <View style={styles.menuText}>
+          <TouchableOpacity style={styles.menuItem}>
           <Image source={icons.Plane} style={styles.menuIcon} />
-          <Text style={styles.menuText}>Flight</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
+         
+          </TouchableOpacity>
+           <Text style={styles.menuText}>Flight</Text>
+        </View>
+        
+        <View style={styles.menuText}>
+          <TouchableOpacity style={styles.menuItem}>
           <Image source={icons.Hotel} style={styles.menuIcon} />
+          
+          </TouchableOpacity>
           <Text style={styles.menuText}>Hotel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
+</View>
+        
+        <View style={styles.menuText}>
+          <TouchableOpacity style={styles.menuItem}>
           <Image source={icons.Visa} style={styles.menuIcon} />
+          
+          </TouchableOpacity>
           <Text style={styles.menuText}>Visa</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
+          </View>
+        
+        <View style={styles.menuText}>
+          <TouchableOpacity style={styles.menuItem}>
           <Image source={icons.Tour} style={styles.menuIcon} />
+          
+          </TouchableOpacity>
           <Text style={styles.menuText}>Tour</Text>
-        </TouchableOpacity>
+</View>
+        
       </View>
 
+      {/* Explore Destination */}
+      <View style={styles.exploretext}>
+          <Text style={styles.exploretext}>Explore Destination</Text>
+        </View>
       {/* Explore Destination Section */}
-      <ScrollView style={styles.destinationSection} horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView style={styles.destinationSection} horizontal showsHorizontalScrollIndicator={false}> 
+        
         <TouchableOpacity style={styles.destinationCard}>
           <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
           <Text style={styles.destinationText}>Paris</Text>
-          <Text style={styles.destinationSubText}>France - 4.5 ⭐</Text>
+          <Text style={styles.destinationSubText}>France - 4.5 ⭐⭐⭐⭐</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.destinationCard}>
           <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
           <Text style={styles.destinationText}>Bali</Text>
-          <Text style={styles.destinationSubText}>Indonesia - 4.5 ⭐</Text>
+          <Text style={styles.destinationSubText}>Indonesia - 4.5 ⭐⭐⭐⭐</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.destinationCard}>
+          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
+          <Text style={styles.destinationText}>Bali</Text>
+          <Text style={styles.destinationSubText}>Indonesia - 4.5 ⭐⭐⭐</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -68,7 +94,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
+    padding: 30,
     backgroundColor: '#F5F5F5',
   },
   userSection: {
@@ -82,12 +108,12 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   bannerSection: {
-    marginVertical: 10,
+    marginVertical: 20,
     alignItems: 'center',
   },
   bannerImage: {
     width: '95%',
-    height: 200,
+    height: 230,
     borderRadius: 15,
   },
   bannerText: {
@@ -103,7 +129,7 @@ const styles = StyleSheet.create({
   menuSection: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 20,
+    marginVertical: 40,
   },
   menuItem: {
     alignItems: 'center',
@@ -114,8 +140,9 @@ const styles = StyleSheet.create({
     justifyContent:'center'
   },
   menuText: {
+    alignItems:'center',
     marginTop: 5,
-    fontSize: 14,
+    fontSize: 18,
     color: '#333',
     fontWeight: '600',
   },
@@ -124,8 +151,18 @@ const styles = StyleSheet.create({
     height: 40,
     resizeMode: 'contain',
   },
+  
   destinationSection: {
     paddingHorizontal: 20,
+  },
+
+  exploretext: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color:'black',
+    marginTop: 10,
+    marginLeft: 10,
+    marginBottom:10
   },
   destinationCard: {
     width: 190,
