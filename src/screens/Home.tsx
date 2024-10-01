@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { icons } from "../constants";  // Assuming icons are exported from the constants folder
+import { icons } from "../constants"; // Ensure icons are correctly imported
+import { useNavigation } from "@react-navigation/native";
 
 const App = () => {
+   const navigation = useNavigation();
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header Section */}
@@ -18,69 +20,65 @@ const App = () => {
       {/* Banner Section */}
       <View style={styles.bannerSection}>
         <Image source={require('../assets/Images/banner.jpg')} style={styles.bannerImage} />
-        <Text style={styles.bannerText}>..</Text>
+        <Text style={styles.bannerText}>Your Next Adventure Awaits</Text>
       </View>
 
       {/* Menu Section */}
       <View style={styles.menuSection}>
-        <View style={styles.menuText}>
-          <TouchableOpacity style={styles.menuItem}>
-          <Image source={icons.Plane} style={styles.menuIcon} />
-         
+        <View style={styles.menuItemContainer}>
+          <TouchableOpacity 
+            style={styles.menuItem} 
+            onPress={() => navigation.navigate('LayoutScreen')}>
+            <Image source={icons.Plane} style={styles.menuIcon} />
           </TouchableOpacity>
-           <Text style={styles.menuText}>Flight</Text>
+          <Text style={styles.menuText}>Flight</Text>
         </View>
-        
-        <View style={styles.menuText}>
-          <TouchableOpacity style={styles.menuItem}>
-          <Image source={icons.Hotel} style={styles.menuIcon} />
-          
+
+        <View style={styles.menuItemContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HotelScreen')}>
+            <Image source={icons.Hotel} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.menuText}>Hotel</Text>
-</View>
-        
-        <View style={styles.menuText}>
-          <TouchableOpacity style={styles.menuItem}>
-          <Image source={icons.Visa} style={styles.menuIcon} />
-          
+        </View>
+
+        <View style={styles.menuItemContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('VisaScreen')}>
+            <Image source={icons.Visa} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.menuText}>Visa</Text>
-          </View>
-        
-        <View style={styles.menuText}>
-          <TouchableOpacity style={styles.menuItem}>
-          <Image source={icons.Tour} style={styles.menuIcon} />
-          
+        </View>
+
+        <View style={styles.menuItemContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('TourScreen')}>
+            <Image source={icons.Tour} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.menuText}>Tour</Text>
-</View>
-        
+        </View>
       </View>
 
       {/* Explore Destination */}
-      <View style={styles.exploretext}>
-          <Text style={styles.exploretext}>Explore Destination</Text>
-        </View>
+      <Text style={styles.exploreText}>Explore Destination</Text>
+
       {/* Explore Destination Section */}
-      <ScrollView style={styles.destinationSection} horizontal showsHorizontalScrollIndicator={false}> 
-        
+      <ScrollView style={styles.destinationSection} horizontal showsHorizontalScrollIndicator={false}>
         <TouchableOpacity style={styles.destinationCard}>
           <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
           <Text style={styles.destinationText}>Paris</Text>
           <Text style={styles.destinationSubText}>France - 4.5 ⭐⭐⭐⭐</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.destinationCard}>
           <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
           <Text style={styles.destinationText}>Bali</Text>
           <Text style={styles.destinationSubText}>Indonesia - 4.5 ⭐⭐⭐⭐</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.destinationCard}>
           <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Bali</Text>
-          <Text style={styles.destinationSubText}>Indonesia - 4.5 ⭐⭐⭐</Text>
+          <Text style={styles.destinationText}>Dubai</Text>
+          <Text style={styles.destinationSubText}>UAE - 4.5 ⭐⭐⭐⭐</Text>
         </TouchableOpacity>
       </ScrollView>
-
     </SafeAreaView>
   );
 };
@@ -131,17 +129,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginVertical: 40,
   },
+  menuItemContainer: {
+    alignItems: 'center',
+  },
   menuItem: {
     alignItems: 'center',
     backgroundColor: '#FFFF',
     borderRadius: 100,
     height: 84,
     width: 84,
-    justifyContent:'center'
+    justifyContent: 'center',
   },
   menuText: {
-    alignItems:'center',
-    marginTop: 5,
+    marginTop: 10,
     fontSize: 18,
     color: '#333',
     fontWeight: '600',
@@ -151,22 +151,20 @@ const styles = StyleSheet.create({
     height: 40,
     resizeMode: 'contain',
   },
-  
+  exploreText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'black',
+    marginTop: 10,
+    marginLeft: 20,
+    marginBottom: 10,
+  },
   destinationSection: {
     paddingHorizontal: 20,
   },
-
-  exploretext: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color:'black',
-    marginTop: 10,
-    marginLeft: 10,
-    marginBottom:10
-  },
   destinationCard: {
     width: 190,
-    height:210,
+    height: 210,
     marginRight: 28,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
@@ -188,20 +186,6 @@ const styles = StyleSheet.create({
   },
   destinationSubText: {
     color: '#888',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: '#E0F7FA',
-  },
-  navItem: {
-    alignItems: 'center',
-  },
-  navText: {
-    marginTop: 5,
-    fontSize: 12,
-    color: '#333',
   },
   iconSize: {
     width: 24,
