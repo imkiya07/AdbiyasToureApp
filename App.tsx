@@ -8,8 +8,9 @@ import DealsScreen from '@screens/Deals';
 import ChatScreen from '@screens/Chat';
 import AccountScreen from '@screens/Account';
 import LayoutScreen from '@components/core/FlightBooking/Layout';
-import FlightShow from '@components/core/FlightBooking/ShowCard'
-
+import FlightShow from '@components/core/FlightBooking/ShowCard';
+import FlightDetails from '@components/core/FlightBooking/FlightDetails'
+import TravellerDetailsScreen from '@components/core/FlightBooking/TravellerDetails';
 import { icons } from '@constants/index';
 
 const Tab = createBottomTabNavigator();
@@ -113,10 +114,27 @@ const App: FC = () => {
         />
 
        <Stack.Screen
+          name="FlightDetails"
+          component={FlightDetails}
+          options={{
+            title: 'Flight Details',
+            headerShown: true, // Set to false if you want to hide the header
+          }}
+        />
+        <Stack.Screen
           name="FlightShow"
           component={FlightShow}
           options={{
-            title: 'Flight Card',
+            title: 'Select Your Flight',
+            headerShown: true, // Set to false if you want to hide the header
+          }}
+        />
+
+        <Stack.Screen
+          name="TravellerDetailsScreen"
+          component={TravellerDetailsScreen}
+          options={{
+            title: 'Traveller Details',
             headerShown: true, // Set to false if you want to hide the header
           }}
         />

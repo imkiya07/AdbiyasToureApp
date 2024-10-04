@@ -196,9 +196,13 @@ const LayoutScreen = () => {
           </Modal>
 
           {/* Search Flights Button */}
-          <TouchableOpacity  style={styles.searchButton}  onPress={() => navigation.navigate('FlightShow')}>
+
+<LinearGradient style={styles.searchButton} colors={['#009FFD', '#2A2A72']}>
+                  <TouchableOpacity  onPress={() => navigation.navigate('FlightShow')}>
+            
             <Text style={styles.searchButtonText}>SEARCH FLIGHTS</Text>
           </TouchableOpacity>
+            </LinearGradient>
         </View>
       </LinearGradient>
     </ImageBackground>
@@ -235,19 +239,20 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: 20,
+    paddingVertical: 14,
     marginHorizontal: 5,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 40,
+    backgroundColor: '#0b2c5f',
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
   },
   selectedButton: {
-    backgroundColor: '#7ABEEB',
+    backgroundColor: '#1c84ff',
   },
   buttonText: {
     fontSize: 18,
-    color: '#000',
+    color: '#FFFF',
+    fontWeight:'bold'
   },
   form: {
     marginBottom: 20,
@@ -255,6 +260,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#f0f0f0',
     borderRadius: 10,
+    borderWidth: 1,
     padding: 15,
     marginVertical: 10,
   },
@@ -321,7 +327,6 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   searchButton: {
-    backgroundColor: '#7ABEEB',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',

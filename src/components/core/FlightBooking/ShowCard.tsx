@@ -15,13 +15,8 @@ const FlightShowPage = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <LinearGradient colors={['#c1caff', '#f8e3ff']} style={styles.background}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <FontAwesome5 name="chevron-left" size={24} color="#000" />
-          </TouchableOpacity>
-          <Text style={styles.title}>Select Your Flight</Text>
-        </View>
+      <LinearGradient colors={['#0b2c5f', '#0b2c5f']} style={styles.background}>
+        
 
         <View style={styles.flightRoute}>
           <Text style={styles.routeText}>YUL---</Text>
@@ -69,14 +64,14 @@ const FlightShowPage = () => {
               <Text style={styles.flightText}>Qatar Airways</Text>
             </View>
             <View style={styles.actionContainer}>
-              <TouchableOpacity style={styles.bookNowButton}>
+              <TouchableOpacity onPress={() => navigation.navigate('TravellerDetailsScreen')}  style={styles.bookNowButton}>
                 <Text style={styles.bookNowText}>Book Now</Text>
               </TouchableOpacity>
               <Text style={styles.priceText}>$1400</Text>
             </View>
             <View style={styles.flightFooter}>
               <Text style={styles.detailsText}>8 LEFT {selectedClass}</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('FlightDetails')}>
                 <Text style={styles.detailsButton}>Details</Text>
               </TouchableOpacity>
             </View>
@@ -129,6 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 16,
+    
   },
   header: {
     flexDirection: 'row',
@@ -158,6 +154,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginHorizontal: 8,
+    color:"#FFFF"
   },
   datePassenger: {
     flexDirection: 'row',
