@@ -11,6 +11,9 @@ import LayoutScreen from '@components/core/FlightBooking/Layout';
 import FlightShow from '@components/core/FlightBooking/ShowCard';
 import FlightDetails from '@components/core/FlightBooking/FlightDetails'
 import TravellerDetailsScreen from '@components/core/FlightBooking/TravellerDetails';
+import LayoutHotel from '@components/core/HotelBooking/HotelBookLayout'
+import LayoutTour from '@components/core/TourBooking/TourBookLayout.';
+import LayoutVisa from '@components/core/VisaBooking/VisaLayout';
 import { icons } from '@constants/index';
 
 const Tab = createBottomTabNavigator();
@@ -135,6 +138,33 @@ const App: FC = () => {
           component={TravellerDetailsScreen}
           options={{
             title: 'Traveller Details',
+            headerShown: true, // Set to false if you want to hide the header
+          }}
+        />
+
+        <Stack.Screen
+          name="LayoutHotel"
+          component={LayoutHotel}
+          options={{
+            title: 'Hello Hotel',
+            headerShown: true, // Set to false if you want to hide the header
+          }}
+        />
+
+        <Stack.Screen
+          name="LayoutTour"
+          component={LayoutTour}
+          options={{
+            title: 'Hello Tour',
+            headerShown: true, // Set to false if you want to hide the header
+          }}
+        />
+
+        <Stack.Screen
+          name="LayoutVisa"
+          component={LayoutVisa}
+          options={{
+            title: ' Hello Visa',
             headerShown: true, // Set to false if you want to hide the header
           }}
         />

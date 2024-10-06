@@ -7,7 +7,8 @@ const App = () => {
    const navigation = useNavigation();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView>
+      <SafeAreaView style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
         <View style={styles.userSection}>
@@ -20,7 +21,7 @@ const App = () => {
       {/* Banner Section */}
       <View style={styles.bannerSection}>
         <Image source={require('../assets/Images/banner.jpg')} style={styles.bannerImage} />
-        <Text style={styles.bannerText}>Your Next Adventure Awaits</Text>
+        <Text style={styles.bannerText}></Text>
       </View>
 
       {/* Menu Section */}
@@ -35,27 +36,30 @@ const App = () => {
         </View>
 
         <View style={styles.menuItemContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HotelScreen')}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('LayoutHotel')}>
             <Image source={icons.Hotel} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.menuText}>Hotel</Text>
         </View>
 
         <View style={styles.menuItemContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('VisaScreen')}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('LayoutVisa')}>
             <Image source={icons.Visa} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.menuText}>Visa</Text>
         </View>
 
         <View style={styles.menuItemContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('TourScreen')}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('LayoutTour')}>
             <Image source={icons.Tour} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.menuText}>Tour</Text>
         </View>
       </View>
 
+        
+
+        
       {/* Explore Destination */}
       <Text style={styles.exploreText}>Explore Destination</Text>
 
@@ -78,8 +82,31 @@ const App = () => {
           <Text style={styles.destinationText}>Dubai</Text>
           <Text style={styles.destinationSubText}>UAE - 4.5 ⭐⭐⭐⭐</Text>
         </TouchableOpacity>
+        </ScrollView>
+
+         <Text style={styles.exploreText}>Hot Deals</Text>
+        <ScrollView style={styles.destinationSection} horizontal showsHorizontalScrollIndicator={false}>
+        <TouchableOpacity style={styles.destinationCard}>
+          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
+          <Text style={styles.destinationText}>Paris</Text>
+          <Text style={styles.destinationSubText}>France - 4.5 ⭐⭐⭐⭐</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.destinationCard}>
+          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
+          <Text style={styles.destinationText}>Bali</Text>
+          <Text style={styles.destinationSubText}>Indonesia - 4.5 ⭐⭐⭐⭐</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.destinationCard}>
+          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
+          <Text style={styles.destinationText}>Dubai</Text>
+          <Text style={styles.destinationSubText}>UAE - 4.5 ⭐⭐⭐⭐</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
+    </ScrollView>
+    
   );
 };
 
@@ -93,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 30,
-    backgroundColor: '#F5F5F5',
+
   },
   userSection: {
     flexDirection: 'row',
@@ -161,6 +188,7 @@ const styles = StyleSheet.create({
   },
   destinationSection: {
     paddingHorizontal: 20,
+    marginBottom:20,
   },
   destinationCard: {
     width: 190,
