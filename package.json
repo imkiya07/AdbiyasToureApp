@@ -1,5 +1,5 @@
 {
-  "name": "adbiyas-tour-app",
+  "name": "flight-kiya",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "chmod +x ../node_modules/.bin/rnc-cli   "
+    "postinstall": "chmod +x ./node_modules/.bin/rnc-cli"
   },
   "dependencies": {
     "@react-native-community/datetimepicker": "^8.2.0",
