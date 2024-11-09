@@ -1,112 +1,156 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { icons } from "../constants"; // Ensure icons are correctly imported
-import { useNavigation } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
+import {icons} from '../constants'; // Ensure icons are correctly imported
+import {useNavigation} from '@react-navigation/native';
+import TestRedux from '@components/common/TestRedux';
 
 const App = () => {
-   const navigation = useNavigation();
+  const navigation = useNavigation();
 
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
-      {/* Header Section */}
-      <View style={styles.header}>
-        <View style={styles.userSection}>
-          <Image source={icons.Profile} style={styles.iconSize} />
-          <Text style={styles.userName}>Guest</Text>
+        {/* Header Section */}
+        <View style={styles.header}>
+          <View style={styles.userSection}>
+            <Image source={icons.Profile} style={styles.iconSize} />
+            <Text style={styles.userName}>Guest</Text>
+          </View>
+          <Image source={icons.Bell} style={styles.iconSize} />
         </View>
-        <Image source={icons.Bell} style={styles.iconSize} />
-      </View>
 
-      {/* Banner Section */}
-      <View style={styles.bannerSection}>
-        <Image source={require('../assets/Images/banner.jpg')} style={styles.bannerImage} />
-        <Text style={styles.bannerText}></Text>
-      </View>
+        {/* Banner Section */}
+        <View style={styles.bannerSection}>
+          <Image
+            source={require('../assets/Images/banner.jpg')}
+            style={styles.bannerImage}
+          />
+          <Text style={styles.bannerText}></Text>
+        </View>
 
-      {/* Menu Section */}
-      <View style={styles.menuSection}>
-        <View style={styles.menuItemContainer}>
-          <TouchableOpacity 
-            style={styles.menuItem} 
-            onPress={() => navigation.navigate('LayoutScreen')}>
-            <Image source={icons.Plane} style={styles.menuIcon} />
+        <TestRedux />
+
+        {/* Menu Section */}
+        <View style={styles.menuSection}>
+          <View style={styles.menuItemContainer}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate('LayoutScreen')}>
+              <Image source={icons.Plane} style={styles.menuIcon} />
+            </TouchableOpacity>
+            <Text style={styles.menuText}>Flight</Text>
+          </View>
+
+          <View style={styles.menuItemContainer}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate('LayoutHotel')}>
+              <Image source={icons.Hotel} style={styles.menuIcon} />
+            </TouchableOpacity>
+            <Text style={styles.menuText}>Hotel</Text>
+          </View>
+
+          <View style={styles.menuItemContainer}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate('LayoutVisa')}>
+              <Image source={icons.Visa} style={styles.menuIcon} />
+            </TouchableOpacity>
+            <Text style={styles.menuText}>Visa</Text>
+          </View>
+
+          <View style={styles.menuItemContainer}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate('LayoutTour')}>
+              <Image source={icons.Tour} style={styles.menuIcon} />
+            </TouchableOpacity>
+            <Text style={styles.menuText}>Tour</Text>
+          </View>
+        </View>
+
+        {/* Explore Destination */}
+        <Text style={styles.exploreText}>Explore Destination</Text>
+
+        {/* Explore Destination Section */}
+        <ScrollView
+          style={styles.destinationSection}
+          horizontal
+          showsHorizontalScrollIndicator={false}>
+          <TouchableOpacity style={styles.destinationCard}>
+            <Image
+              source={require('../assets/Images/banner.jpg')}
+              style={styles.destinationImage}
+            />
+            <Text style={styles.destinationText}>Paris</Text>
+            <Text style={styles.destinationSubText}>France - 4.5 ⭐⭐⭐⭐</Text>
           </TouchableOpacity>
-          <Text style={styles.menuText}>Flight</Text>
-        </View>
 
-        <View style={styles.menuItemContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('LayoutHotel')}>
-            <Image source={icons.Hotel} style={styles.menuIcon} />
+          <TouchableOpacity style={styles.destinationCard}>
+            <Image
+              source={require('../assets/Images/banner.jpg')}
+              style={styles.destinationImage}
+            />
+            <Text style={styles.destinationText}>Bali</Text>
+            <Text style={styles.destinationSubText}>
+              Indonesia - 4.5 ⭐⭐⭐⭐
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.menuText}>Hotel</Text>
-        </View>
 
-        <View style={styles.menuItemContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('LayoutVisa')}>
-            <Image source={icons.Visa} style={styles.menuIcon} />
+          <TouchableOpacity style={styles.destinationCard}>
+            <Image
+              source={require('../assets/Images/banner.jpg')}
+              style={styles.destinationImage}
+            />
+            <Text style={styles.destinationText}>Dubai</Text>
+            <Text style={styles.destinationSubText}>UAE - 4.5 ⭐⭐⭐⭐</Text>
           </TouchableOpacity>
-          <Text style={styles.menuText}>Visa</Text>
-        </View>
-
-        <View style={styles.menuItemContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('LayoutTour')}>
-            <Image source={icons.Tour} style={styles.menuIcon} />
-          </TouchableOpacity>
-          <Text style={styles.menuText}>Tour</Text>
-        </View>
-      </View>
-
-        
-
-        
-      {/* Explore Destination */}
-      <Text style={styles.exploreText}>Explore Destination</Text>
-
-      {/* Explore Destination Section */}
-      <ScrollView style={styles.destinationSection} horizontal showsHorizontalScrollIndicator={false}>
-        <TouchableOpacity style={styles.destinationCard}>
-          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Paris</Text>
-          <Text style={styles.destinationSubText}>France - 4.5 ⭐⭐⭐⭐</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.destinationCard}>
-          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Bali</Text>
-          <Text style={styles.destinationSubText}>Indonesia - 4.5 ⭐⭐⭐⭐</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.destinationCard}>
-          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Dubai</Text>
-          <Text style={styles.destinationSubText}>UAE - 4.5 ⭐⭐⭐⭐</Text>
-        </TouchableOpacity>
         </ScrollView>
 
-         <Text style={styles.exploreText}>Hot Deals</Text>
-        <ScrollView style={styles.destinationSection} horizontal showsHorizontalScrollIndicator={false}>
-        <TouchableOpacity style={styles.destinationCard}>
-          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Paris</Text>
-          <Text style={styles.destinationSubText}>France - 4.5 ⭐⭐⭐⭐</Text>
-        </TouchableOpacity>
+        <Text style={styles.exploreText}>Hot Deals</Text>
+        <ScrollView
+          style={styles.destinationSection}
+          horizontal
+          showsHorizontalScrollIndicator={false}>
+          <TouchableOpacity style={styles.destinationCard}>
+            <Image
+              source={require('../assets/Images/banner.jpg')}
+              style={styles.destinationImage}
+            />
+            <Text style={styles.destinationText}>Paris</Text>
+            <Text style={styles.destinationSubText}>France - 4.5 ⭐⭐⭐⭐</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.destinationCard}>
-          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Bali</Text>
-          <Text style={styles.destinationSubText}>Indonesia - 4.5 ⭐⭐⭐⭐</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.destinationCard}>
+            <Image
+              source={require('../assets/Images/banner.jpg')}
+              style={styles.destinationImage}
+            />
+            <Text style={styles.destinationText}>Bali</Text>
+            <Text style={styles.destinationSubText}>
+              Indonesia - 4.5 ⭐⭐⭐⭐
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.destinationCard}>
-          <Image source={require('../assets/Images/banner.jpg')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Dubai</Text>
-          <Text style={styles.destinationSubText}>UAE - 4.5 ⭐⭐⭐⭐</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+          <TouchableOpacity style={styles.destinationCard}>
+            <Image
+              source={require('../assets/Images/banner.jpg')}
+              style={styles.destinationImage}
+            />
+            <Text style={styles.destinationText}>Dubai</Text>
+            <Text style={styles.destinationSubText}>UAE - 4.5 ⭐⭐⭐⭐</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
     </ScrollView>
-    
   );
 };
 
@@ -120,7 +164,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 30,
-
   },
   userSection: {
     flexDirection: 'row',
@@ -148,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textShadowColor: '#000',
-    textShadowOffset: { width: 1, height: 1 },
+    textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 5,
   },
   menuSection: {
@@ -188,7 +231,7 @@ const styles = StyleSheet.create({
   },
   destinationSection: {
     paddingHorizontal: 20,
-    marginBottom:20,
+    marginBottom: 20,
   },
   destinationCard: {
     width: 190,

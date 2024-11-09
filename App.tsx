@@ -9,85 +9,89 @@ import LayoutHotel from '@components/core/HotelBooking/HotelBookLayout';
 import LayoutTour from '@components/core/TourBooking/TourBookLayout.';
 import LayoutVisa from '@components/core/VisaBooking/VisaLayout';
 import TabNavigator from '@components/navigators/TabNavigator';
+import {Provider} from 'react-redux';
+import {rootStore} from '@store/index';
 
 const Stack = createNativeStackNavigator();
 
 // Main App component with Stack and Tab navigation
 const App: FC = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {/* Main Tab Navigation */}
-        <Stack.Screen
-          name="MainTabs"
-          component={TabNavigator}
-          options={{headerShown: false}}
-        />
+    <Provider store={rootStore}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {/* Main Tab Navigation */}
+          <Stack.Screen
+            name="MainTabs"
+            component={TabNavigator}
+            options={{headerShown: false}}
+          />
 
-        {/* Flight Book Layout, not part of tabs */}
-        <Stack.Screen
-          name="LayoutScreen"
-          component={LayoutScreen}
-          options={{
-            title: 'Flight Booking',
-            headerShown: true, // Set to false if you want to hide the header
-          }}
-        />
+          {/* Flight Book Layout, not part of tabs */}
+          <Stack.Screen
+            name="LayoutScreen"
+            component={LayoutScreen}
+            options={{
+              title: 'Flight Booking',
+              headerShown: true, // Set to false if you want to hide the header
+            }}
+          />
 
-        <Stack.Screen
-          name="FlightDetails"
-          component={FlightDetails}
-          options={{
-            title: 'Flight Details',
-            headerShown: true, // Set to false if you want to hide the header
-          }}
-        />
-        <Stack.Screen
-          name="FlightShow"
-          component={FlightShow}
-          options={{
-            title: 'Select Your Flight',
-            headerShown: true, // Set to false if you want to hide the header
-          }}
-        />
+          <Stack.Screen
+            name="FlightDetails"
+            component={FlightDetails}
+            options={{
+              title: 'Flight Details',
+              headerShown: true, // Set to false if you want to hide the header
+            }}
+          />
+          <Stack.Screen
+            name="FlightShow"
+            component={FlightShow}
+            options={{
+              title: 'Select Your Flight',
+              headerShown: true, // Set to false if you want to hide the header
+            }}
+          />
 
-        <Stack.Screen
-          name="TravellerDetailsScreen"
-          component={TravellerDetailsScreen}
-          options={{
-            title: 'Traveller Details',
-            headerShown: true, // Set to false if you want to hide the header
-          }}
-        />
+          <Stack.Screen
+            name="TravellerDetailsScreen"
+            component={TravellerDetailsScreen}
+            options={{
+              title: 'Traveller Details',
+              headerShown: true, // Set to false if you want to hide the header
+            }}
+          />
 
-        <Stack.Screen
-          name="LayoutHotel"
-          component={LayoutHotel}
-          options={{
-            title: 'Hello Hotel',
-            headerShown: true, // Set to false if you want to hide the header
-          }}
-        />
+          <Stack.Screen
+            name="LayoutHotel"
+            component={LayoutHotel}
+            options={{
+              title: 'Hello Hotel',
+              headerShown: true, // Set to false if you want to hide the header
+            }}
+          />
 
-        <Stack.Screen
-          name="LayoutTour"
-          component={LayoutTour}
-          options={{
-            title: 'Hello Tour',
-            headerShown: true, // Set to false if you want to hide the header
-          }}
-        />
+          <Stack.Screen
+            name="LayoutTour"
+            component={LayoutTour}
+            options={{
+              title: 'Hello Tour',
+              headerShown: true, // Set to false if you want to hide the header
+            }}
+          />
 
-        <Stack.Screen
-          name="LayoutVisa"
-          component={LayoutVisa}
-          options={{
-            title: ' Hello Visa',
-            headerShown: true, // Set to false if you want to hide the header
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen
+            name="LayoutVisa"
+            component={LayoutVisa}
+            options={{
+              title: ' Hello Visa',
+              headerShown: true, // Set to false if you want to hide the header
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 
