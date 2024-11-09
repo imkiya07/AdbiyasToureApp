@@ -474,7 +474,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = FlightKiya/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "FlightKiya: Tours, Flights & Hotels";
+				INFOPLIST_KEY_CFBundleDisplayName = FlightKiya;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -503,7 +503,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = FlightKiya/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "FlightKiya: Tours, Flights & Hotels";
+				INFOPLIST_KEY_CFBundleDisplayName = FlightKiya;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
