@@ -1,10 +1,15 @@
-import {createStore} from 'redux';
-import {allReducers} from './reducer/allReducers';
+import {configureStore} from '@reduxjs/toolkit';
+import {counterReducer} from './reducer/counter';
+import {isLoggedReducer} from './reducer/authStatus';
+import logger from 'redux-logger';
 
-export const rootStore = createStore(allReducers);
-/* export const store = configureStore({
-  reducer: {},
-}); */
+// export const rootStore = createStore(allReducers);
+export const rootStore = configureStore({
+  reducer: {counterReducer, isLoggedReducer},
+  middleware: getDefaultMiddleware => {
+    return getDefaultMiddleware().concat(logger);
+  },
+});
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof rootStore.getState>;
