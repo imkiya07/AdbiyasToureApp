@@ -1,11 +1,12 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {counterReducer} from './reducer/counter';
 import {isLoggedReducer} from './reducer/authStatus';
+import {fetchUser} from './slice/authStatus';
 import logger from 'redux-logger';
 
 // export const rootStore = createStore(allReducers);
 export const rootStore = configureStore({
-  reducer: {counterReducer, isLoggedReducer},
+  reducer: {counterReducer, isLoggedReducer, fetchUser},
   middleware: getDefaultMiddleware => {
     return getDefaultMiddleware().concat(logger);
   },
