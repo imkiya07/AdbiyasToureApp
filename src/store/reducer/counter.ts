@@ -15,4 +15,4 @@ const counterReducer = (state = 0, action: any) => {
   return state;
 };
 
-export {counterReducer};
+export default counterReducer;
