@@ -1,14 +1,13 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {decrement, increment} from '@store/slice/counter';
 import {fetchUser} from '@store/slice/fetchUser';
-import store from '@store/index';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
 
 const TestRedux = () => {
   // const user = useSelector((state: any) => state.user.data);
-  const counter = useSelector((state: any) => state.counter.counter);
-  const dispatch = useDispatch<typeof store.dispatch>();
+  const counter = useAppSelector(state => state.counter.counter);
+  const dispatch = useAppDispatch();
   return (
     <View>
       <>

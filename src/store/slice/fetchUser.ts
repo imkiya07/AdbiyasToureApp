@@ -1,7 +1,15 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import axios from 'axios';
-
-const initialUserState = {
+type User = {
+  id: number;
+  name: string;
+};
+type UserState = {
+  loading: boolean;
+  data: User[];
+  error: string;
+};
+const initialState: UserState = {
   loading: false,
   data: [],
   error: '',
@@ -19,18 +27,21 @@ const fetchUser = createAsyncThunk('authStatus/fetchUser', async () => {
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: initialUserState,
+  initialState,
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchUser.pending, state => {
       state.loading = true;
     });
-    builder.addCase(fetchUser.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.loading = false;
-    });
-    builder.addCase(fetchUser.rejected, state => {
-      state.error = 'Error';
+    builder.addCase(
+      fetchUser.fulfilled,
+      (state, action: PayloadAction<User[]>) => {
+        state.data = action.payload;
+        state.loading = false;
+      },
+    );
+    builder.addCase(fetchUser.rejected, (state, action) => {
+      state.error = action.error.message ?? '';
       state.data = [];
       state.loading = false;
     });
