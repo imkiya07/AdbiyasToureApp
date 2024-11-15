@@ -2,10 +2,17 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const counterSlice = createSlice({
   name: 'counter',
-  initialState: 0,
+  initialState: {counter: 0},
   reducers: {
-    increment: state => state + 1,
-    decrement: (state, action) => state + action.payload,
+    increment: (state, action) => {
+      console.log('Increment Triggered: ', action);
+
+      state.counter += action.payload;
+    },
+    decrement: (state, action) => {
+      console.log('Decrement Triggered: ', action);
+      state.counter -= action.payload;
+    },
   },
 });
 

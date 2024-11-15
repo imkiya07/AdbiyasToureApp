@@ -10,7 +10,7 @@ import LayoutTour from '@components/core/TourBooking/TourBookLayout.';
 import LayoutVisa from '@components/core/VisaBooking/VisaLayout';
 import TabNavigator from '@components/navigators/TabNavigator';
 import {Provider} from 'react-redux';
-import {rootStore} from '@store/index';
+import rootStore from '@store/index';
 
 const Stack = createNativeStackNavigator();
 
