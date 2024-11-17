@@ -1,5 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit';
 import flightTypeSlice from './slice/flightType';
+import passengerSlice from './slice/passengerSlice';
 import counterReducer from './slice/counter';
 import isLoggedReducer from './slice/authStatus';
 import userSlice from './slice/fetchUser';
@@ -12,6 +13,7 @@ const rootStore = configureStore({
     isLoggedReducer,
     user: userSlice,
     flightTypeSlice,
+    passengerSlice,
   },
   // middleware: getDefaultMiddleware => {
   //   return getDefaultMiddleware().concat(logger);

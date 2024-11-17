@@ -1,6 +1,12 @@
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import PassengerCounter from '@components/core/FlightBooking/PassengerCounter';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {
+  updateAdults,
+  updateChildren,
+  updateInfants,
+} from '@store/slice/passengerSlice';
 
 type tPassengerModalProps = {
   visible: boolean;
@@ -8,25 +14,12 @@ type tPassengerModalProps = {
 };
 
 const PassengerModal: FC<tPassengerModalProps> = ({visible, onClose}) => {
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
-  const [infants, setInfants] = useState(0);
-  const [cabinClass, setCabinClass] = useState<
-    'Economy' | 'Premium Economy' | 'Business Class' | 'First Class'
-  >('Economy');
+  const {cabinClass, infants, children, adults} = useAppSelector(
+    state => state.passengerSlice,
+  );
 
-  const handlePassengerChange = (
-    type: string,
-    action: 'increase' | 'decrease',
-  ) => {
-    if (type === 'adult') {
-      setAdults(prev => Math.max(1, prev + (action === 'increase' ? 1 : -1)));
-    } else if (type === 'child') {
-      setChildren(prev => Math.max(0, prev + (action === 'increase' ? 1 : -1)));
-    } else if (type === 'infant') {
-      setInfants(prev => Math.max(0, prev + (action === 'increase' ? 1 : -1)));
-    }
-  };
+  const dispatch = useAppDispatch();
+
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
       <View style={styles.modalBackground}>
@@ -37,24 +30,26 @@ const PassengerModal: FC<tPassengerModalProps> = ({visible, onClose}) => {
           <PassengerCounter
             title="Adults"
             count={adults}
-            onIncrease={() => handlePassengerChange('adult', 'increase')}
-            onDecrease={() => handlePassengerChange('adult', 'decrease')}
+            onIncrease={() => dispatch(updateAdults(adults + 1))}
+            onDecrease={() => dispatch(updateAdults(Math.max(1, adults - 1)))}
           />
 
           {/* Child Section */}
           <PassengerCounter
             title="Children"
             count={children}
-            onIncrease={() => handlePassengerChange('child', 'increase')}
-            onDecrease={() => handlePassengerChange('child', 'decrease')}
+            onIncrease={() => dispatch(updateChildren(children + 1))}
+            onDecrease={() =>
+              dispatch(updateChildren(Math.max(0, children - 1)))
+            }
           />
 
           {/* Infant Section */}
           <PassengerCounter
             title="Infants"
             count={infants}
-            onIncrease={() => handlePassengerChange('infant', 'increase')}
-            onDecrease={() => handlePassengerChange('infant', 'decrease')}
+            onIncrease={() => dispatch(updateInfants(infants + 1))}
+            onDecrease={() => dispatch(updateInfants(Math.max(0, infants - 1)))}
           />
 
           {/* Cabin Class Section */}

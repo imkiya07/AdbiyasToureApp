@@ -12,8 +12,14 @@ import PassengerModal from '@components/common/Modal/PassengerModal';
 
 const FlightForm = () => {
   const tripType = useAppSelector(state => state.flightTypeSlice.tripType);
+  const {cabinClass, infants, children, adults} = useAppSelector(
+    state => state.passengerSlice,
+  );
+  // Convert Into RTK
   const [departureDate, setDepartureDate] = useState<Date | null>(null);
   const [returnDate, setReturnDate] = useState<Date | null>(null);
+
+  // Active States
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showReturnDatePicker, setShowReturnDatePicker] = useState(false);
   const [showPassengerModal, setShowPassengerModal] = useState<boolean>(false);
