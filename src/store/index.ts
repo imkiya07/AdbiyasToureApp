@@ -1,4 +1,5 @@
 import {configureStore} from '@reduxjs/toolkit';
+import flightTypeSlice from './slice/flightType';
 import counterReducer from './slice/counter';
 import isLoggedReducer from './slice/authStatus';
 import userSlice from './slice/fetchUser';
@@ -6,7 +7,12 @@ import userSlice from './slice/fetchUser';
 
 // export const rootStore = createStore(allReducers);
 const rootStore = configureStore({
-  reducer: {counter: counterReducer, isLoggedReducer, user: userSlice},
+  reducer: {
+    counter: counterReducer,
+    isLoggedReducer,
+    user: userSlice,
+    flightTypeSlice,
+  },
   // middleware: getDefaultMiddleware => {
   //   return getDefaultMiddleware().concat(logger);
   // },
