@@ -1,7 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-// Y=Economy,C=Business,F=First & S=Premium Economy
-type tCabins = 'Y' | 'S' | 'C' | 'F';
+type tCabins = 'Economy' | 'Premium Economy' | 'Business Class' | 'First Class';
 
 interface PassengerState {
   adults: number;
@@ -14,7 +13,7 @@ const initialState: PassengerState = {
   adults: 1,
   children: 0,
   infants: 0,
-  cabinClass: 'Y',
+  cabinClass: 'Economy',
 };
 
 const passengerSlice = createSlice({

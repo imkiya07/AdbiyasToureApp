@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import {icons} from '../constants'; // Ensure icons are correctly imported
 import {useNavigation} from '@react-navigation/native';
-import TestRedux from '@components/common/TestRedux';
 
 const App = () => {
   const navigation = useNavigation();
@@ -36,7 +35,7 @@ const App = () => {
           <Text style={styles.bannerText}></Text>
         </View>
 
-        <TestRedux />
+        {/* <TestRedux /> */}
 
         {/* Menu Section */}
         <View style={styles.menuSection}>

@@ -43,17 +43,17 @@ const LayoutScreen = () => {
               <TouchableOpacity
                 style={[
                   styles.button,
-                  tripType === 'RoundTrip' && styles.selectedButton,
+                  tripType === 'Return' && styles.selectedButton,
                 ]}
-                onPress={() => dispatch(toggleTripType('RoundTrip'))}>
+                onPress={() => dispatch(toggleTripType('Return'))}>
                 <Text style={styles.buttonText}>Round Trip</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   styles.button,
-                  tripType === 'MultiCity' && styles.selectedButton,
+                  tripType === 'OpenJaw' && styles.selectedButton,
                 ]}
-                onPress={() => dispatch(toggleTripType('MultiCity'))}>
+                onPress={() => dispatch(toggleTripType('OpenJaw'))}>
                 <Text style={styles.buttonText}>Multi City</Text>
               </TouchableOpacity>
             </View>

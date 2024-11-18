@@ -6,7 +6,7 @@ import {
   updateAdults,
   updateChildren,
   updateInfants,
-} from '@store/slice/passengerSlice';
+} from '@store/slice/passenger';
 
 type tPassengerModalProps = {
   visible: boolean;

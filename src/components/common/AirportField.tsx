@@ -1,0 +1,125 @@
+import {
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  View,
+  ScrollView,
+  Text,
+} from 'react-native';
+import React, {FC, useState} from 'react';
+import axios from 'axios';
+
+type tFlightForm = {
+  title: string;
+  selectedAirport: string;
+  selectedAirportCb: (airport: string) => void;
+};
+
+type tAirport = {
+  city: string;
+  country: string;
+  iata: string;
+  id: number;
+  name: string;
+};
+
+const AirportField: FC<tFlightForm> = ({
+  selectedAirport,
+  selectedAirportCb,
+  title,
+}) => {
+  let timeoutId: NodeJS.Timeout;
+  const [searchedAirport, setSearchedAirport] = useState<tAirport[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder={title}
+        placeholderTextColor="#666"
+        value={inputValue}
+        onKeyPress={({nativeEvent}) => {
+          if (nativeEvent.key === 'Backspace') {
+            console.log('Backspace key pressed');
+            selectedAirportCb('');
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+            }
+          }
+        }}
+        onChangeText={value => {
+          setInputValue(value);
+
+          // If there is a timeoutId or the input is empty, clear the timeout
+          if (timeoutId || value === '') {
+            clearTimeout(timeoutId);
+          }
+
+          // If the input is not empty and there is no selected airport, fetch the airports
+          if (value !== '' && selectedAirport === '') {
+            timeoutId = setTimeout(async () => {
+              try {
+                const response = await axios.get(
+                  `https://fk-api.adbiyas.com/api/common/airports?size=25&search=${value}`,
+                );
+                const results = response.data;
+                setSearchedAirport(results.data);
+              } catch (error) {
+                console.warn('Error while fetching airports', error);
+              }
+            }, 1500);
+          }
+        }}
+      />
+      {searchedAirport?.length > 0 && (
+        <ScrollView style={styles.dropdown}>
+          {searchedAirport?.map(airport => (
+            <TouchableOpacity
+              onPress={() => {
+                console.log('Airport selected for', title, ':', airport);
+                selectedAirportCb(airport.iata);
+                setInputValue(
+                  `${airport.name} - ${airport.city}, ${airport.country}`,
+                );
+                setSearchedAirport([]);
+              }}
+              key={airport.id}
+              style={styles.input}>
+              <Text>
+                {airport.name} - {airport.city}, {airport.country}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+    </View>
+  );
+};
+
+export default AirportField;
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'relative',
+  },
+  input: {
+    backgroundColor: '#f1f1f1',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    color: '#333',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: '100%',
+    width: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
+    borderRadius: 5,
+    padding: 10,
+    zIndex: 5,
+    maxHeight: 200,
+  },
+});

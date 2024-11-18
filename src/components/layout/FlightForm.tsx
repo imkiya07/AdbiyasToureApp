@@ -6,13 +6,21 @@ import {
   StyleSheet,
 } from 'react-native';
 import React, {FC, useState} from 'react';
-import {useAppSelector} from '@utils/hooks';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PassengerModal from '@components/common/Modal/PassengerModal';
-import axios from 'axios';
+import AirportField from '@components/common/AirportField';
+import {
+  updateDestinationLocationCode,
+  updateOriginLocationCode,
+} from '@store/slice/flightDestinations';
 
 const FlightForm: FC = () => {
+  const dispatch = useAppDispatch();
   const tripType = useAppSelector(state => state.flightTypeSlice.tripType);
+  const {OriginLocationCode, DestinationLocationCode} = useAppSelector(
+    state => state.flightDestinations[0],
+  );
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
   );
@@ -63,39 +71,25 @@ const FlightForm: FC = () => {
     setMultiCityList(updatedCities);
   };
 
-  let timeoutId: NodeJS.Timeout;
-
   return (
     <>
       <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="From"
-          placeholderTextColor="#666"
-          onChangeText={value => {
-            if (timeoutId || value === '') {
-              clearTimeout(timeoutId);
-            }
-            timeoutId = setTimeout(async () => {
-              try {
-                const response = await axios.get(
-                  `https://fk-api.adbiyas.com/api/common/airports?size=25&search=${value}`,
-                );
-                const results = response.data;
-                console.log(results.data);
-              } catch (error) {
-                console.warn('Error while fetching airports', error);
-              }
-            }, 1500);
+        <AirportField
+          title="Form"
+          selectedAirport={OriginLocationCode}
+          selectedAirportCb={e => {
+            dispatch(updateOriginLocationCode(e));
           }}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="To"
-          placeholderTextColor="#666"
+        <AirportField
+          title="To"
+          selectedAirport={DestinationLocationCode}
+          selectedAirportCb={e => {
+            dispatch(updateDestinationLocationCode(e));
+          }}
         />
 
-        {tripType === 'RoundTrip' && (
+        {tripType === 'Return' && (
           <>
             <TouchableOpacity onPress={() => setShowReturnDatePicker(true)}>
               <TextInput
@@ -146,7 +140,7 @@ const FlightForm: FC = () => {
         </TouchableOpacity>
       </View>
 
-      {tripType === 'MultiCity' &&
+      {tripType === 'OpenJaw' &&
         multiCityList.map((city, index) => (
           <View key={index + 12} style={styles.multiCityInput}>
             <TextInput
@@ -178,7 +172,7 @@ const FlightForm: FC = () => {
             </TouchableOpacity>
           </View>
         ))}
-      {tripType === 'MultiCity' && multiCityList.length < 3 && (
+      {tripType === 'OpenJaw' && multiCityList.length < 3 && (
         <TouchableOpacity onPress={handleAddCity}>
           <Text style={styles.addCityText}>+ Add City</Text>
         </TouchableOpacity>
