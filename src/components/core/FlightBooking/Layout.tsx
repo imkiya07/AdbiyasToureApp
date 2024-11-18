@@ -21,10 +21,6 @@ const LayoutScreen = () => {
   const tripType = useAppSelector(state => state.flightTypeSlice.tripType);
   const dispatch = useAppDispatch();
 
-  // const [tripType, setTripType] = useState<
-  //   'OneWay' | 'RoundTrip' | 'MultiCity'
-  // >('OneWay');
-
   return (
     <ImageBackground source={images.Cover} style={styles.backgroundImage}>
       <LinearGradient

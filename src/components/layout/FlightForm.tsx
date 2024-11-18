@@ -5,12 +5,13 @@ import {
   TextInput,
   StyleSheet,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 import {useAppSelector} from '@utils/hooks';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PassengerModal from '@components/common/Modal/PassengerModal';
+import axios from 'axios';
 
-const FlightForm = () => {
+const FlightForm: FC = () => {
   const tripType = useAppSelector(state => state.flightTypeSlice.tripType);
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
@@ -24,9 +25,13 @@ const FlightForm = () => {
   const [showReturnDatePicker, setShowReturnDatePicker] = useState(false);
   const [showPassengerModal, setShowPassengerModal] = useState<boolean>(false);
 
-  const [multiCityList, setMultiCityList] = useState([
-    {from: '', to: '', date: null},
-  ]);
+  const [multiCityList, setMultiCityList] = useState<
+    {
+      from: string;
+      to: string;
+      date: Date | null;
+    }[]
+  >([{from: '', to: '', date: null}]);
 
   const handleDepartureDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(false);
@@ -50,13 +55,15 @@ const FlightForm = () => {
 
   const handleMultiCityInputChange = (
     index: number,
-    field: string,
+    field: 'from' | 'to' | 'date',
     value: any,
   ) => {
     const updatedCities = [...multiCityList];
     updatedCities[index][field] = value;
     setMultiCityList(updatedCities);
   };
+
+  let timeoutId: NodeJS.Timeout;
 
   return (
     <>
@@ -65,6 +72,22 @@ const FlightForm = () => {
           style={styles.input}
           placeholder="From"
           placeholderTextColor="#666"
+          onChangeText={value => {
+            if (timeoutId || value === '') {
+              clearTimeout(timeoutId);
+            }
+            timeoutId = setTimeout(async () => {
+              try {
+                const response = await axios.get(
+                  `https://fk-api.adbiyas.com/api/common/airports?size=25&search=${value}`,
+                );
+                const results = response.data;
+                console.log(results.data);
+              } catch (error) {
+                console.warn('Error while fetching airports', error);
+              }
+            }, 1500);
+          }}
         />
         <TextInput
           style={styles.input}
