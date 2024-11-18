@@ -1,4 +1,10 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {
+  Action,
+  createSlice,
+  PayloadAction,
+  createAction,
+} from '@reduxjs/toolkit';
+import {tFlightTypes, toggleTripType} from './flightType';
 
 /* type tPassengerTypeQuantities = {
   Code: 'ADT' | 'CHD' | 'INF';
@@ -24,6 +30,11 @@ type tDestination = {
 };*/
 
 const initialState: tDestination[] = [
+  {
+    DepartureDateTime: '',
+    OriginLocationCode: '',
+    DestinationLocationCode: '',
+  },
   {
     DepartureDateTime: '',
     OriginLocationCode: '',
@@ -55,7 +66,7 @@ const flightDestinations = createSlice({
     updateDepartureDateTime: (state, action: PayloadAction<string>) => {
       state[0].DepartureDateTime = action.payload;
     },
-    addMultiCity: state => {
+    addDestination: state => {
       state.push({
         OriginLocationCode: '',
         DestinationLocationCode: '',
@@ -63,13 +74,27 @@ const flightDestinations = createSlice({
       });
     },
   },
+  extraReducers: builder => {
+    builder.addCase(
+      toggleTripType,
+      (state, action: PayloadAction<tFlightTypes>) => {
+        if (action.payload === 'Return') {
+          state[1] = {
+            OriginLocationCode: state[0].DestinationLocationCode,
+            DestinationLocationCode: state[0].OriginLocationCode,
+            DepartureDateTime: '',
+          };
+        }
+      },
+    );
+  },
 });
 
 export const {
   updateOriginLocationCode,
   updateDestinationLocationCode,
   updateDepartureDateTime,
-  addMultiCity,
+  addDestination,
 } = flightDestinations.actions;
 
 export default flightDestinations.reducer;

@@ -11,6 +11,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import PassengerModal from '@components/common/Modal/PassengerModal';
 import AirportField from '@components/common/AirportField';
 import {
+  updateDepartureDateTime,
   updateDestinationLocationCode,
   updateOriginLocationCode,
 } from '@store/slice/flightDestinations';
@@ -18,15 +19,16 @@ import {
 const FlightForm: FC = () => {
   const dispatch = useAppDispatch();
   const tripType = useAppSelector(state => state.flightTypeSlice.tripType);
-  const {OriginLocationCode, DestinationLocationCode} = useAppSelector(
-    state => state.flightDestinations[0],
+  const {OriginLocationCode, DestinationLocationCode, DepartureDateTime} =
+    useAppSelector(state => state.flightDestinations[0]);
+  const returnDate = useAppSelector(
+    state => state.flightDestinations[1].DepartureDateTime,
   );
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
   );
   // Convert Into RTK
-  const [departureDate, setDepartureDate] = useState<Date | null>(null);
-  const [returnDate, setReturnDate] = useState<Date | null>(null);
+  // const [returnDate, setReturnDate] = useState<Date | null>(null);
 
   // Active States
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -44,14 +46,14 @@ const FlightForm: FC = () => {
   const handleDepartureDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(false);
     if (selectedDate) {
-      setDepartureDate(selectedDate);
+      dispatch(updateDepartureDateTime(selectedDate.toDateString()));
     }
   };
 
   const handleReturnDateChange = (event: any, selectedDate?: Date) => {
     setShowReturnDatePicker(false);
     if (selectedDate) {
-      setReturnDate(selectedDate);
+      // setReturnDate(selectedDate);
     }
   };
 
@@ -97,12 +99,12 @@ const FlightForm: FC = () => {
                 placeholder="Return Date"
                 placeholderTextColor="#666"
                 editable={false}
-                value={returnDate ? returnDate.toDateString() : ''}
+                value={returnDate}
               />
             </TouchableOpacity>
             {showReturnDatePicker && (
               <DateTimePicker
-                value={returnDate || new Date()}
+                value={new Date(returnDate)}
                 mode="date"
                 display="default"
                 onChange={handleReturnDateChange}
@@ -117,12 +119,12 @@ const FlightForm: FC = () => {
             placeholder="Departure"
             placeholderTextColor="#666"
             editable={false}
-            value={departureDate ? departureDate.toDateString() : ''}
+            value={DepartureDateTime}
           />
         </TouchableOpacity>
         {showDatePicker && (
           <DateTimePicker
-            value={departureDate || new Date()}
+            value={new Date(DepartureDateTime)}
             mode="date"
             display="default"
             onChange={handleDepartureDateChange}
