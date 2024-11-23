@@ -1,32 +1,42 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Modal, FlatList } from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import {images} from '../../../constants/index'
+import {useNavigation} from '@react-navigation/native';
+import {images} from '../../../constants/index';
+import {useAppSelector} from '@utils/hooks';
 const FlightShowPage = () => {
-  const [selectedClass, setSelectedClass] = useState('Economy');
+  const {
+    cabinClass: selectedClass,
+    infants,
+    children,
+    adults,
+  } = useAppSelector(state => state.passengerSlice);
   const [modalVisible, setModalVisible] = useState(false);
-  const flightCards = Array.from({ length: 10 });
+  const flightCards = Array.from({length: 10});
   const classOptions = ['Economy', 'Business Class', 'First Class'];
-  
+
   const navigation = useNavigation(); // Hook for navigation
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <LinearGradient colors={['#0b2c5f', '#0b2c5f']} style={styles.background}>
-        
-
         <View style={styles.flightRoute}>
           <Text style={styles.routeText}>YUL---</Text>
           <FontAwesome5 name="plane" size={24} color="#000" />
           <Text style={styles.routeText}>---NRT</Text>
         </View>
-        <Image
-          source={images.Earth}
-          style={styles.earthImage}
-        />
+        <Image source={images.Earth} style={styles.earthImage} />
 
         <View style={styles.infoContainer}>
           <View style={styles.datePassenger}>
@@ -42,8 +52,12 @@ const FlightShowPage = () => {
         </View>
 
         <View style={styles.classpic}>
-          <TouchableOpacity style={styles.classPicker} onPress={() => setModalVisible(true)}>
-            <LinearGradient colors={['#007AFF', '#1E90FF']} style={styles.classPickerGradient}>
+          <TouchableOpacity
+            style={styles.classPicker}
+            onPress={() => setModalVisible(true)}>
+            <LinearGradient
+              colors={['#007AFF', '#1E90FF']}
+              style={styles.classPickerGradient}>
               <Text style={styles.selectedClassText}>{selectedClass}</Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -57,21 +71,21 @@ const FlightShowPage = () => {
               <Text style={styles.timeText}>8:05 PM</Text>
             </View>
             <View style={styles.airlineContainer}>
-              <Image
-                source={images.Quater}
-                style={styles.airlineLogo}
-              />
+              <Image source={images.Quater} style={styles.airlineLogo} />
               <Text style={styles.flightText}>Qatar Airways</Text>
             </View>
             <View style={styles.actionContainer}>
-              <TouchableOpacity onPress={() => navigation.navigate('TravellerDetailsScreen')}  style={styles.bookNowButton}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('TravellerDetailsScreen')}
+                style={styles.bookNowButton}>
                 <Text style={styles.bookNowText}>Book Now</Text>
               </TouchableOpacity>
               <Text style={styles.priceText}>$1400</Text>
             </View>
             <View style={styles.flightFooter}>
               <Text style={styles.detailsText}>8 LEFT {selectedClass}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('FlightDetails')}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('FlightDetails')}>
                 <Text style={styles.detailsButton}>Details</Text>
               </TouchableOpacity>
             </View>
@@ -83,30 +97,27 @@ const FlightShowPage = () => {
         transparent={true}
         visible={modalVisible}
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Select Class</Text>
             <FlatList
               data={classOptions}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
+              keyExtractor={item => item}
+              renderItem={({item}) => (
                 <TouchableOpacity
                   style={styles.modalItem}
                   onPress={() => {
                     setSelectedClass(item);
                     setModalVisible(false);
-                  }}
-                >
+                  }}>
                   <Text style={styles.modalItemText}>{item}</Text>
                 </TouchableOpacity>
               )}
             />
             <TouchableOpacity
               style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
+              onPress={() => setModalVisible(false)}>
               <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -124,7 +135,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 16,
-    
   },
   header: {
     flexDirection: 'row',
@@ -154,7 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginHorizontal: 8,
-    color:"#FFFF"
+    color: '#FFFF',
   },
   datePassenger: {
     flexDirection: 'row',
@@ -192,7 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
@@ -207,7 +217,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,

@@ -81,3 +81,35 @@ export type tFlightSearch = {
   results: tFlightResult[];
   filter: tFilter;
 };
+
+export type tCabins = 'Y' | 'S' | 'C' | 'F'; // Y=Economy,C=Business,F=First & S=Premium Economy
+
+export type tPassengerState = {
+  adults: number;
+  children: number;
+  infants: number;
+  cabinClass: tCabins;
+};
+
+export type tFlightTypes = 'OneWay' | 'Return' | 'OpenJaw' | 'Circle';
+
+export type tFlightTypeState = {
+  tripType: tFlightTypes;
+};
+
+export type tFlightSearchState = {
+  searchResults: tFlightResult[];
+  loading: boolean;
+  error: string | null;
+};
+
+export type tDestination = {
+  DestinationLocationCode: string;
+  DepartureDateTime: string;
+  OriginLocationCode: string;
+};
+
+export type tDestinationPayload = {
+  index: number;
+  value: string;
+};

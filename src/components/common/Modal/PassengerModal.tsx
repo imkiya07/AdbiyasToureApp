@@ -13,7 +13,7 @@ import {
   updateAdults,
   updateChildren,
   updateInfants,
-} from '@store/slice/passenger';
+} from '@store/slice/passengerSlice';
 
 const PassengerModal: FC = () => {
   const {cabinClass, infants, children, adults} = useAppSelector(

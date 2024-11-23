@@ -1,11 +1,9 @@
 import {configureStore} from '@reduxjs/toolkit';
 import flightTypeSlice from './slice/flightType';
-import passengerSlice from './slice/passenger';
+import passengerSlice from './slice/passengerSlice';
 import flightDestinations from './slice/flightDestinations';
 import flightSearchSlice from './slice/flightResults';
-// import logger from 'redux-logger';
 
-// export const rootStore = createStore(allReducers);
 const rootStore = configureStore({
   reducer: {
     flightTypeSlice,

@@ -1,10 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-
-export type tFlightTypes = 'OneWay' | 'Return' | 'OpenJaw' | 'Circle';
-
-type tFlightTypeState = {
-  tripType: tFlightTypes;
-};
+import {tFlightTypes, tFlightTypeState} from '@utils/types';
 
 const initialState: tFlightTypeState = {
   tripType: 'OneWay',

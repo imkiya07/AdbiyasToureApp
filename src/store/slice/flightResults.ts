@@ -1,13 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {tFlightResult} from '@utils/types';
+import {tFlightResult, tFlightSearchState} from '@utils/types';
 
-interface FlightSearchState {
-  searchResults: tFlightResult[];
-  loading: boolean;
-  error: string | null;
-}
-
-const initialState: FlightSearchState = {
+const initialState: tFlightSearchState = {
   searchResults: [],
   loading: false,
   error: null,

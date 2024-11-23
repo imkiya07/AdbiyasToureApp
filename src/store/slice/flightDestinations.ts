@@ -1,33 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {tFlightTypes, toggleTripType} from './flightType';
-
-/* type tPassengerTypeQuantities = {
-  Code: 'ADT' | 'CHD' | 'INF';
-  Quantity: number;
-}; */
-// type tFlightTypes = 'OneWay' | 'Return' | 'OpenJaw' | 'Circle';
-// type tCabins = 'Y' | 'S' | 'C' | 'F';
-type tDestination = {
-  DestinationLocationCode: string;
-  DepartureDateTime: string;
-  OriginLocationCode: string;
-};
-
-/* type tSearchFlight = {
-"CabinPreference": tCabins;
-  OriginDestinationInformations: tDestination[];
-  TravelPreferences: {
-    AirTripType: tFlightTypes;
-  }; 
-    PricingSourceType: 'Public' | 'Private' | 'All';
-  PassengerTypeQuantities: tPassengerTypeQuantities[];
-  RequestOptions: 'Fifty' | 'Hundred' | 'TwoHundred'; 
-};*/
-
-type tDestinationPayload = {
-  index: number;
-  value: string;
-};
+import {toggleTripType} from './flightType';
+import {tDestination, tDestinationPayload, tFlightTypes} from '@utils/types';
 
 const initialState: tDestination[] = [
   {
@@ -36,17 +9,6 @@ const initialState: tDestination[] = [
     DestinationLocationCode: '',
   },
 ];
-/* TravelPreferences: {
-    AirTripType: 'OneWay',
-  },
-  PricingSourceType: 'Public',
-  PassengerTypeQuantities: [
-    {
-      Code: 'ADT',
-      Quantity: 1,
-    },
-  ],
-  RequestOptions: 'Fifty', */
 
 const flightDestinations = createSlice({
   name: 'flightDestinations',

@@ -1,16 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {tCabins, tPassengerState} from '@utils/types';
 
-// Y=Economy,C=Business,F=First & S=Premium Economy
-type tCabins = 'Y' | 'S' | 'C' | 'F';
-
-interface PassengerState {
-  adults: number;
-  children: number;
-  infants: number;
-  cabinClass: tCabins;
-}
-
-const initialState: PassengerState = {
+const initialState: tPassengerState = {
   adults: 1,
   children: 0,
   infants: 0,
