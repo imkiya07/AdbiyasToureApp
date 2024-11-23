@@ -1,11 +1,14 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {tCabins, tPassengerState} from '@utils/types';
+import {tClassOptions, tPassengerState} from '@utils/types';
 
 const initialState: tPassengerState = {
   adults: 1,
   children: 0,
   infants: 0,
-  cabinClass: 'Y',
+  cabinClass: {
+    value: 'Y',
+    label: 'Economy',
+  },
 };
 
 const passengerSlice = createSlice({
@@ -21,7 +24,7 @@ const passengerSlice = createSlice({
     updateInfants(state, action: PayloadAction<number>) {
       state.infants = action.payload;
     },
-    updateCabinClass(state, action: PayloadAction<tCabins>) {
+    updateCabinClass(state, action: PayloadAction<tClassOptions>) {
       state.cabinClass = action.payload;
     },
   },

@@ -26,20 +26,15 @@ import {
 
 const LayoutScreen = () => {
   const navigation = useNavigation();
-  const {
-    cabinClass: CabinPreference,
-    infants,
-    children,
-    adults,
-  } = useAppSelector(state => state.passengerSlice);
+  const {cabinClass, infants, children, adults} = useAppSelector(
+    state => state.passengerSlice,
+  );
   const tripStates = useAppSelector(state => state.flightDestinations);
   const AirTripType = useAppSelector(state => state.flightTypeSlice.tripType);
   const {loading} = useAppSelector(state => state.flightSearchSlice);
   const dispatch = useAppDispatch();
 
   const searchFlight = async () => {
-    dispatch(searchFlightsStart());
-
     const PassengerTypeQuantities = [
       {
         Code: 'ADT',
@@ -59,7 +54,7 @@ const LayoutScreen = () => {
       });
     }
     const flightDetails = {
-      CabinPreference,
+      CabinPreference: cabinClass.value,
       OriginDestinationInformations: tripStates,
       TravelPreferences: {
         AirTripType,
@@ -68,33 +63,35 @@ const LayoutScreen = () => {
       PassengerTypeQuantities,
       RequestOptions: 'Fifty',
     };
-
-    console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
-    try {
-      const response = await axios.post(
-        'https://fk-api.adbiyas.com/api/b2c/search',
-        flightDetails,
-      );
-      dispatch(searchFlightsSuccess(response.data.results));
-      navigation.navigate('FlightShow');
-    } catch (error: any) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          // Server responded with a status other than 2xx
-          dispatch(searchFlightsFailure(error.response.data.message));
-          Alert.alert('Error', error.response.data.message);
-        } else if (error.request) {
-          // Request was made but no response received
-          dispatch(searchFlightsFailure('No response received from server'));
-          Alert.alert('Error', 'No response received from server');
+    if (!loading) {
+      dispatch(searchFlightsStart());
+      console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
+      try {
+        const response = await axios.post(
+          'https://fk-api.adbiyas.com/api/b2c/search',
+          flightDetails,
+        );
+        dispatch(searchFlightsSuccess(response.data.results));
+        navigation.navigate('FlightShow');
+      } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            // Server responded with a status other than 2xx
+            dispatch(searchFlightsFailure(error.response.data.message));
+            Alert.alert('Error', error.response.data.message);
+          } else if (error.request) {
+            // Request was made but no response received
+            dispatch(searchFlightsFailure('No response received from server'));
+            Alert.alert('Error', 'No response received from server');
+          } else {
+            // Something happened in setting up the request
+            dispatch(searchFlightsFailure(error.message));
+            Alert.alert('Error', error.message);
+          }
         } else {
-          // Something happened in setting up the request
-          dispatch(searchFlightsFailure(error.message));
-          Alert.alert('Error', error.message);
+          // Handle other errors
+          dispatch(searchFlightsFailure('An unexpected error occurred'));
         }
-      } else {
-        // Handle other errors
-        dispatch(searchFlightsFailure('An unexpected error occurred'));
       }
     }
   };

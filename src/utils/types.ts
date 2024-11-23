@@ -84,11 +84,15 @@ export type tFlightSearch = {
 
 export type tCabins = 'Y' | 'S' | 'C' | 'F'; // Y=Economy,C=Business,F=First & S=Premium Economy
 
+export type tClassOptions = {
+  value: tCabins;
+  label: string;
+};
 export type tPassengerState = {
   adults: number;
   children: number;
   infants: number;
-  cabinClass: tCabins;
+  cabinClass: tClassOptions;
 };
 
 export type tFlightTypes = 'OneWay' | 'Return' | 'OpenJaw' | 'Circle';
