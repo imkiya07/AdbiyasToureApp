@@ -5,7 +5,7 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker';
 
 type tFlightDate = {
-  initialValue: Date;
+  initialValue: string;
   minimumValue?: Date;
   updateStateCb: (date: Date) => void;
   placeholder: string;
@@ -26,12 +26,12 @@ const FlightDatePicker: FC<tFlightDate> = ({
           placeholder={placeholder}
           placeholderTextColor="#666"
           editable={false}
-          value={initialValue.toDateString()}
+          value={initialValue}
         />
       </TouchableOpacity>
       {toggleDatePicker && (
         <DateTimePicker
-          value={initialValue}
+          value={new Date(initialValue)}
           mode="date"
           display="default"
           minimumDate={minimumValue}

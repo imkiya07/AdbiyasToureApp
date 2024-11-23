@@ -63,8 +63,10 @@ const FlightForm: FC = () => {
         {tripType === 'Return' && (
           <FlightDatePicker
             placeholder="Return Date"
-            initialValue={new Date(returnDate)}
-            minimumValue={new Date(DepartureDateTime)}
+            initialValue={returnDate}
+            minimumValue={
+              DepartureDateTime ? new Date(DepartureDateTime) : new Date()
+            }
             updateStateCb={date => {
               dispatch(
                 updateDepartureDateTime({
@@ -77,7 +79,7 @@ const FlightForm: FC = () => {
         )}
         <FlightDatePicker
           placeholder="Departure"
-          initialValue={new Date(DepartureDateTime)}
+          initialValue={DepartureDateTime}
           updateStateCb={date => {
             dispatch(
               updateDepartureDateTime({
@@ -92,36 +94,42 @@ const FlightForm: FC = () => {
       </View>
 
       {tripType === 'OpenJaw' &&
-        tripStates.map((data, index) => (
-          <View key={index + 12} style={styles.multiCityInput}>
-            <AirportField
-              title={`From City ${index + 1}`}
-              selectedAirport={data.OriginLocationCode}
-              selectedAirportCb={iata => {
-                dispatch(updateOriginLocationCode({index, value: iata}));
-              }}
-            />
-            <AirportField
-              title={`To City ${index + 1}`}
-              selectedAirport={data.DestinationLocationCode}
-              selectedAirportCb={iata => {
-                dispatch(updateDestinationLocationCode({index, value: iata}));
-              }}
-            />
-            <FlightDatePicker
-              placeholder="Date"
-              initialValue={new Date(data.DepartureDateTime)}
-              updateStateCb={date => {
-                dispatch(
-                  updateDepartureDateTime({
-                    index,
-                    value: date.toDateString(),
-                  }),
-                );
-              }}
-            />
-          </View>
-        ))}
+        tripStates.map((data, index) => {
+          if (index > 0) {
+            return (
+              <View key={index + 12} style={styles.multiCityInput}>
+                <AirportField
+                  title={`From City ${index}`}
+                  selectedAirport={data.OriginLocationCode}
+                  selectedAirportCb={iata => {
+                    dispatch(updateOriginLocationCode({index, value: iata}));
+                  }}
+                />
+                <AirportField
+                  title={`To City ${index}`}
+                  selectedAirport={data.DestinationLocationCode}
+                  selectedAirportCb={iata => {
+                    dispatch(
+                      updateDestinationLocationCode({index, value: iata}),
+                    );
+                  }}
+                />
+                <FlightDatePicker
+                  placeholder="Date"
+                  initialValue={data.DepartureDateTime}
+                  updateStateCb={date => {
+                    dispatch(
+                      updateDepartureDateTime({
+                        index,
+                        value: date.toDateString(),
+                      }),
+                    );
+                  }}
+                />
+              </View>
+            );
+          }
+        })}
       {tripType === 'OpenJaw' && tripStates.length < 3 && (
         <TouchableOpacity
           onPress={() => {

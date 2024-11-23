@@ -92,8 +92,7 @@ const flightDestinations = createSlice({
             DestinationLocationCode: state[0].OriginLocationCode,
             DepartureDateTime: '',
           };
-        }
-        if (action.payload === 'OpenJaw') {
+        } else if (action.payload === 'OpenJaw') {
           state[1] = {
             OriginLocationCode: '',
             DestinationLocationCode: '',
