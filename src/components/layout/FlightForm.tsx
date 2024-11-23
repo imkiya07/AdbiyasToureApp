@@ -19,13 +19,8 @@ const FlightForm: FC = () => {
   const returnDate =
     useAppSelector(state => state.flightDestinations[1]?.DepartureDateTime) ??
     '';
-  // const {cabinClass, infants, children, adults} = useAppSelector(
-  //   state => state.passengerSlice,
-  // );
+
   const tripStates = useAppSelector(state => state.flightDestinations);
-  console.log('FlightForm.tsx ~ tripStates:', tripStates);
-  // Convert Into RTK
-  // const [returnDate, setReturnDate] = useState<Date | null>(null);
   return (
     <>
       <View style={styles.form}>

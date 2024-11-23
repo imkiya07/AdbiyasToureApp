@@ -2,20 +2,16 @@ import {configureStore} from '@reduxjs/toolkit';
 import flightTypeSlice from './slice/flightType';
 import passengerSlice from './slice/passenger';
 import flightDestinations from './slice/flightDestinations';
-import counterReducer from './slice/counter';
-import isLoggedReducer from './slice/authStatus';
-import userSlice from './slice/fetchUser';
+import flightSearchSlice from './slice/flightResults';
 // import logger from 'redux-logger';
 
 // export const rootStore = createStore(allReducers);
 const rootStore = configureStore({
   reducer: {
-    counter: counterReducer,
-    isLoggedReducer,
-    user: userSlice,
     flightTypeSlice,
     passengerSlice,
     flightDestinations,
+    flightSearchSlice,
   },
   // middleware: getDefaultMiddleware => {
   //   return getDefaultMiddleware().concat(logger);

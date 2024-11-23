@@ -41,7 +41,6 @@ const AirportField: FC<tFlightForm> = ({
         value={inputValue}
         onKeyPress={({nativeEvent}) => {
           if (nativeEvent.key === 'Backspace') {
-            console.log('Backspace key pressed');
             selectedAirportCb('');
             if (timeoutId) {
               clearTimeout(timeoutId);
@@ -77,7 +76,6 @@ const AirportField: FC<tFlightForm> = ({
           {searchedAirport?.map(airport => (
             <TouchableOpacity
               onPress={() => {
-                console.log('Airport selected for', title, ':', airport);
                 selectedAirportCb(airport.iata);
                 setInputValue(
                   `${airport.name} - ${airport.city}, ${airport.country}`,

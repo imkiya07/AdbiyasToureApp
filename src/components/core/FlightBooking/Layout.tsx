@@ -7,6 +7,8 @@ import {
   ImageBackground,
   Image,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {images} from '@constants/index';
@@ -15,12 +17,87 @@ import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {toggleTripType} from '@store/slice/flightType';
 import FlightForm from '@components/layout/FlightForm';
 import {resetStateObj} from '@store/slice/flightDestinations';
+import axios from 'axios';
+import {
+  searchFlightsFailure,
+  searchFlightsStart,
+  searchFlightsSuccess,
+} from '@store/slice/flightResults';
 
 const LayoutScreen = () => {
   const navigation = useNavigation();
-
-  const tripType = useAppSelector(state => state.flightTypeSlice.tripType);
+  const {
+    cabinClass: CabinPreference,
+    infants,
+    children,
+    adults,
+  } = useAppSelector(state => state.passengerSlice);
+  const tripStates = useAppSelector(state => state.flightDestinations);
+  const AirTripType = useAppSelector(state => state.flightTypeSlice.tripType);
+  const {loading} = useAppSelector(state => state.flightSearchSlice);
   const dispatch = useAppDispatch();
+
+  const searchFlight = async () => {
+    dispatch(searchFlightsStart());
+
+    const PassengerTypeQuantities = [
+      {
+        Code: 'ADT',
+        Quantity: adults,
+      },
+    ];
+    if (children > 0) {
+      PassengerTypeQuantities.push({
+        Code: 'CHD',
+        Quantity: children,
+      });
+    }
+    if (infants > 0) {
+      PassengerTypeQuantities.push({
+        Code: 'INF',
+        Quantity: infants,
+      });
+    }
+    const flightDetails = {
+      CabinPreference,
+      OriginDestinationInformations: tripStates,
+      TravelPreferences: {
+        AirTripType,
+      },
+      PricingSourceType: 'Public',
+      PassengerTypeQuantities,
+      RequestOptions: 'Fifty',
+    };
+
+    console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
+    try {
+      const response = await axios.post(
+        'https://fk-api.adbiyas.com/api/b2c/search',
+        flightDetails,
+      );
+      dispatch(searchFlightsSuccess(response.data.results));
+      navigation.navigate('FlightShow');
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // Server responded with a status other than 2xx
+          dispatch(searchFlightsFailure(error.response.data.message));
+          Alert.alert('Error', error.response.data.message);
+        } else if (error.request) {
+          // Request was made but no response received
+          dispatch(searchFlightsFailure('No response received from server'));
+          Alert.alert('Error', 'No response received from server');
+        } else {
+          // Something happened in setting up the request
+          dispatch(searchFlightsFailure(error.message));
+          Alert.alert('Error', error.message);
+        }
+      } else {
+        // Handle other errors
+        dispatch(searchFlightsFailure('An unexpected error occurred'));
+      }
+    }
+  };
 
   return (
     <ImageBackground source={images.Cover} style={styles.backgroundImage}>
@@ -36,7 +113,7 @@ const LayoutScreen = () => {
               <TouchableOpacity
                 style={[
                   styles.button,
-                  tripType === 'OneWay' && styles.selectedButton,
+                  AirTripType === 'OneWay' && styles.selectedButton,
                 ]}
                 onPress={() => {
                   dispatch(toggleTripType('OneWay'));
@@ -47,7 +124,7 @@ const LayoutScreen = () => {
               <TouchableOpacity
                 style={[
                   styles.button,
-                  tripType === 'Return' && styles.selectedButton,
+                  AirTripType === 'Return' && styles.selectedButton,
                 ]}
                 onPress={() => dispatch(toggleTripType('Return'))}>
                 <Text style={styles.buttonText}>Round Trip</Text>
@@ -55,7 +132,7 @@ const LayoutScreen = () => {
               <TouchableOpacity
                 style={[
                   styles.button,
-                  tripType === 'OpenJaw' && styles.selectedButton,
+                  AirTripType === 'OpenJaw' && styles.selectedButton,
                 ]}
                 onPress={() => dispatch(toggleTripType('OpenJaw'))}>
                 <Text style={styles.buttonText}>Multi City</Text>
@@ -67,9 +144,12 @@ const LayoutScreen = () => {
             <LinearGradient
               style={styles.searchButton}
               colors={['#009FFD', '#2A2A72']}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('FlightShow')}>
-                <Text style={styles.searchButtonText}>SEARCH FLIGHTS</Text>
+              <TouchableOpacity onPress={() => searchFlight()}>
+                {loading ? (
+                  <ActivityIndicator size="large" color="#ffffff" />
+                ) : (
+                  <Text style={styles.searchButtonText}>SEARCH FLIGHTS</Text>
+                )}
               </TouchableOpacity>
             </LinearGradient>
           </View>
