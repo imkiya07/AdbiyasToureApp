@@ -1,78 +1,31 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-} from 'react-native';
-import React, {FC, useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {FC} from 'react';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import PassengerModal from '@components/common/Modal/PassengerModal';
 import AirportField from '@components/common/AirportField';
 import {
+  addDestination,
   updateDepartureDateTime,
   updateDestinationLocationCode,
   updateOriginLocationCode,
 } from '@store/slice/flightDestinations';
+import FlightDatePicker from '@components/common/FlightDatePicker';
 
 const FlightForm: FC = () => {
   const dispatch = useAppDispatch();
   const tripType = useAppSelector(state => state.flightTypeSlice.tripType);
   const {OriginLocationCode, DestinationLocationCode, DepartureDateTime} =
     useAppSelector(state => state.flightDestinations[0]);
-  const returnDate = useAppSelector(
-    state => state.flightDestinations[1].DepartureDateTime,
-  );
-  const {cabinClass, infants, children, adults} = useAppSelector(
-    state => state.passengerSlice,
-  );
+  const returnDate =
+    useAppSelector(state => state.flightDestinations[1]?.DepartureDateTime) ??
+    '';
+  // const {cabinClass, infants, children, adults} = useAppSelector(
+  //   state => state.passengerSlice,
+  // );
+  const tripStates = useAppSelector(state => state.flightDestinations);
+  console.log('FlightForm.tsx ~ tripStates:', tripStates);
   // Convert Into RTK
   // const [returnDate, setReturnDate] = useState<Date | null>(null);
-
-  // Active States
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showReturnDatePicker, setShowReturnDatePicker] = useState(false);
-  const [showPassengerModal, setShowPassengerModal] = useState<boolean>(false);
-
-  const [multiCityList, setMultiCityList] = useState<
-    {
-      from: string;
-      to: string;
-      date: Date | null;
-    }[]
-  >([{from: '', to: '', date: null}]);
-
-  const handleDepartureDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      dispatch(updateDepartureDateTime(selectedDate.toDateString()));
-    }
-  };
-
-  const handleReturnDateChange = (event: any, selectedDate?: Date) => {
-    setShowReturnDatePicker(false);
-    if (selectedDate) {
-      // setReturnDate(selectedDate);
-    }
-  };
-
-  const handleAddCity = () => {
-    if (multiCityList.length < 3) {
-      setMultiCityList([...multiCityList, {from: '', to: '', date: null}]);
-    }
-  };
-
-  const handleMultiCityInputChange = (
-    index: number,
-    field: 'from' | 'to' | 'date',
-    value: any,
-  ) => {
-    const updatedCities = [...multiCityList];
-    updatedCities[index][field] = value;
-    setMultiCityList(updatedCities);
-  };
-
   return (
     <>
       <View style={styles.form}>
@@ -80,110 +33,105 @@ const FlightForm: FC = () => {
           title="Form"
           selectedAirport={OriginLocationCode}
           selectedAirportCb={e => {
-            dispatch(updateOriginLocationCode(e));
+            dispatch(updateOriginLocationCode({index: 0, value: e}));
+            if (tripType === 'Return') {
+              dispatch(
+                updateDestinationLocationCode({
+                  index: 1,
+                  value: e,
+                }),
+              );
+            }
           }}
         />
         <AirportField
           title="To"
           selectedAirport={DestinationLocationCode}
           selectedAirportCb={e => {
-            dispatch(updateDestinationLocationCode(e));
+            dispatch(updateDestinationLocationCode({index: 0, value: e}));
+            if (tripType === 'Return') {
+              dispatch(
+                updateOriginLocationCode({
+                  index: 1,
+                  value: e,
+                }),
+              );
+            }
           }}
         />
 
         {tripType === 'Return' && (
-          <>
-            <TouchableOpacity onPress={() => setShowReturnDatePicker(true)}>
-              <TextInput
-                style={styles.input}
-                placeholder="Return Date"
-                placeholderTextColor="#666"
-                editable={false}
-                value={returnDate}
-              />
-            </TouchableOpacity>
-            {showReturnDatePicker && (
-              <DateTimePicker
-                value={new Date(returnDate)}
-                mode="date"
-                display="default"
-                onChange={handleReturnDateChange}
-              />
-            )}
-          </>
-        )}
-
-        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-          <TextInput
-            style={styles.input}
-            placeholder="Departure"
-            placeholderTextColor="#666"
-            editable={false}
-            value={DepartureDateTime}
-          />
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={new Date(DepartureDateTime)}
-            mode="date"
-            display="default"
-            onChange={handleDepartureDateChange}
+          <FlightDatePicker
+            placeholder="Return Date"
+            initialValue={new Date(returnDate)}
+            minimumValue={new Date(DepartureDateTime)}
+            updateStateCb={date => {
+              dispatch(
+                updateDepartureDateTime({
+                  index: 1,
+                  value: date.toDateString(),
+                }),
+              );
+            }}
           />
         )}
-
-        <TouchableOpacity onPress={() => setShowPassengerModal(true)}>
-          <TextInput
-            style={styles.input}
-            placeholder="Passenger"
-            placeholderTextColor="#666"
-            editable={false}
-            value={`${adults} Adult, ${children} Children, ${infants} Infants, ${cabinClass}`}
-          />
-        </TouchableOpacity>
+        <FlightDatePicker
+          placeholder="Departure"
+          initialValue={new Date(DepartureDateTime)}
+          updateStateCb={date => {
+            dispatch(
+              updateDepartureDateTime({
+                index: 0,
+                value: date.toDateString(),
+              }),
+            );
+          }}
+        />
+        {/* Passenger Modal */}
+        <PassengerModal />
       </View>
 
       {tripType === 'OpenJaw' &&
-        multiCityList.map((city, index) => (
+        tripStates.map((data, index) => (
           <View key={index + 12} style={styles.multiCityInput}>
-            <TextInput
-              style={styles.input}
-              placeholder={`From City ${index + 1}`}
-              placeholderTextColor="#666"
-              value={city.from}
-              onChangeText={value =>
-                handleMultiCityInputChange(index, 'from', value)
-              }
+            <AirportField
+              title={`From City ${index + 1}`}
+              selectedAirport={data.OriginLocationCode}
+              selectedAirportCb={iata => {
+                dispatch(updateOriginLocationCode({index, value: iata}));
+              }}
             />
-            <TextInput
-              style={styles.input}
-              placeholder={`To City ${index + 1}`}
-              placeholderTextColor="#666"
-              value={city.to}
-              onChangeText={value =>
-                handleMultiCityInputChange(index, 'to', value)
-              }
+            <AirportField
+              title={`To City ${index + 1}`}
+              selectedAirport={data.DestinationLocationCode}
+              selectedAirportCb={iata => {
+                dispatch(updateDestinationLocationCode({index, value: iata}));
+              }}
             />
-            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-              <TextInput
-                style={styles.input}
-                placeholder="Date"
-                placeholderTextColor="#666"
-                editable={false}
-                value={city.date ? city.date.toDateString() : ''}
-              />
-            </TouchableOpacity>
+            <FlightDatePicker
+              placeholder="Date"
+              initialValue={new Date(data.DepartureDateTime)}
+              updateStateCb={date => {
+                dispatch(
+                  updateDepartureDateTime({
+                    index,
+                    value: date.toDateString(),
+                  }),
+                );
+              }}
+            />
           </View>
         ))}
-      {tripType === 'OpenJaw' && multiCityList.length < 3 && (
-        <TouchableOpacity onPress={handleAddCity}>
+      {tripType === 'OpenJaw' && tripStates.length < 3 && (
+        <TouchableOpacity
+          onPress={() => {
+            if (tripStates.length < 3) {
+              dispatch(addDestination());
+            }
+          }}>
           <Text style={styles.addCityText}>+ Add City</Text>
         </TouchableOpacity>
       )}
-      {/* Passenger Modal */}
-      <PassengerModal
-        visible={showPassengerModal}
-        onClose={() => setShowPassengerModal(false)}
-      />
     </>
   );
 };
@@ -193,13 +141,6 @@ export default FlightForm;
 const styles = StyleSheet.create({
   form: {
     marginBottom: 20,
-  },
-  input: {
-    backgroundColor: '#f1f1f1',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-    color: '#333',
   },
   multiCityInput: {
     marginBottom: 10,

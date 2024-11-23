@@ -14,6 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {toggleTripType} from '@store/slice/flightType';
 import FlightForm from '@components/layout/FlightForm';
+import {resetStateObj} from '@store/slice/flightDestinations';
 
 const LayoutScreen = () => {
   const navigation = useNavigation();
@@ -37,7 +38,10 @@ const LayoutScreen = () => {
                   styles.button,
                   tripType === 'OneWay' && styles.selectedButton,
                 ]}
-                onPress={() => dispatch(toggleTripType('OneWay'))}>
+                onPress={() => {
+                  dispatch(toggleTripType('OneWay'));
+                  dispatch(resetStateObj());
+                }}>
                 <Text style={styles.buttonText}>One Way</Text>
               </TouchableOpacity>
               <TouchableOpacity

@@ -1,9 +1,4 @@
-import {
-  Action,
-  createSlice,
-  PayloadAction,
-  createAction,
-} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {tFlightTypes, toggleTripType} from './flightType';
 
 /* type tPassengerTypeQuantities = {
@@ -29,12 +24,12 @@ type tDestination = {
   RequestOptions: 'Fifty' | 'Hundred' | 'TwoHundred'; 
 };*/
 
+type tDestinationPayload = {
+  index: number;
+  value: string;
+};
+
 const initialState: tDestination[] = [
-  {
-    DepartureDateTime: '',
-    OriginLocationCode: '',
-    DestinationLocationCode: '',
-  },
   {
     DepartureDateTime: '',
     OriginLocationCode: '',
@@ -57,14 +52,24 @@ const flightDestinations = createSlice({
   name: 'flightDestinations',
   initialState,
   reducers: {
-    updateOriginLocationCode: (state, action: PayloadAction<string>) => {
-      state[0].OriginLocationCode = action.payload;
+    updateOriginLocationCode: (
+      state,
+      action: PayloadAction<tDestinationPayload>,
+    ) => {
+      state[action.payload.index].OriginLocationCode = action.payload.value;
     },
-    updateDestinationLocationCode: (state, action: PayloadAction<string>) => {
-      state[0].DestinationLocationCode = action.payload;
+    updateDestinationLocationCode: (
+      state,
+      action: PayloadAction<tDestinationPayload>,
+    ) => {
+      state[action.payload.index].DestinationLocationCode =
+        action.payload.value;
     },
-    updateDepartureDateTime: (state, action: PayloadAction<string>) => {
-      state[0].DepartureDateTime = action.payload;
+    updateDepartureDateTime: (
+      state,
+      action: PayloadAction<tDestinationPayload>,
+    ) => {
+      state[action.payload.index].DepartureDateTime = action.payload.value;
     },
     addDestination: state => {
       state.push({
@@ -72,6 +77,9 @@ const flightDestinations = createSlice({
         DestinationLocationCode: '',
         DepartureDateTime: '',
       });
+    },
+    resetStateObj: state => {
+      state.splice(0, state.length - 1);
     },
   },
   extraReducers: builder => {
@@ -85,6 +93,13 @@ const flightDestinations = createSlice({
             DepartureDateTime: '',
           };
         }
+        if (action.payload === 'OpenJaw') {
+          state[1] = {
+            OriginLocationCode: '',
+            DestinationLocationCode: '',
+            DepartureDateTime: '',
+          };
+        }
       },
     );
   },
@@ -95,6 +110,7 @@ export const {
   updateDestinationLocationCode,
   updateDepartureDateTime,
   addDestination,
+  resetStateObj,
 } = flightDestinations.actions;
 
 export default flightDestinations.reducer;
