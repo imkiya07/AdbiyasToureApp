@@ -31,7 +31,7 @@ const PassengerModal: FC = () => {
           placeholder="Passenger"
           placeholderTextColor="#666"
           editable={false}
-          value={`${adults} Adult, ${children} Children, ${infants} Infants, ${cabinClass}`}
+          value={`${adults} Adult, ${children} Children, ${infants} Infants, ${cabinClass.label}`}
         />
       </TouchableOpacity>
       <Modal

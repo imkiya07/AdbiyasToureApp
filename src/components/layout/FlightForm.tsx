@@ -28,12 +28,24 @@ const FlightForm: FC = () => {
           title="Form"
           selectedAirport={OriginLocationCode}
           selectedAirportCb={e => {
-            dispatch(updateOriginLocationCode({index: 0, value: e}));
+            const {name, iata, city, country} = e;
+            dispatch(
+              updateOriginLocationCode({
+                index: 0,
+                iata,
+                name,
+                city,
+                country,
+              }),
+            );
             if (tripType === 'Return') {
               dispatch(
                 updateDestinationLocationCode({
                   index: 1,
-                  value: e,
+                  iata,
+                  name,
+                  city,
+                  country,
                 }),
               );
             }
@@ -43,12 +55,24 @@ const FlightForm: FC = () => {
           title="To"
           selectedAirport={DestinationLocationCode}
           selectedAirportCb={e => {
-            dispatch(updateDestinationLocationCode({index: 0, value: e}));
+            const {name, iata, city, country} = e;
+            dispatch(
+              updateDestinationLocationCode({
+                index: 0,
+                iata,
+                name,
+                city,
+                country,
+              }),
+            );
             if (tripType === 'Return') {
               dispatch(
                 updateOriginLocationCode({
                   index: 1,
-                  value: e,
+                  iata,
+                  name,
+                  city,
+                  country,
                 }),
               );
             }
@@ -96,16 +120,32 @@ const FlightForm: FC = () => {
                 <AirportField
                   title={`From City ${index}`}
                   selectedAirport={data.OriginLocationCode}
-                  selectedAirportCb={iata => {
-                    dispatch(updateOriginLocationCode({index, value: iata}));
+                  selectedAirportCb={e => {
+                    const {name, iata, city, country} = e;
+                    dispatch(
+                      updateOriginLocationCode({
+                        index,
+                        name,
+                        iata,
+                        city,
+                        country,
+                      }),
+                    );
                   }}
                 />
                 <AirportField
                   title={`To City ${index}`}
                   selectedAirport={data.DestinationLocationCode}
-                  selectedAirportCb={iata => {
+                  selectedAirportCb={e => {
+                    const {name, iata, city, country} = e;
                     dispatch(
-                      updateDestinationLocationCode({index, value: iata}),
+                      updateDestinationLocationCode({
+                        index,
+                        name,
+                        iata,
+                        city,
+                        country,
+                      }),
                     );
                   }}
                 />

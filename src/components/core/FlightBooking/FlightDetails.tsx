@@ -1,9 +1,33 @@
-import React, { FC } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {useAppSelector} from '@utils/hooks';
+import {tFlightResult} from '@utils/types';
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const FlightDetailsScreen: FC = () => {
+const FlightDetailsScreen = ({route}: {route: any}) => {
+  const {cabinClass, infants, children, adults} = useAppSelector(
+    state => state.passengerSlice,
+  );
+  const tripStates = useAppSelector(state => state.flightDestinations);
+  console.log('🚀 ~ FlightDetailsScreen ~ tripStates:', tripStates);
+  const flight: tFlightResult = route.params;
+  console.log('🚀 ~ FlightDetailsScreen ~ flight:', flight);
+
+  const totalDuration = flight.segments.reduce((acc, segment) => {
+    return acc + segment.JourneyDuration;
+  }, 0);
+
+  const hours = Math.floor(totalDuration / 60);
+  const minutes = totalDuration % 60;
+  const durationString = `${hours}h ${minutes}m`;
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <LinearGradient colors={['#009FFD', '#2A2A72']} style={styles.header}>
@@ -15,41 +39,67 @@ const FlightDetailsScreen: FC = () => {
         <View style={styles.row}>
           <Icon name="plane-departure" size={24} color="#009FFD" />
           <View style={styles.flightTextContainer}>
-            <Text style={styles.flightText}>Dhaka (DAC)</Text>
-            <Text style={styles.smallText}>Hazrat Shahjalal Int'l</Text>
+            <Text style={styles.flightText}>
+              {tripStates[0].originLocation.city} (
+              {tripStates[0].originLocation.iata})
+            </Text>
+            <Text style={styles.smallText}>
+              {tripStates[0].originLocation.name}
+            </Text>
           </View>
         </View>
 
-        <Text style={styles.flightTime}>08:45 AM</Text>
+        <Text style={styles.flightTime}>
+          {new Date(flight.segments[0].DepartureDateTime).toLocaleTimeString(
+            [],
+            {hour: '2-digit', minute: '2-digit'},
+          )}
+        </Text>
 
         <View style={styles.row}>
           <Icon name="plane-arrival" size={24} color="#009FFD" />
           <View style={styles.flightTextContainer}>
-            <Text style={styles.flightText}>New York (JFK)</Text>
-            <Text style={styles.smallText}>John F. Kennedy Int'l</Text>
+            <Text style={styles.flightText}>
+              {tripStates[tripStates.length - 1].destinationLocation.city} (
+              {tripStates[tripStates.length - 1].destinationLocation.iata})
+            </Text>
+            <Text style={styles.smallText}>
+              {tripStates[tripStates.length - 1].destinationLocation.name}
+            </Text>
           </View>
         </View>
 
-        <Text style={styles.flightTime}>06:30 PM</Text>
+        <Text style={styles.flightTime}>
+          {new Date(
+            flight.segments[flight.segments.length - 1].DepartureDateTime,
+          ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+        </Text>
 
         <View style={styles.durationContainer}>
-          <Text style={styles.durationText}>Flight Duration: 15h 45m</Text>
+          <Text style={styles.durationText}>
+            Flight Duration: {durationString}
+          </Text>
         </View>
       </View>
 
       {/* Passenger & Class Selection Section */}
       <View style={styles.passengerSection}>
         <Text style={styles.sectionTitle}>Passenger Details</Text>
-        <Text style={styles.detailText}>Adult: 1, Child: 0, Infant: 0</Text>
+        <Text style={styles.detailText}>
+          Adult: {adults}, Child: {children}, Infant: {infants}
+        </Text>
 
         <Text style={styles.sectionTitle}>Class</Text>
-        <Text style={styles.detailText}>Business Class</Text>
+        <Text style={styles.detailText}>{cabinClass.label}</Text>
       </View>
 
       {/* Total Amount Section */}
       <View style={styles.totalAmountSection}>
         <Text style={styles.totalText}>Total Amount</Text>
-        <Text style={styles.amountText}>$1,200.00</Text>
+        <Text style={styles.amountText}>
+          {flight.fares.Currency}
+          {flight.fares.TotalFare}
+        </Text>
       </View>
 
       {/* Confirm Button */}
@@ -82,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowRadius: 10,
     marginBottom: 20,
   },
@@ -121,7 +171,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowRadius: 10,
     marginBottom: 20,
   },
@@ -141,7 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowRadius: 10,
     marginBottom: 20,
     alignItems: 'center',

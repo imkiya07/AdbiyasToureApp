@@ -30,39 +30,15 @@ const LayoutScreen = () => {
     state => state.passengerSlice,
   );
   const tripStates = useAppSelector(state => state.flightDestinations);
+  console.log('🚀 ~ LayoutScreen ~ tripStates:', tripStates);
   const AirTripType = useAppSelector(state => state.flightTypeSlice.tripType);
   const {loading} = useAppSelector(state => state.flightSearchSlice);
   const dispatch = useAppDispatch();
 
   const searchFlight = async () => {
-    const PassengerTypeQuantities = [
-      {
-        Code: 'ADT',
-        Quantity: adults,
-      },
-    ];
-    if (children > 0) {
-      PassengerTypeQuantities.push({
-        Code: 'CHD',
-        Quantity: children,
-      });
-    }
-    if (infants > 0) {
-      PassengerTypeQuantities.push({
-        Code: 'INF',
-        Quantity: infants,
-      });
-    }
-    const flightDetails = {
-      CabinPreference: cabinClass.value,
-      OriginDestinationInformations: tripStates,
-      TravelPreferences: {
-        AirTripType,
-      },
-      PricingSourceType: 'Public',
-      PassengerTypeQuantities,
-      RequestOptions: 'Fifty',
-    };
+    const PassengerTypeQuantities = getPassengerTypeQuantities();
+    const flightDetails = getFlightDetails(PassengerTypeQuantities);
+
     if (!loading) {
       dispatch(searchFlightsStart());
       console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
@@ -71,28 +47,93 @@ const LayoutScreen = () => {
           'https://fk-api.adbiyas.com/api/b2c/search',
           flightDetails,
         );
-        dispatch(searchFlightsSuccess(response.data.results));
-        navigation.navigate('FlightShow');
+        handleSearchResponse(response.data);
       } catch (error: any) {
-        if (axios.isAxiosError(error)) {
-          if (error.response) {
-            // Server responded with a status other than 2xx
-            dispatch(searchFlightsFailure(error.response.data.message));
-            Alert.alert('Error', error.response.data.message);
-          } else if (error.request) {
-            // Request was made but no response received
-            dispatch(searchFlightsFailure('No response received from server'));
-            Alert.alert('Error', 'No response received from server');
-          } else {
-            // Something happened in setting up the request
-            dispatch(searchFlightsFailure(error.message));
-            Alert.alert('Error', error.message);
-          }
-        } else {
-          // Handle other errors
-          dispatch(searchFlightsFailure('An unexpected error occurred'));
-        }
+        handleSearchError(error);
       }
+    }
+  };
+
+  const getPassengerTypeQuantities = () => {
+    const quantities = [
+      {
+        Code: 'ADT',
+        Quantity: adults,
+      },
+    ];
+    if (children > 0) {
+      quantities.push({
+        Code: 'CHD',
+        Quantity: children,
+      });
+    }
+    if (infants > 0) {
+      quantities.push({
+        Code: 'INF',
+        Quantity: infants,
+      });
+    }
+    return quantities;
+  };
+
+  const getFlightDetails = (PassengerTypeQuantities: any) => {
+    const destinationArr = tripStates.map(destination => {
+      return {
+        DestinationLocationCode: destination.DestinationLocationCode,
+        DepartureDateTime: destination.DepartureDateTime,
+        OriginLocationCode: destination.OriginLocationCode,
+      };
+    });
+
+    return {
+      CabinPreference: cabinClass.value,
+      OriginDestinationInformations: destinationArr,
+      TravelPreferences: {
+        AirTripType,
+      },
+      PricingSourceType: 'Public',
+      PassengerTypeQuantities,
+      RequestOptions: 'Fifty',
+    };
+  };
+
+  const handleSearchResponse = (data: any) => {
+    console.log('🚀 ~ searchFlight ~ response:', data);
+    if (data.success) {
+      if (data.results === 0) {
+        Alert.alert('No flights found');
+        return;
+      } else {
+        dispatch(searchFlightsSuccess(data.results));
+        navigation.navigate('FlightShow');
+      }
+    } else {
+      dispatch(searchFlightsFailure(data.error.message));
+      Alert.alert(`We're Sorry`, data.error.message);
+      console.warn('🚀 ~ searchFlight ~ error', data.error);
+    }
+  };
+
+  const handleSearchError = (error: any) => {
+    console.warn('🚀 ~ searchFlight ~ error', error);
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        dispatch(searchFlightsFailure(error.response.data.message));
+        Alert.alert('Error', error.response.data.message);
+      } else if (error.request) {
+        // Request was made but no response received
+        dispatch(searchFlightsFailure('No response received from server'));
+        Alert.alert('Error', 'No response received from server');
+      } else {
+        // Something happened in setting up the request
+        dispatch(searchFlightsFailure(error.message));
+        Alert.alert('Error', error.message);
+      }
+    } else {
+      // Handle other errors
+      dispatch(searchFlightsFailure('An unexpected error occurred'));
+      Alert.alert('Error', error.message);
     }
   };
 

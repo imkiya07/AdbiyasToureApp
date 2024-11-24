@@ -8,20 +8,7 @@ import {
 } from 'react-native';
 import React, {FC, useState} from 'react';
 import axios from 'axios';
-
-type tFlightForm = {
-  title: string;
-  selectedAirport: string;
-  selectedAirportCb: (airport: string) => void;
-};
-
-type tAirport = {
-  city: string;
-  country: string;
-  iata: string;
-  id: number;
-  name: string;
-};
+import {tAirport, tFlightForm} from '@utils/types';
 
 const AirportField: FC<tFlightForm> = ({
   selectedAirport,
@@ -41,7 +28,12 @@ const AirportField: FC<tFlightForm> = ({
         value={inputValue}
         onKeyPress={({nativeEvent}) => {
           if (nativeEvent.key === 'Backspace') {
-            selectedAirportCb('');
+            selectedAirportCb({
+              iata: '',
+              city: '',
+              country: '',
+              name: '',
+            });
             if (timeoutId) {
               clearTimeout(timeoutId);
             }
@@ -76,7 +68,12 @@ const AirportField: FC<tFlightForm> = ({
           {searchedAirport?.map(airport => (
             <TouchableOpacity
               onPress={() => {
-                selectedAirportCb(airport.iata);
+                selectedAirportCb({
+                  iata: airport.iata,
+                  city: airport.city,
+                  country: airport.country,
+                  name: airport.name,
+                });
                 setInputValue(
                   `${airport.name} - ${airport.city}, ${airport.country}`,
                 );

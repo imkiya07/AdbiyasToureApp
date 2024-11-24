@@ -111,9 +111,36 @@ export type tDestination = {
   DestinationLocationCode: string;
   DepartureDateTime: string;
   OriginLocationCode: string;
+  originLocation: tAirportField;
+  destinationLocation: tAirportField;
 };
 
-export type tDestinationPayload = {
+type tAirportField = {
+  iata: string;
+  name: string;
+  city: string;
+  country: string;
+};
+
+export type tDestinationPayload = tAirportField & {
+  index: number;
+};
+
+export type tTimePayload = {
   index: number;
   value: string;
+};
+
+export type tFlightForm = {
+  title: string;
+  selectedAirport: string;
+  selectedAirportCb: ({name, iata, city, country}: tAirportField) => void;
+};
+
+export type tAirport = {
+  city: string;
+  country: string;
+  iata: string;
+  id: number;
+  name: string;
 };

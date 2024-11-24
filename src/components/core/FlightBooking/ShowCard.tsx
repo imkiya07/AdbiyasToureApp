@@ -97,7 +97,7 @@ const FlightShowPage = () => {
           </TouchableOpacity>
         </View>
 
-        {flightSearchResults.map((flight, index) => (
+        {flightSearchResults?.map((flight, index) => (
           <View key={index + flight.flight_id} style={styles.flightCard}>
             <View style={styles.flightDetails}>
               <Text style={styles.timeText}>
@@ -131,10 +131,14 @@ const FlightShowPage = () => {
             </View>
             <View style={styles.flightFooter}>
               <Text style={styles.detailsText}>
-                8 LEFT {selectedClass.label}
+                {flight.segments[0].SeatsRemaining
+                  ? flight.segments[0].SeatsRemaining +
+                    ' LEFT ' +
+                    selectedClass.label
+                  : ''}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('FlightDetails')}>
+                onPress={() => navigation.navigate('FlightDetails', flight)}>
                 <Text style={styles.detailsButton}>Details</Text>
               </TouchableOpacity>
             </View>
