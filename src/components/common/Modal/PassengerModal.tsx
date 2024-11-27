@@ -5,15 +5,19 @@ import {
   TouchableOpacity,
   View,
   TextInput,
+  FlatList,
 } from 'react-native';
 import React, {FC, useState} from 'react';
 import PassengerCounter from '@components/core/FlightBooking/PassengerCounter';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {
   updateAdults,
+  updateCabinClass,
   updateChildren,
   updateInfants,
 } from '@store/slice/passengerSlice';
+import {classOptions} from '@components/core/FlightBooking/ShowCard';
+import {tClassOptions} from '@utils/types';
 
 const PassengerModal: FC = () => {
   const {cabinClass, infants, children, adults} = useAppSelector(
@@ -72,6 +76,25 @@ const PassengerModal: FC = () => {
 
             {/* Cabin Class Section */}
 
+            <View style={styles.cabinContainer}>
+              <TouchableOpacity style={styles.cabinContent}>
+                <Text style={styles.cabinTitle}>Select Class</Text>
+              </TouchableOpacity>
+              <FlatList
+                data={classOptions}
+                keyExtractor={item => item.value}
+                renderItem={({item}: {item: tClassOptions}) => (
+                  <TouchableOpacity
+                    style={styles.cabinItem}
+                    onPress={() => {
+                      dispatch(updateCabinClass(item));
+                    }}>
+                    <Text style={styles.cabinItemText}>{item.label}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+
             <TouchableOpacity
               style={styles.confirmButton}
               onPress={() => setShowPassengerModal(false)}>
@@ -121,6 +144,38 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     color: 'white',
+    fontSize: 16,
+  },
+
+  cabinContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  cabinContent: {
+    width: 300,
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  cabinTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  cabinItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    width: '100%',
+    alignItems: 'center',
+  },
+  cabinItemText: {
     fontSize: 16,
   },
 });

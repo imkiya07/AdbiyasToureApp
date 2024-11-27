@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Keyboard,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {images} from '@constants/index';
@@ -26,11 +27,11 @@ import {
 
 const LayoutScreen = () => {
   const navigation = useNavigation();
+  const formView = useRef<ScrollView>(null);
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
   );
   const tripStates = useAppSelector(state => state.flightDestinations);
-  console.log('🚀 ~ LayoutScreen ~ tripStates:', tripStates);
   const AirTripType = useAppSelector(state => state.flightTypeSlice.tripType);
   const {loading} = useAppSelector(state => state.flightSearchSlice);
   const dispatch = useAppDispatch();
@@ -137,12 +138,29 @@ const LayoutScreen = () => {
     }
   };
 
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      formView?.current?.scrollToEnd({animated: true});
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      formView?.current?.scrollTo({y: 0, animated: true});
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
     <ImageBackground source={images.Cover} style={styles.backgroundImage}>
       <LinearGradient
         colors={['#0b2c5f', '#ffffff']}
         style={styles.gradientContainer}>
-        <ScrollView>
+        <ScrollView
+          ref={formView}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive">
           <Image source={images.Plane} style={styles.planeImage} />
           <View style={styles.container}>
             <Text style={styles.title}>Book Your Flight</Text>

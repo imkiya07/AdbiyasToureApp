@@ -17,7 +17,7 @@ import {images} from '../../../constants/index';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {updateCabinClass} from '@store/slice/passengerSlice';
 import {tClassOptions} from '@utils/types';
-const classOptions: tClassOptions[] = [
+export const classOptions: tClassOptions[] = [
   {
     label: 'Economy',
     value: 'Y',

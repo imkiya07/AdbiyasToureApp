@@ -18,6 +18,7 @@ const AirportField: FC<tFlightForm> = ({
   let timeoutId: NodeJS.Timeout;
   const [searchedAirport, setSearchedAirport] = useState<tAirport[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
+  const [isBlank, setIsBlank] = useState<boolean>(true);
 
   return (
     <View style={styles.container}>
@@ -34,9 +35,9 @@ const AirportField: FC<tFlightForm> = ({
               country: '',
               name: '',
             });
-            if (timeoutId) {
-              clearTimeout(timeoutId);
-            }
+            clearTimeout(timeoutId);
+            setIsBlank(true);
+            setSearchedAirport([]);
           }
         }}
         onChangeText={value => {
@@ -48,14 +49,16 @@ const AirportField: FC<tFlightForm> = ({
           }
 
           // If the input is not empty and there is no selected airport, fetch the airports
-          if (value !== '' && selectedAirport === '') {
+          if (isBlank && selectedAirport === '') {
+            console.debug('fetching', value);
             timeoutId = setTimeout(async () => {
               try {
                 const response = await axios.get(
                   `https://fk-api.adbiyas.com/api/common/airports?size=25&search=${value}`,
                 );
-                const results = response.data;
-                setSearchedAirport(results.data);
+                const results = response.data.data;
+                console.log('🚀 ~ timeoutId=setTimeout ~ results:', results);
+                setSearchedAirport(results);
               } catch (error) {
                 console.warn('Error while fetching airports', error);
               }
@@ -64,7 +67,10 @@ const AirportField: FC<tFlightForm> = ({
         }}
       />
       {searchedAirport?.length > 0 && (
-        <ScrollView style={styles.dropdown}>
+        <ScrollView
+          style={styles.dropdown}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive">
           {searchedAirport?.map(airport => (
             <TouchableOpacity
               onPress={() => {
@@ -78,6 +84,7 @@ const AirportField: FC<tFlightForm> = ({
                   `${airport.name} - ${airport.city}, ${airport.country}`,
                 );
                 setSearchedAirport([]);
+                setIsBlank(false);
               }}
               key={airport.id}
               style={styles.input}>
