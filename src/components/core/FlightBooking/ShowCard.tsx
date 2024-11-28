@@ -27,7 +27,7 @@ export const classOptions: tClassOptions[] = [
     value: 'C',
   },
   {
-    label: 'First',
+    label: 'First Class',
     value: 'F',
   },
   {

@@ -45,9 +45,10 @@ const LayoutScreen = () => {
       console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
       try {
         const response = await axios.post(
-          'https://fk-api.adbiyas.com/api/b2c/search',
+          'https://fk-api.adbiyas.com/api/b2c/search?filter=true',
           flightDetails,
         );
+        console.log('🚀 ~ searchFlight ~ response:', response);
         handleSearchResponse(response.data);
       } catch (error: any) {
         handleSearchError(error);

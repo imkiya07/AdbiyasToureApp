@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   View,
   TextInput,
-  FlatList,
 } from 'react-native';
 import React, {FC, useState} from 'react';
 import PassengerCounter from '@components/core/FlightBooking/PassengerCounter';
@@ -73,28 +72,21 @@ const PassengerModal: FC = () => {
                 dispatch(updateInfants(Math.max(0, infants - 1)))
               }
             />
-
             {/* Cabin Class Section */}
-
             <View style={styles.cabinContainer}>
-              <TouchableOpacity style={styles.cabinContent}>
-                <Text style={styles.cabinTitle}>Select Class</Text>
+              <Text style={styles.cabinTitle}>Select Class</Text>
+              <TouchableOpacity
+                style={styles.cabinButton}
+                onPress={() => {
+                  const index = classOptions.findIndex(
+                    (item: tClassOptions) => item.value === cabinClass.value,
+                  );
+                  const newIndex = (index + 1) % classOptions.length;
+                  dispatch(updateCabinClass(classOptions[newIndex]));
+                }}>
+                <Text style={styles.cabinButtonText}>{cabinClass.label}</Text>
               </TouchableOpacity>
-              <FlatList
-                data={classOptions}
-                keyExtractor={item => item.value}
-                renderItem={({item}: {item: tClassOptions}) => (
-                  <TouchableOpacity
-                    style={styles.cabinItem}
-                    onPress={() => {
-                      dispatch(updateCabinClass(item));
-                    }}>
-                    <Text style={styles.cabinItemText}>{item.label}</Text>
-                  </TouchableOpacity>
-                )}
-              />
             </View>
-
             <TouchableOpacity
               style={styles.confirmButton}
               onPress={() => setShowPassengerModal(false)}>
@@ -148,34 +140,27 @@ const styles = StyleSheet.create({
   },
 
   cabinContainer: {
-    flex: 1,
+    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  cabinContent: {
-    width: 300,
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  cabinTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
     marginBottom: 20,
   },
-  cabinItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginBottom: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    width: '100%',
-    alignItems: 'center',
-  },
-  cabinItemText: {
+
+  cabinTitle: {
     fontSize: 16,
+  },
+
+  cabinButton: {
+    width: 150,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#007BFF',
+    borderRadius: 5,
+  },
+
+  cabinButtonText: {
+    fontSize: 16,
+    color: '#ffffff',
   },
 });
