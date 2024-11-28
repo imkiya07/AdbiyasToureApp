@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LayoutScreen from '@components/core/FlightBooking/Layout';
@@ -11,11 +11,19 @@ import LayoutVisa from '@components/core/VisaBooking/VisaLayout';
 import TabNavigator from '@components/navigators/TabNavigator';
 import {Provider} from 'react-redux';
 import rootStore from '@store/index';
+import axios from 'axios';
 
 const Stack = createNativeStackNavigator();
 
 // Main App component with Stack and Tab navigation
 const App: FC = () => {
+  useEffect(() => {
+    axios.get('https://fk-api.adbiyas.com/api/common/session-id').then(res => {
+      console.debug('Session ID:', res.data.data.session_id);
+      axios.defaults.headers.common['sessionId'] = res.data.data.session_id;
+    });
+  }, []);
+
   return (
     <Provider store={rootStore}>
       <NavigationContainer>

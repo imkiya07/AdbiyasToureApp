@@ -3,6 +3,7 @@ import flightTypeSlice from './slice/flightType';
 import passengerSlice from './slice/passengerSlice';
 import flightDestinations from './slice/flightDestinations';
 import flightSearchSlice from './slice/flightResults';
+import sessionSlice from './slice/sessionSlice';
 
 const rootStore = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const rootStore = configureStore({
     passengerSlice,
     flightDestinations,
     flightSearchSlice,
+    sessionSlice,
   },
   // middleware: getDefaultMiddleware => {
   //   return getDefaultMiddleware().concat(logger);
