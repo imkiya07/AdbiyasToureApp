@@ -1,6 +1,7 @@
 import {useAppSelector} from '@utils/hooks';
 import {tFlightResult} from '@utils/types';
-import React from 'react';
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -16,13 +17,30 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
     state => state.passengerSlice,
   );
   const tripStates = useAppSelector(state => state.flightDestinations);
-  console.log('🚀 ~ FlightDetailsScreen ~ tripStates:', tripStates);
-  const flight: tFlightResult = route.params;
-  console.log('🚀 ~ FlightDetailsScreen ~ flight:', flight);
+  const flightId: string = route.params;
+  const [flightDetails, setFlightDetails] = useState<tFlightResult>();
+  const [totalDuration, setTotalDuration] = useState(0);
+  console.debug('🚀 ~ FlightDetailsScreen ~ flight:', flightDetails);
 
-  const totalDuration = flight.segments.reduce((acc, segment) => {
-    return acc + segment.JourneyDuration;
-  }, 0);
+  useEffect(() => {
+    const timedCall = setInterval(async () => {
+      try {
+        const response = await axios.get(
+          `https://fk-api.adbiyas.com/api/b2c/revalidated/${flightId}`,
+        );
+        // const data = await response.json();
+        // setFlightDetails(data.data[0]);
+        console.debug('🚀 ~ timedCall ~ response:', response.data);
+      } catch (error) {
+        console.error('Error fetching flight details:', error);
+      } finally {
+        console.debug('🚀 ~ timedCall ~ Ended!');
+      }
+    }, 1000);
+    return () => {
+      clearInterval(timedCall);
+    };
+  }, []);
 
   const hours = Math.floor(totalDuration / 60);
   const minutes = totalDuration % 60;
@@ -50,10 +68,9 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
         </View>
 
         <Text style={styles.flightTime}>
-          {new Date(flight.segments[0].DepartureDateTime).toLocaleTimeString(
-            [],
-            {hour: '2-digit', minute: '2-digit'},
-          )}
+          {new Date(
+            flightDetails.segments[0].DepartureDateTime,
+          ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
         </Text>
 
         <View style={styles.row}>
@@ -71,7 +88,9 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
 
         <Text style={styles.flightTime}>
           {new Date(
-            flight.segments[flight.segments.length - 1].DepartureDateTime,
+            flightDetails.segments[
+              flightDetails.segments.length - 1
+            ].DepartureDateTime,
           ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
         </Text>
 
@@ -97,8 +116,8 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
       <View style={styles.totalAmountSection}>
         <Text style={styles.totalText}>Total Amount</Text>
         <Text style={styles.amountText}>
-          {flight.fares.Currency}
-          {flight.fares.TotalFare}
+          {flightDetails.fares.Currency}
+          {flightDetails.fares.TotalFare}
         </Text>
       </View>
 
