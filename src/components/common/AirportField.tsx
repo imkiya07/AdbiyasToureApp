@@ -50,14 +50,14 @@ const AirportField: FC<tFlightForm> = ({
 
           // If the input is not empty and there is no selected airport, fetch the airports
           if (isBlank && selectedAirport === '') {
-            console.debug('fetching', value);
+            // console.debug('fetching', value);
             timeoutId = setTimeout(async () => {
               try {
                 const response = await axios.get(
-                  `https://fk-api.adbiyas.com/api/common/airports?size=25&search=${value}`,
+                  `https://flightkiya.cosmelic.com/api/common/airports?size=25&search=${value}`,
                 );
                 const results = response.data.data;
-                console.log('🚀 ~ timeoutId=setTimeout ~ results:', results);
+                // console.log('🚀 ~ timeoutId=setTimeout ~ results:', results);
                 setSearchedAirport(results);
               } catch (error) {
                 console.warn('Error while fetching airports', error);

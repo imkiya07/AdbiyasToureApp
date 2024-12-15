@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@utils/hooks';
 import {tFlightResult} from '@utils/types';
 import axios from 'axios';
@@ -10,35 +11,41 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import moment from 'moment';
 
 const FlightDetailsScreen = ({route}: {route: any}) => {
+  const navigation = useNavigation(); // Hook for navigation
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
   );
   const tripStates = useAppSelector(state => state.flightDestinations);
-  const flightId: string = route.params;
-  const [flightDetails, setFlightDetails] = useState<tFlightResult>();
+  const flight: tFlightResult = route.params;
+  const [flightDetails, setFlightDetails] = useState<any>();
   const [totalDuration, setTotalDuration] = useState(0);
-  console.debug('🚀 ~ FlightDetailsScreen ~ flight:', flightDetails);
+
+  const fetchFlightDetails = async () => {
+    try {
+      const response = await axios.get(
+        `https://flightkiya.cosmelic.com/api/b2c/revalidated/${flight.flight_id}`,
+      );
+      setFlightDetails(response.data.data);
+      let durationCount = 0;
+      response.data.data.flights[0].flightSegments.forEach((segment: any) => {
+        durationCount += segment.JourneyDuration;
+      });
+      setTotalDuration(durationCount);
+    } catch (error) {
+      console.error('🚀 ~ FlightDetailsScreen ~ error', error);
+    }
+  };
 
   useEffect(() => {
-    const timedCall = setInterval(async () => {
-      try {
-        const response = await axios.get(
-          `https://fk-api.adbiyas.com/api/b2c/revalidated/${flightId}`,
-        );
-        // const data = await response.json();
-        // setFlightDetails(data.data[0]);
-        console.debug('🚀 ~ timedCall ~ response:', response.data);
-      } catch (error) {
-        console.error('Error fetching flight details:', error);
-      } finally {
-        console.debug('🚀 ~ timedCall ~ Ended!');
-      }
-    }, 1000);
+    fetchFlightDetails();
+    const intervalFetch = setInterval(() => {
+      fetchFlightDetails();
+    }, 30000);
     return () => {
-      clearInterval(timedCall);
+      clearInterval(intervalFetch);
     };
   }, []);
 
@@ -54,45 +61,28 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
 
       {/* Flight Information Section */}
       <View style={styles.flightInfoContainer}>
-        <View style={styles.row}>
-          <Icon name="plane-departure" size={24} color="#009FFD" />
-          <View style={styles.flightTextContainer}>
-            <Text style={styles.flightText}>
-              {tripStates[0].originLocation.city} (
-              {tripStates[0].originLocation.iata})
-            </Text>
-            <Text style={styles.smallText}>
-              {tripStates[0].originLocation.name}
-            </Text>
-          </View>
-        </View>
-
-        <Text style={styles.flightTime}>
-          {new Date(
-            flightDetails.segments[0].DepartureDateTime,
-          ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-        </Text>
-
-        <View style={styles.row}>
-          <Icon name="plane-arrival" size={24} color="#009FFD" />
-          <View style={styles.flightTextContainer}>
-            <Text style={styles.flightText}>
-              {tripStates[tripStates.length - 1].destinationLocation.city} (
-              {tripStates[tripStates.length - 1].destinationLocation.iata})
-            </Text>
-            <Text style={styles.smallText}>
-              {tripStates[tripStates.length - 1].destinationLocation.name}
-            </Text>
-          </View>
-        </View>
-
-        <Text style={styles.flightTime}>
-          {new Date(
-            flightDetails.segments[
-              flightDetails.segments.length - 1
-            ].DepartureDateTime,
-          ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-        </Text>
+        {flightDetails?.flights[0]?.flightSegments.map(
+          (segment: any, index: number) => (
+            <View key={segment.ArrivalDateTime} style={styles.row}>
+              <View style={styles.flightTextContainer}>
+                <Text style={styles.flightText}>
+                  {segment.departureAirport}
+                </Text>
+                <Text style={styles.smallText}>
+                  {moment(segment.DepartureDateTime).format('hh:mm A')}
+                </Text>
+              </View>
+              <View style={styles.flightTextContainer}>
+                <Text style={{...styles.flightText, ...styles.rtlText}}>
+                  {segment.arrivalAirport}
+                </Text>
+                <Text style={{...styles.smallText, ...styles.rtlText}}>
+                  {moment(segment.ArrivalDateTime).format('hh:mm A')}
+                </Text>
+              </View>
+            </View>
+          ),
+        )}
 
         <View style={styles.durationContainer}>
           <Text style={styles.durationText}>
@@ -116,13 +106,15 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
       <View style={styles.totalAmountSection}>
         <Text style={styles.totalText}>Total Amount</Text>
         <Text style={styles.amountText}>
-          {flightDetails.fares.Currency}
-          {flightDetails.fares.TotalFare}
+          {flightDetails?.TotalFare?.CurrencyCode}&nbsp;
+          {flightDetails?.TotalFare?.Amount}
         </Text>
       </View>
 
       {/* Confirm Button */}
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('TravellerDetailsScreen')}>
         <Text style={styles.buttonText}>Confirm Booking</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -158,18 +150,22 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 10,
   },
   flightTextContainer: {
     marginLeft: 10,
   },
   flightText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
   },
   smallText: {
     color: 'gray',
     fontSize: 12,
+  },
+  rtlText: {
+    textAlign: 'right',
   },
   flightTime: {
     fontSize: 16,

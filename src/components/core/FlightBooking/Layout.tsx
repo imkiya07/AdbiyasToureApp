@@ -25,6 +25,16 @@ import {
   searchFlightsSuccess,
 } from '@store/slice/flightResults';
 
+/* const validDepartureDate = new Date('Tue Dec 31 2024');
+departureDate = 2024-12-09
+
+new Date(departureDate) = Mon Dec 09 2024 06:00:00 GMT+0600 (Bangladesh Standard Time)
+
+const departureDateTime =
+  validDepartureDate instanceof Date && !isNaN(validDepartureDate)
+    ? `${validDepartureDate.toISOString().split('T')[0]}T00:00:00`
+    : ''; */
+
 const LayoutScreen = () => {
   const navigation = useNavigation();
   const formView = useRef<ScrollView>(null);
@@ -45,10 +55,10 @@ const LayoutScreen = () => {
       console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
       try {
         const response = await axios.post(
-          'https://fk-api.adbiyas.com/api/b2c/search?filter=true',
+          'https://flightkiya.cosmelic.com/api/b2c/search?filter=true',
           flightDetails,
         );
-        console.log('🚀 ~ searchFlight ~ response:', response);
+        // console.log('🚀 ~ searchFlight ~ response:', response);
         handleSearchResponse(response.data);
       } catch (error: any) {
         handleSearchError(error);
@@ -100,7 +110,6 @@ const LayoutScreen = () => {
   };
 
   const handleSearchResponse = (data: any) => {
-    console.log('🚀 ~ searchFlight ~ response:', data);
     if (data.success) {
       if (data.results === 0) {
         Alert.alert('No flights found');

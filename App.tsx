@@ -17,12 +17,14 @@ const Stack = createNativeStackNavigator();
 
 // Main App component with Stack and Tab navigation
 const App: FC = () => {
-  useEffect(() => {
-    axios.get('https://fk-api.adbiyas.com/api/common/session-id').then(res => {
-      console.debug('Session ID:', res.data.data.session_id);
-      axios.defaults.headers.common['sessionId'] = res.data.data.session_id;
-    });
-  }, []);
+  /* useEffect(() => {
+    axios
+      .get('https://flightkiya.cosmelic.com/api/common/session-id')
+      .then(res => {
+        console.debug('Session ID:', res.data.data.session_id);
+        axios.defaults.headers.common['sessionId'] = res.data.data.session_id;
+      });
+  }, []); */
 
   return (
     <Provider store={rootStore}>

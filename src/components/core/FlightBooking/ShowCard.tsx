@@ -138,9 +138,7 @@ const FlightShowPage = () => {
                   : ''}
               </Text>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('FlightDetails', flight.flight_id)
-                }>
+                onPress={() => navigation.navigate('FlightDetails', flight)}>
                 <Text style={styles.detailsButton}>Details</Text>
               </TouchableOpacity>
             </View>
