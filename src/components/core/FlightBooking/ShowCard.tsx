@@ -10,8 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import {useNavigation} from '@react-navigation/native';
 import {images} from '../../../constants/index';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
@@ -58,7 +57,7 @@ const FlightShowPage = () => {
           <Text style={styles.routeText}>
             {tripStates[0].OriginLocationCode}---
           </Text>
-          <FontAwesome5 name="plane" size={24} color="#000" />
+          <FontAwesome name="plane-departure" size={24} color="#ffffff" />
           <Text style={styles.routeText}>
             ---{tripStates[tripStates.length - 1].DestinationLocationCode}
           </Text>
@@ -105,7 +104,7 @@ const FlightShowPage = () => {
                   flight.segments[0].ArrivalDateTime,
                 ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
               </Text>
-              <FontAwesome5 name="plane" size={16} color="#007AFF" />
+              <FontAwesome name="plane-departure" size={16} color="#007AFF" />
               <Text style={styles.timeText}>
                 {new Date(
                   flight.segments[0].DepartureDateTime,

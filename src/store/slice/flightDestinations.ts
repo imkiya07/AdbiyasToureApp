@@ -53,7 +53,7 @@ const flightDestinations = createSlice({
       state.push({...defaultState});
     },
     resetStateObj: state => {
-      state.splice(0, state.length - 1);
+      state.splice(0, state.length, ...initialState);
     },
   },
   extraReducers: builder => {

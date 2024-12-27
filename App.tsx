@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LayoutScreen from '@components/core/FlightBooking/Layout';
@@ -12,6 +12,9 @@ import TabNavigator from '@components/navigators/TabNavigator';
 import {Provider} from 'react-redux';
 import rootStore from '@store/index';
 import axios from 'axios';
+import {TouchableOpacity} from 'react-native';
+import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
+import {resetStateObj} from '@store/slice/flightDestinations';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +28,8 @@ const App: FC = () => {
         axios.defaults.headers.common['sessionId'] = res.data.data.session_id;
       });
   }, []); */
+  const dispatch = rootStore.dispatch;
+  const tripStates = rootStore.getState().flightDestinations;
 
   return (
     <Provider store={rootStore}>
@@ -58,10 +63,27 @@ const App: FC = () => {
           <Stack.Screen
             name="FlightShow"
             component={FlightShow}
-            options={{
+            options={({navigation}) => ({
               title: 'Select Your Flight',
               headerShown: true, // Set to false if you want to hide the header
-            }}
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => {
+                    dispatch(resetStateObj());
+                    // console.warn(
+                    //   '🚀 ~ file: App.tsx ~ line 116 ~ onPress ~ tripStates',
+                    //   tripStates,
+                    // );
+                    navigation.goBack();
+                  }}>
+                  <FontAwesome6Icon
+                    name="chevron-left"
+                    size={24}
+                    color="#007AFF"
+                  />
+                </TouchableOpacity>
+              ),
+            })}
           />
 
           <Stack.Screen
