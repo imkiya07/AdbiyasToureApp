@@ -6,7 +6,7 @@ import {
   View,
   TextInput,
 } from 'react-native';
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import PassengerCounter from '@components/core/FlightBooking/PassengerCounter';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {
@@ -17,6 +17,7 @@ import {
 } from '@store/slice/passengerSlice';
 import {classOptions} from '@components/core/FlightBooking/ShowCard';
 import {tClassOptions} from '@utils/types';
+import {useNavigation} from '@react-navigation/native';
 
 const PassengerModal: FC = () => {
   const {cabinClass, infants, children, adults} = useAppSelector(
@@ -25,6 +26,19 @@ const PassengerModal: FC = () => {
   // Active States
   const [showPassengerModal, setShowPassengerModal] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      dispatch(updateAdults(1));
+      dispatch(updateChildren(0));
+      dispatch(updateInfants(0));
+      dispatch(updateCabinClass(classOptions[0]));
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <>

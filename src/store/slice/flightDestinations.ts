@@ -52,7 +52,7 @@ const flightDestinations = createSlice({
     addDestination: state => {
       state.push({...defaultState});
     },
-    resetStateObj: state => {
+    resetFlightState: state => {
       state.splice(0, state.length, ...initialState);
     },
   },
@@ -81,7 +81,7 @@ export const {
   updateDestinationLocationCode,
   updateDepartureDateTime,
   addDestination,
-  resetStateObj,
+  resetFlightState,
 } = flightDestinations.actions;
 
 export default flightDestinations.reducer;

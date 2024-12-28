@@ -6,9 +6,10 @@ import {
   ScrollView,
   Text,
 } from 'react-native';
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import axios from 'axios';
 import {tAirport, tFlightForm} from '@utils/types';
+import {useNavigation} from '@react-navigation/native';
 
 const AirportField: FC<tFlightForm> = ({
   selectedAirport,
@@ -17,8 +18,19 @@ const AirportField: FC<tFlightForm> = ({
 }) => {
   let timeoutId: NodeJS.Timeout;
   const [searchedAirport, setSearchedAirport] = useState<tAirport[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>(selectedAirport);
   const [isBlank, setIsBlank] = useState<boolean>(true);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setInputValue('');
+      setSearchedAirport([]);
+      setIsBlank(true);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

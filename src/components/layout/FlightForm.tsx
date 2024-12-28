@@ -90,7 +90,7 @@ const FlightForm: FC = () => {
               dispatch(
                 updateDepartureDateTime({
                   index: 1,
-                  value: date.toDateString(),
+                  value: date,
                 }),
               );
             }}
@@ -103,7 +103,7 @@ const FlightForm: FC = () => {
             dispatch(
               updateDepartureDateTime({
                 index: 0,
-                value: date.toDateString(),
+                value: date,
               }),
             );
           }}
@@ -156,7 +156,7 @@ const FlightForm: FC = () => {
                     dispatch(
                       updateDepartureDateTime({
                         index,
-                        value: date.toDateString(),
+                        value: date,
                       }),
                     );
                   }}

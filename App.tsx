@@ -11,10 +11,9 @@ import LayoutVisa from '@components/core/VisaBooking/VisaLayout';
 import TabNavigator from '@components/navigators/TabNavigator';
 import {Provider} from 'react-redux';
 import rootStore from '@store/index';
-import axios from 'axios';
 import {TouchableOpacity} from 'react-native';
-import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
-import {resetStateObj} from '@store/slice/flightDestinations';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import {resetFlightState} from '@store/slice/flightDestinations';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +29,8 @@ const App: FC = () => {
   }, []); */
   const dispatch = rootStore.dispatch;
   const tripStates = rootStore.getState().flightDestinations;
+  const flightTypeStates = rootStore.getState().flightTypeSlice;
+  const passengerStates = rootStore.getState().passengerSlice;
 
   return (
     <Provider store={rootStore}>
@@ -64,23 +65,21 @@ const App: FC = () => {
             name="FlightShow"
             component={FlightShow}
             options={({navigation}) => ({
-              title: 'Select Your Flight',
+              title: ' Select Your Flight',
               headerShown: true, // Set to false if you want to hide the header
               headerLeft: () => (
                 <TouchableOpacity
                   onPress={() => {
-                    dispatch(resetStateObj());
-                    // console.warn(
-                    //   '🚀 ~ file: App.tsx ~ line 116 ~ onPress ~ tripStates',
-                    //   tripStates,
-                    // );
+                    dispatch(resetFlightState());
+                    console.warn(
+                      '🚀 ~ file: App.tsx ~ line 116 ~ onPress ~ tripStates',
+                      tripStates,
+                      passengerStates,
+                      flightTypeStates,
+                    );
                     navigation.goBack();
                   }}>
-                  <FontAwesome6Icon
-                    name="chevron-left"
-                    size={24}
-                    color="#007AFF"
-                  />
+                  <FontAwesome6 name="arrow-left" size={24} color="#000000" />
                 </TouchableOpacity>
               ),
             })}

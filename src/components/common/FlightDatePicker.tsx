@@ -1,13 +1,14 @@
 import {StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import {useNavigation} from '@react-navigation/native';
 
 type tFlightDate = {
   initialValue: string;
   minimumValue?: Date;
-  updateStateCb: (date: Date) => void;
+  updateStateCb: (date: string) => void;
   placeholder: string;
 };
 
@@ -18,6 +19,16 @@ const FlightDatePicker: FC<tFlightDate> = ({
   placeholder,
 }) => {
   const [toggleDatePicker, setToggleDatePicker] = useState<boolean>(false);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      updateStateCb('');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   return (
     <>
       <TouchableOpacity onPress={() => setToggleDatePicker(true)}>
@@ -26,7 +37,7 @@ const FlightDatePicker: FC<tFlightDate> = ({
           placeholder={placeholder}
           placeholderTextColor="#666"
           editable={false}
-          value={initialValue}
+          value={initialValue ?? ''}
         />
       </TouchableOpacity>
       {toggleDatePicker && (
@@ -41,7 +52,7 @@ const FlightDatePicker: FC<tFlightDate> = ({
           ) => {
             setToggleDatePicker(false);
             if (selectedDate) {
-              updateStateCb(selectedDate);
+              updateStateCb(selectedDate.toDateString());
             }
           }}
         />
