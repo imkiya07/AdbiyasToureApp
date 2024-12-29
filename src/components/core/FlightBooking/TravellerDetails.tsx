@@ -1,3 +1,4 @@
+import Accordion from '@components/common/Accordions';
 import React, {FC} from 'react';
 import {
   View,
@@ -11,6 +12,8 @@ const TravellerDetailsScreen: FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headerText}>Traveller Details</Text>
+
+      <Accordion />
 
       {/* Confirm Button */}
       <TouchableOpacity style={styles.button}>
