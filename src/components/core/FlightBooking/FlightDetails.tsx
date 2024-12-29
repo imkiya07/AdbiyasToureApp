@@ -18,8 +18,8 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
   );
-  const tripStates = useAppSelector(state => state.flightDestinations);
   const flight: tFlightResult = route.params;
+  console.log('🚀 ~ FlightDetailsScreen ~ flight:', flight);
   const [flightDetails, setFlightDetails] = useState<any>();
   const [totalDuration, setTotalDuration] = useState(0);
 
