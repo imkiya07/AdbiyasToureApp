@@ -1,6 +1,14 @@
 import React from 'react';
-import {StyleSheet, View, Button, SafeAreaView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import Animated, {
+  Easing,
   SharedValue,
   useAnimatedStyle,
   useDerivedValue,
@@ -8,6 +16,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import BookingForm from '../BookingForm';
+import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
 
 function AccordionItem({
   isExpanded,
@@ -27,6 +36,7 @@ function AccordionItem({
   const derivedHeight = useDerivedValue(() =>
     withTiming(height.value * Number(isExpanded.value), {
       duration,
+      easing: Easing.linear,
     }),
   );
   const bodyStyle = useAnimatedStyle(() => ({
@@ -49,63 +59,105 @@ function AccordionItem({
 }
 
 export default function Accordion() {
-  const open = useSharedValue(false);
-  const onPress = () => {
-    open.value = !open.value;
+  const items = [
+    {id: '1', title: 'Item 1'},
+    {id: '2', title: 'Item 2'},
+    // Add more items as needed
+  ];
+
+  const openStates = items.map((item, index) =>
+    useSharedValue(index === 0 ? true : false),
+  );
+
+  const toggleItem = (index: number) => {
+    openStates.forEach((state, i) => {
+      state.value = i === index ? !state.value : false;
+    });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Button onPress={onPress} title="Click me" />
-      </View>
+      <ScrollView>
+        {items.map((item, index) => {
+          const borderRadiusStyle = useAnimatedStyle(() => ({
+            borderBottomLeftRadius: withTiming(openStates[index].value ? 0 : 8),
+            borderBottomRightRadius: withTiming(
+              openStates[index].value ? 0 : 8,
+            ),
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+          }));
 
-      <View style={styles.content}>
-        <AccordionItem isExpanded={open} viewKey="Accordion">
-          <BookingForm />
-        </AccordionItem>
-      </View>
+          const rotateStyle = useAnimatedStyle(() => ({
+            transform: [
+              {rotate: withTiming(openStates[index].value ? '180deg' : '0deg')},
+            ],
+          }));
+
+          return (
+            <View key={item.id}>
+              <View style={styles.buttonContainer}>
+                <AnimatedTouchableOpacity
+                  style={[styles.accordionButton, borderRadiusStyle]}
+                  onPress={() => toggleItem(index)}>
+                  <Text style={styles.btnText}>
+                    Passenger {index + 1} - Adult
+                  </Text>
+                  <Animated.View style={rotateStyle}>
+                    <FontAwesome6Icon
+                      name="chevron-down"
+                      size={20}
+                      color={'#ffffff'}
+                    />
+                  </Animated.View>
+                </AnimatedTouchableOpacity>
+
+                <AccordionItem isExpanded={openStates[index]} viewKey={item.id}>
+                  <BookingForm />
+                </AccordionItem>
+              </View>
+            </View>
+          );
+        })}
+      </ScrollView>
     </SafeAreaView>
   );
 }
+
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     paddingTop: 24,
+    paddingBottom: 45,
   },
   buttonContainer: {
-    flex: 1,
     paddingBottom: 16,
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 200,
-  },
-  wrapper: {
-    width: '100%',
-    position: 'absolute',
-    display: 'flex',
-    alignItems: 'center',
+    marginBottom: 16,
   },
   animatedView: {
-    width: '100%',
     overflow: 'hidden',
   },
-  box: {
-    height: 120,
-    width: 120,
-    color: '#f8f9ff',
-    backgroundColor: '#b58df1',
-    borderRadius: 20,
+  wrapper: {
+    backgroundColor: '#ffffff',
+    paddingVertical: 16,
+  },
+  accordionButton: {
+    padding: 16,
+    backgroundColor: '#10A5F9',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });

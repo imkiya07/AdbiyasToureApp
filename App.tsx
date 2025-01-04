@@ -71,12 +71,6 @@ const App: FC = () => {
                 <TouchableOpacity
                   onPress={() => {
                     dispatch(resetFlightState());
-                    console.warn(
-                      '🚀 ~ file: App.tsx ~ line 116 ~ onPress ~ tripStates',
-                      tripStates,
-                      passengerStates,
-                      flightTypeStates,
-                    );
                     navigation.goBack();
                   }}>
                   <FontAwesome6 name="arrow-left" size={24} color="#000000" />

@@ -80,8 +80,6 @@ const BookingForm = () => {
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: 'white',
-    padding: 15,
     borderRadius: 10,
     marginBottom: 20,
     shadowColor: '#000',

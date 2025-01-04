@@ -42,7 +42,9 @@ const App = () => {
           <View style={styles.menuItemContainer}>
             <TouchableOpacity
               style={styles.menuItem}
-              onPress={() => navigation.navigate('LayoutScreen')}>
+              onPress={() => navigation.navigate('TravellerDetailsScreen')}
+              // onPress={() => navigation.navigate('LayoutScreen')}
+            >
               <Image source={icons.Plane} style={styles.menuIcon} />
             </TouchableOpacity>
             <Text style={styles.menuText}>Flight</Text>

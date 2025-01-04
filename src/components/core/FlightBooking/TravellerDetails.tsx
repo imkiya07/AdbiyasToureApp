@@ -11,8 +11,6 @@ import {
 const TravellerDetailsScreen: FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.headerText}>Traveller Details</Text>
-
       <Accordion />
 
       {/* Confirm Button */}
@@ -26,13 +24,14 @@ const TravellerDetailsScreen: FC = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
+    flex: 1,
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 5,
   },
   button: {
     backgroundColor: '#009FFD',
@@ -40,6 +39,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 20,
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
   buttonText: {
     color: 'white',
