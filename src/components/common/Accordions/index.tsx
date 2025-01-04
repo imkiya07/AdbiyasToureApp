@@ -17,6 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import BookingForm from '../BookingForm';
 import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
+import {useAppSelector} from '@utils/hooks';
 
 function AccordionItem({
   isExpanded,
@@ -59,11 +60,18 @@ function AccordionItem({
 }
 
 export default function Accordion() {
+  const {adults, children, infants} = useAppSelector(
+    state => state.passengerSlice,
+  );
   const items = [
-    {id: '1', title: 'Item 1'},
-    {id: '2', title: 'Item 2'},
-    // Add more items as needed
-  ];
+    ...Array(adults).fill({type: 'Adult'}),
+    ...Array(children).fill({type: 'Child'}),
+    ...Array(infants).fill({type: 'Infant'}),
+  ].map((item, index) => ({
+    id: `${index + 1}`,
+    title: `${item.type} ${index + 1}`,
+  }));
+  console.log('🚀 ~ Accordion ~ items:', items);
 
   const openStates = items.map((item, index) =>
     useSharedValue(index === 0 ? true : false),
@@ -100,9 +108,7 @@ export default function Accordion() {
                 <AnimatedTouchableOpacity
                   style={[styles.accordionButton, borderRadiusStyle]}
                   onPress={() => toggleItem(index)}>
-                  <Text style={styles.btnText}>
-                    Passenger {index + 1} - Adult
-                  </Text>
+                  <Text style={styles.btnText}>Passenger {item.title}</Text>
                   <Animated.View style={rotateStyle}>
                     <FontAwesome6Icon
                       name="chevron-down"
