@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,12 +8,12 @@ import {
   Text,
 } from 'react-native';
 import Animated, {
-  Easing,
   SharedValue,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withTiming,
+  Easing,
 } from 'react-native-reanimated';
 import BookingForm from '../BookingForm';
 import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
@@ -63,52 +63,83 @@ export default function Accordion() {
   const {adults, children, infants} = useAppSelector(
     state => state.passengerSlice,
   );
-  const items = [
-    ...Array(adults).fill({type: 'Adult'}),
-    ...Array(children).fill({type: 'Child'}),
-    ...Array(infants).fill({type: 'Infant'}),
-  ].map((item, index) => ({
-    id: `${index + 1}`,
-    title: `${item.type} ${index + 1}`,
-  }));
-  console.log('🚀 ~ Accordion ~ items:', items);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const itemLayouts = useRef<{[key: string]: number}>({});
 
-  const openStates = items.map((item, index) =>
-    useSharedValue(index === 0 ? true : false),
-  );
+  const items = [
+    ...Array(adults).fill({PassengerType: 'ADT'}),
+    ...Array(children).fill({PassengerType: 'CHD'}),
+    ...Array(infants).fill({PassengerType: 'INF'}),
+  ].map((item, index) => {
+    const title =
+      item.PassengerType === 'ADT'
+        ? 'Adult'
+        : item.PassengerType === 'CHD'
+          ? 'Child'
+          : 'Infant';
+    return {
+      title,
+      PassengerType: item.PassengerType,
+      id: `${index}`,
+    };
+  });
+
+  const openStates = items.map(() => useSharedValue(false));
 
   const toggleItem = (index: number) => {
+    // const isOpening = !openStates[index].value;
     openStates.forEach((state, i) => {
       state.value = i === index ? !state.value : false;
     });
+
+    // if (
+    //   isOpening &&
+    //   scrollViewRef.current &&
+    //   itemLayouts.current[items[index].id]
+    // ) {
+    //   scrollViewRef.current.scrollTo({
+    //     y: itemLayouts.current[items[index].id],
+    //     animated: true,
+    //   });
+    // }
+  };
+
+  const getBorderRadiusStyle = (isOpen: SharedValue<boolean>) => {
+    return useAnimatedStyle(() => ({
+      borderBottomLeftRadius: withTiming(isOpen.value ? 0 : 8),
+      borderBottomRightRadius: withTiming(isOpen.value ? 0 : 8),
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+    }));
+  };
+
+  const getRotateStyle = (isOpen: SharedValue<boolean>) => {
+    return useAnimatedStyle(() => ({
+      transform: [{rotate: withTiming(isOpen.value ? '180deg' : '0deg')}],
+    }));
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView ref={scrollViewRef}>
         {items.map((item, index) => {
-          const borderRadiusStyle = useAnimatedStyle(() => ({
-            borderBottomLeftRadius: withTiming(openStates[index].value ? 0 : 8),
-            borderBottomRightRadius: withTiming(
-              openStates[index].value ? 0 : 8,
-            ),
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-          }));
-
-          const rotateStyle = useAnimatedStyle(() => ({
-            transform: [
-              {rotate: withTiming(openStates[index].value ? '180deg' : '0deg')},
-            ],
-          }));
+          const borderRadiusStyle = getBorderRadiusStyle(openStates[index]);
+          const rotateStyle = getRotateStyle(openStates[index]);
 
           return (
-            <View key={item.id}>
+            <Animated.View
+              key={item.id}
+              onLayout={e => {
+                itemLayouts.current[item.id] = e.nativeEvent.layout.y;
+              }}>
               <View style={styles.buttonContainer}>
                 <AnimatedTouchableOpacity
                   style={[styles.accordionButton, borderRadiusStyle]}
                   onPress={() => toggleItem(index)}>
-                  <Text style={styles.btnText}>Passenger {item.title}</Text>
+                  <Text style={styles.btnText}>
+                    Passenger {index + 1 < 10 ? '0' + (index + 1) : index + 1}:
+                    {item.title}
+                  </Text>
                   <Animated.View style={rotateStyle}>
                     <FontAwesome6Icon
                       name="chevron-down"
@@ -122,7 +153,7 @@ export default function Accordion() {
                   <BookingForm />
                 </AccordionItem>
               </View>
-            </View>
+            </Animated.View>
           );
         })}
       </ScrollView>

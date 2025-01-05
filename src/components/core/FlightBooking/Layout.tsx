@@ -17,7 +17,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {toggleTripType} from '@store/slice/flightType';
 import FlightForm from '@components/layout/FlightForm';
-import {resetStateObj} from '@store/slice/flightDestinations';
+import {resetFlightState} from '@store/slice/flightDestinations';
 import axios from 'axios';
 import {
   searchFlightsFailure,
@@ -183,7 +183,7 @@ const LayoutScreen = () => {
                 ]}
                 onPress={() => {
                   dispatch(toggleTripType('OneWay'));
-                  dispatch(resetStateObj());
+                  dispatch(resetFlightState());
                 }}>
                 <Text style={styles.buttonText}>One Way</Text>
               </TouchableOpacity>

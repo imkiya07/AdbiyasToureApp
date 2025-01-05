@@ -28,9 +28,9 @@ const App: FC = () => {
       });
   }, []); */
   const dispatch = rootStore.dispatch;
-  const tripStates = rootStore.getState().flightDestinations;
-  const flightTypeStates = rootStore.getState().flightTypeSlice;
-  const passengerStates = rootStore.getState().passengerSlice;
+  // const tripStates = rootStore.getState().flightDestinations;
+  // const flightTypeStates = rootStore.getState().flightTypeSlice;
+  // const passengerStates = rootStore.getState().passengerSlice;
 
   return (
     <Provider store={rootStore}>
