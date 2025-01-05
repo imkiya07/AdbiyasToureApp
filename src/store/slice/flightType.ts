@@ -9,7 +9,7 @@ const flightTypeSlice = createSlice({
   name: 'flightType',
   initialState,
   reducers: {
-    toggleTripType(state, action: PayloadAction<tFlightTypes>) {
+    toggleTripType: (state, action: PayloadAction<tFlightTypes>) => {
       state.tripType = action.payload;
     },
   },

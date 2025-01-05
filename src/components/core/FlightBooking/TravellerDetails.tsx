@@ -1,6 +1,12 @@
 import Accordion from '@components/common/Accordions';
 import React, {FC} from 'react';
-import {Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const TravellerDetailsScreen: FC = () => {
   return (
@@ -8,17 +14,19 @@ const TravellerDetailsScreen: FC = () => {
       <Accordion />
 
       {/* Confirm Button */}
-      <TouchableOpacity
-        onPress={() => {}}
-        style={[
-          styles.button,
-          {
-            // backgroundColor: '#009FFD',
-            backgroundColor: '#C4C4C4',
-          },
-        ]}>
-        <Text style={styles.buttonText}>Proceed to Booking</Text>
-      </TouchableOpacity>
+      <View>
+        <TouchableOpacity
+          onPress={() => {}}
+          style={[
+            styles.button,
+            {
+              // backgroundColor: '#009FFD',
+              backgroundColor: '#C4C4C4',
+            },
+          ]}>
+          <Text style={styles.buttonText}>Proceed to Booking</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };

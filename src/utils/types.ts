@@ -1,3 +1,7 @@
+import {SharedValue} from 'react-native-reanimated';
+
+export type tPassengerType = 'ADT' | 'CHD' | 'INF';
+
 type tSegment = {
   legIndicator: string;
   operating_airline: string;
@@ -143,4 +147,40 @@ export type tAirport = {
   iata: string;
   id: number;
   name: string;
+};
+
+export type tTravelerState = {
+  PassengerType: tPassengerType;
+  Gender: string;
+  PassengerName: {
+    PassengerTitle: string;
+    PassengerFirstName: string;
+    PassengerLastName: string;
+  };
+  DateOfBirth: string;
+  Passport: {
+    PassportNumber: string;
+    ExpiryDate: string;
+    Country: string;
+  };
+  PassengerNationality: string;
+  NationalID: string;
+};
+
+export type tBookingState = {
+  flight_id: string;
+  CountryCode: string;
+  AreaCode: string;
+  PhoneNumber: string;
+  Email: string;
+  PostCode: string;
+  airTravelers: tTravelerState[];
+};
+
+export type tAccordionItem = {
+  isExpanded: SharedValue<boolean>;
+  children: React.ReactNode;
+  viewKey: string;
+  style?: any;
+  duration?: number;
 };

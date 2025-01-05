@@ -15,16 +15,16 @@ const passengerSlice = createSlice({
   name: 'passengers',
   initialState,
   reducers: {
-    updateAdults(state, action: PayloadAction<number>) {
+    updateAdults: (state, action: PayloadAction<number>) => {
       state.adults = action.payload;
     },
-    updateChildren(state, action: PayloadAction<number>) {
+    updateChildren: (state, action: PayloadAction<number>) => {
       state.children = action.payload;
     },
-    updateInfants(state, action: PayloadAction<number>) {
+    updateInfants: (state, action: PayloadAction<number>) => {
       state.infants = action.payload;
     },
-    updateCabinClass(state, action: PayloadAction<tClassOptions>) {
+    updateCabinClass: (state, action: PayloadAction<tClassOptions>) => {
       state.cabinClass = action.payload;
     },
   },

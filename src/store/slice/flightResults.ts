@@ -11,15 +11,15 @@ const flightSearchSlice = createSlice({
   name: 'flightSearch',
   initialState,
   reducers: {
-    searchFlightsStart(state) {
+    searchFlightsStart: state => {
       state.loading = true;
       state.error = null;
     },
-    searchFlightsSuccess(state, action: PayloadAction<tFlightResult[]>) {
+    searchFlightsSuccess: (state, action: PayloadAction<tFlightResult[]>) => {
       state.loading = false;
       state.searchResults = action.payload;
     },
-    searchFlightsFailure(state, action: PayloadAction<string>) {
+    searchFlightsFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
     },

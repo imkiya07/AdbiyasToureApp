@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {FC, useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,79 +10,18 @@ import {
 import Animated, {
   SharedValue,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withTiming,
-  Easing,
 } from 'react-native-reanimated';
 import BookingForm from '../BookingForm';
 import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
 import {useAppSelector} from '@utils/hooks';
+import AccordionItem from './AccordionItem';
 
-function AccordionItem({
-  isExpanded,
-  children,
-  viewKey,
-  style,
-  duration = 500,
-}: {
-  isExpanded: SharedValue<boolean>;
-  children: React.ReactNode;
-  viewKey: string;
-  style?: any;
-  duration?: number;
-}) {
-  const height = useSharedValue(0);
-
-  const derivedHeight = useDerivedValue(() =>
-    withTiming(height.value * Number(isExpanded.value), {
-      duration,
-      easing: Easing.linear,
-    }),
-  );
-  const bodyStyle = useAnimatedStyle(() => ({
-    height: derivedHeight.value,
-  }));
-
-  return (
-    <Animated.View
-      key={`accordionItem_${viewKey}`}
-      style={[styles.animatedView, bodyStyle, style]}>
-      <View
-        onLayout={e => {
-          height.value = e.nativeEvent.layout.height;
-        }}
-        style={styles.wrapper}>
-        {children}
-      </View>
-    </Animated.View>
-  );
-}
-
-export default function Accordion() {
-  const {adults, children, infants} = useAppSelector(
-    state => state.passengerSlice,
-  );
+const Accordion: FC = () => {
+  const {airTravelers: items} = useAppSelector(state => state.bookingSlice);
   const scrollViewRef = useRef<ScrollView>(null);
   const itemLayouts = useRef<{[key: string]: number}>({});
-
-  const items = [
-    ...Array(adults).fill({PassengerType: 'ADT'}),
-    ...Array(children).fill({PassengerType: 'CHD'}),
-    ...Array(infants).fill({PassengerType: 'INF'}),
-  ].map((item, index) => {
-    const title =
-      item.PassengerType === 'ADT'
-        ? 'Adult'
-        : item.PassengerType === 'CHD'
-          ? 'Child'
-          : 'Infant';
-    return {
-      title,
-      PassengerType: item.PassengerType,
-      id: `${index}`,
-    };
-  });
 
   const openStates = items.map(() => useSharedValue(false));
 
@@ -128,9 +67,9 @@ export default function Accordion() {
 
           return (
             <Animated.View
-              key={item.id}
+              key={index}
               onLayout={e => {
-                itemLayouts.current[item.id] = e.nativeEvent.layout.y;
+                itemLayouts.current[index] = e.nativeEvent.layout.y;
               }}>
               <View style={styles.buttonContainer}>
                 <AnimatedTouchableOpacity
@@ -138,7 +77,11 @@ export default function Accordion() {
                   onPress={() => toggleItem(index)}>
                   <Text style={styles.btnText}>
                     Passenger {index + 1 < 10 ? '0' + (index + 1) : index + 1}:
-                    {item.title}
+                    {item.PassengerType === 'ADT'
+                      ? ' Adult'
+                      : item.PassengerType === 'CHD'
+                        ? ' Child'
+                        : ' Infant'}
                   </Text>
                   <Animated.View style={rotateStyle}>
                     <FontAwesome6Icon
@@ -149,7 +92,9 @@ export default function Accordion() {
                   </Animated.View>
                 </AnimatedTouchableOpacity>
 
-                <AccordionItem isExpanded={openStates[index]} viewKey={item.id}>
+                <AccordionItem
+                  isExpanded={openStates[index]}
+                  viewKey={index.toString()}>
                   <BookingForm />
                 </AccordionItem>
               </View>
@@ -159,7 +104,7 @@ export default function Accordion() {
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const AnimatedTouchableOpacity =
   Animated.createAnimatedComponent(TouchableOpacity);
@@ -198,3 +143,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default Accordion;

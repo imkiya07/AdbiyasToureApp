@@ -16,6 +16,7 @@ import {images} from '../../../constants/index';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {updateCabinClass} from '@store/slice/passengerSlice';
 import {tClassOptions} from '@utils/types';
+import {setPassengers} from '@store/slice/bookingSlice';
 export const classOptions: tClassOptions[] = [
   {
     label: 'Economy',
@@ -37,9 +38,9 @@ export const classOptions: tClassOptions[] = [
 const FlightShowPage = () => {
   const {
     cabinClass: selectedClass,
-    infants,
-    children,
     adults,
+    children,
+    infants,
   } = useAppSelector(state => state.passengerSlice);
   const tripStates = useAppSelector(state => state.flightDestinations);
   const flightSearchResults = useAppSelector(
@@ -120,7 +121,11 @@ const FlightShowPage = () => {
             </View>
             <View style={styles.actionContainer}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('TravellerDetailsScreen')}
+                onPress={() => {
+                  /* Generate Traveler Form Array */
+                  dispatch(setPassengers({adults, children, infants}));
+                  navigation.navigate('TravellerDetailsScreen');
+                }}
                 style={styles.bookNowButton}>
                 <Text style={styles.bookNowText}>Book Now</Text>
               </TouchableOpacity>

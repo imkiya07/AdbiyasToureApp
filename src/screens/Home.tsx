@@ -10,9 +10,17 @@ import {
 } from 'react-native';
 import {icons} from '../constants'; // Ensure icons are correctly imported
 import {useNavigation} from '@react-navigation/native';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {setPassengers} from '@store/slice/bookingSlice';
 
 const App = () => {
   const navigation = useNavigation();
+
+  const {adults, children, infants} = useAppSelector(
+    state => state.passengerSlice,
+  );
+
+  const dispatch = useAppDispatch();
 
   return (
     <ScrollView>
@@ -42,7 +50,10 @@ const App = () => {
           <View style={styles.menuItemContainer}>
             <TouchableOpacity
               style={styles.menuItem}
-              onPress={() => navigation.navigate('TravellerDetailsScreen')}
+              onPress={() => {
+                dispatch(setPassengers({adults, children, infants}));
+                navigation.navigate('TravellerDetailsScreen');
+              }}
               // onPress={() => navigation.navigate('LayoutScreen')}
             >
               <Image source={icons.Plane} style={styles.menuIcon} />
