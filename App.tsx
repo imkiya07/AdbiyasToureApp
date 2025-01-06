@@ -14,6 +14,7 @@ import rootStore from '@store/index';
 import {TouchableOpacity} from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {resetFlightState} from '@store/slice/flightDestinations';
+import {PaperProvider} from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,88 +35,90 @@ const App: FC = () => {
 
   return (
     <Provider store={rootStore}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          {/* Main Tab Navigation */}
-          <Stack.Screen
-            name="MainTabs"
-            component={TabNavigator}
-            options={{headerShown: false}}
-          />
+      <PaperProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            {/* Main Tab Navigation */}
+            <Stack.Screen
+              name="MainTabs"
+              component={TabNavigator}
+              options={{headerShown: false}}
+            />
 
-          {/* Flight Book Layout, not part of tabs */}
-          <Stack.Screen
-            name="LayoutScreen"
-            component={LayoutScreen}
-            options={{
-              title: 'Flight Booking',
-              headerShown: true, // Set to false if you want to hide the header
-            }}
-          />
+            {/* Flight Book Layout, not part of tabs */}
+            <Stack.Screen
+              name="LayoutScreen"
+              component={LayoutScreen}
+              options={{
+                title: 'Flight Booking',
+                headerShown: true, // Set to false if you want to hide the header
+              }}
+            />
 
-          <Stack.Screen
-            name="FlightDetails"
-            component={FlightDetails}
-            options={{
-              title: 'Flight Details',
-              headerShown: true, // Set to false if you want to hide the header
-            }}
-          />
-          <Stack.Screen
-            name="FlightShow"
-            component={FlightShow}
-            options={({navigation}) => ({
-              title: ' Select Your Flight',
-              headerShown: true, // Set to false if you want to hide the header
-              headerLeft: () => (
-                <TouchableOpacity
-                  onPress={() => {
-                    dispatch(resetFlightState());
-                    navigation.goBack();
-                  }}>
-                  <FontAwesome6 name="arrow-left" size={24} color="#000000" />
-                </TouchableOpacity>
-              ),
-            })}
-          />
+            <Stack.Screen
+              name="FlightDetails"
+              component={FlightDetails}
+              options={{
+                title: 'Flight Details',
+                headerShown: true, // Set to false if you want to hide the header
+              }}
+            />
+            <Stack.Screen
+              name="FlightShow"
+              component={FlightShow}
+              options={({navigation}) => ({
+                title: ' Select Your Flight',
+                headerShown: true, // Set to false if you want to hide the header
+                headerLeft: () => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      dispatch(resetFlightState());
+                      navigation.goBack();
+                    }}>
+                    <FontAwesome6 name="arrow-left" size={24} color="#000000" />
+                  </TouchableOpacity>
+                ),
+              })}
+            />
 
-          <Stack.Screen
-            name="TravellerDetailsScreen"
-            component={TravellerDetailsScreen}
-            options={{
-              title: 'Traveller Details',
-              headerShown: true, // Set to false if you want to hide the header
-            }}
-          />
+            <Stack.Screen
+              name="TravellerDetailsScreen"
+              component={TravellerDetailsScreen}
+              options={{
+                title: 'Traveller Details',
+                headerShown: true, // Set to false if you want to hide the header
+              }}
+            />
 
-          <Stack.Screen
-            name="LayoutHotel"
-            component={LayoutHotel}
-            options={{
-              title: 'Hello Hotel',
-              headerShown: true, // Set to false if you want to hide the header
-            }}
-          />
+            <Stack.Screen
+              name="LayoutHotel"
+              component={LayoutHotel}
+              options={{
+                title: 'Hello Hotel',
+                headerShown: true, // Set to false if you want to hide the header
+              }}
+            />
 
-          <Stack.Screen
-            name="LayoutTour"
-            component={LayoutTour}
-            options={{
-              title: 'Hello Tour',
-              headerShown: true, // Set to false if you want to hide the header
-            }}
-          />
+            <Stack.Screen
+              name="LayoutTour"
+              component={LayoutTour}
+              options={{
+                title: 'Hello Tour',
+                headerShown: true, // Set to false if you want to hide the header
+              }}
+            />
 
-          <Stack.Screen
-            name="LayoutVisa"
-            component={LayoutVisa}
-            options={{
-              title: ' Hello Visa',
-              headerShown: true, // Set to false if you want to hide the header
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+            <Stack.Screen
+              name="LayoutVisa"
+              component={LayoutVisa}
+              options={{
+                title: ' Hello Visa',
+                headerShown: true, // Set to false if you want to hide the header
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
     </Provider>
   );
 };

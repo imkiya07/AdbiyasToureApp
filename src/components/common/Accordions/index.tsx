@@ -18,7 +18,7 @@ import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
 import {useAppSelector} from '@utils/hooks';
 import AccordionItem from './AccordionItem';
 
-const Accordion: FC = () => {
+const TravelerAccordion: FC = () => {
   const {airTravelers: items} = useAppSelector(state => state.bookingSlice);
   const scrollViewRef = useRef<ScrollView>(null);
   const itemLayouts = useRef<{[key: string]: number}>({});
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingTop: 24,
-    paddingBottom: 45,
+    paddingBottom: 120,
   },
   buttonContainer: {
     paddingBottom: 16,
@@ -144,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Accordion;
+export default TravelerAccordion;
