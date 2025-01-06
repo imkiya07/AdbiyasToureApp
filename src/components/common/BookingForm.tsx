@@ -1,5 +1,17 @@
-import {View, Text, TextInput, StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
+import {useNavigation} from '@react-navigation/native';
+
+const radioItemList: string[] = ['male', 'female'];
 
 const BookingForm = () => {
   // States to manage input data
@@ -7,24 +19,49 @@ const BookingForm = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [gender, setGender] = useState<string>(radioItemList[0]);
   const [passportNumber, setPassportNumber] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState<string>('');
+
+  const [toggleDatePicker, setToggleDatePicker] = useState<boolean>(false);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setDateOfBirth('');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <>
       {/* Personal Information Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Personal Information</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>First Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter first name"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
+        <View style={styles.nameContainer}>
+          <View style={styles.titleField}>
+            <Text style={styles.label}>Title</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Mr. / Mrs. / Ms."
+              value={firstName}
+              onChangeText={setFirstName}
+            />
+          </View>
+          <View style={styles.nameField}>
+            <Text style={styles.label}>First Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter first name"
+              value={firstName}
+              onChangeText={setFirstName}
+            />
+          </View>
         </View>
 
-        <View style={styles.inputContainer}>
+        <View>
           <Text style={styles.label}>Last Name</Text>
           <TextInput
             style={styles.input}
@@ -32,6 +69,60 @@ const BookingForm = () => {
             value={lastName}
             onChangeText={setLastName}
           />
+        </View>
+        <View>
+          <Text style={styles.label}>Gender</Text>
+          <View style={styles.radioGroup}>
+            {radioItemList.map((item, index) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setGender(item);
+                }}
+                key={item + index}
+                style={styles.radioBtn}>
+                <View style={styles.radioOuterCircle}>
+                  <View
+                    style={[
+                      styles.radioInnerCircle,
+                      {transform: [{scale: item === gender ? 1 : 0}]},
+                    ]}
+                  />
+                </View>
+                <Text style={styles.radioTxt}>{item} </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Date of Birth</Text>
+          <TouchableOpacity
+            style={{width: '100%'}}
+            onPress={() => setToggleDatePicker(true)}>
+            <TextInput
+              style={styles.input}
+              placeholder="Select Date of birth"
+              placeholderTextColor="#666"
+              editable={false}
+              value={dateOfBirth}
+            />
+          </TouchableOpacity>
+          {toggleDatePicker && (
+            <DateTimePicker
+              value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
+              mode="date"
+              display="default"
+              maximumDate={new Date()}
+              onChange={(
+                event: DateTimePickerEvent,
+                selectedDate: Date | undefined,
+              ) => {
+                setToggleDatePicker(false);
+                if (selectedDate) {
+                  setDateOfBirth(selectedDate.toDateString());
+                }
+              }}
+            />
+          )}
         </View>
       </View>
 
@@ -81,17 +172,70 @@ const BookingForm = () => {
 const styles = StyleSheet.create({
   section: {
     borderRadius: 10,
-    marginBottom: 20,
+    marginBottom: 15,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: {width: 0, height: 4},
     shadowRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    gap: 15,
+    flexWrap: 'wrap',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
     color: '#333',
+  },
+  nameContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 15,
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+  },
+  titleField: {
+    width: '35%',
+  },
+  nameField: {
+    width: '61%',
+  },
+  radioGroup: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 15,
+    alignItems: 'center',
+  },
+  radioBtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    width: '45%',
+  },
+  radioOuterCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: '50%',
+    borderColor: '#CCC',
+    borderWidth: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  radioInnerCircle: {
+    width: 10,
+    height: 10,
+    borderRadius: '50%',
+    backgroundColor: '#10A5F9',
+  },
+  radioTxt: {
+    fontSize: 16,
+    color: '#333',
+    textTransform: 'capitalize',
   },
   inputContainer: {
     marginBottom: 15,
@@ -108,6 +252,7 @@ const styles = StyleSheet.create({
     borderColor: '#CCC',
     borderWidth: 1,
     fontSize: 16,
+    width: '100%',
   },
 });
 

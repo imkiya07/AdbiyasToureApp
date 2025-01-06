@@ -14,7 +14,9 @@ const TravellerDetailsScreen: FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
+        <Text style={styles.sectionTitle}>Contact Information</Text>
         <ContactForm />
+        <Text style={styles.sectionTitle}>Passenger Information</Text>
         <TravelerAccordion />
       </ScrollView>
 
@@ -42,6 +44,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     minHeight: '100%',
     flex: 1,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
   },
   headerText: {
     fontSize: 24,

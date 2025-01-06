@@ -8,6 +8,7 @@ import {
 const ContactForm = () => {
   // States to manage input data
   const [email, setEmail] = useState('');
+  const [postCode, setPostCode] = useState('');
   const [countryCode, setCountryCode] = useState<string>('BD');
   const [phoneNumber, setPhoneNumber] = useState<string>();
 
@@ -15,54 +16,61 @@ const ContactForm = () => {
   console.log('🚀 ~ ContactForm ~ dialCode:', dialCode);
 
   return (
-    <>
+    <View style={styles.formContainer}>
       {/* Contact Information Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Contact Information</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email Address</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter email address"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-        </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Phone Number</Text>
-          <PhoneNumberInput
-            code={countryCode}
-            setCode={setCountryCode}
-            phoneNumber={phoneNumber}
-            setPhoneNumber={setPhoneNumber}
-            // includeCountries={includeCountries}
-            style={styles.phoneInput}
-          />
-        </View>
+      <View style={styles.emailContainer}>
+        <Text style={styles.label}>Email Address</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter email address"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
       </View>
-    </>
+      <View style={styles.postCodeContainer}>
+        <Text style={styles.label}>Post Code</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Post Code"
+          value={postCode}
+          onChangeText={setPostCode}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Phone Number</Text>
+        <PhoneNumberInput
+          code={countryCode}
+          setCode={setCountryCode}
+          phoneNumber={phoneNumber}
+          setPhoneNumber={setPhoneNumber}
+          // includeCountries={includeCountries}
+          style={styles.phoneInput}
+        />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  section: {
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 4},
-    shadowRadius: 10,
+  formContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    gap: 15,
+    marginBottom: 15,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
+  emailContainer: {
+    width: '55%',
+  },
+  postCodeContainer: {
+    width: '40%',
   },
   inputContainer: {
-    marginBottom: 15,
+    width: '100%',
   },
   label: {
     fontSize: 14,
