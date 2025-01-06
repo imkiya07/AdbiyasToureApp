@@ -10,6 +10,8 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import {useNavigation} from '@react-navigation/native';
+import {tCountry} from '@utils/types';
+import CountryModal from './Modal/CountryModal';
 
 const radioItemList: string[] = ['male', 'female'];
 
@@ -19,6 +21,11 @@ const BookingForm = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [nationality, setNationality] = useState<tCountry>({
+    name: '',
+    code: '',
+  });
+  const [countryModal, setCountryModal] = useState<boolean>(false);
   const [gender, setGender] = useState<string>(radioItemList[0]);
   const [passportNumber, setPassportNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState<string>('');
@@ -124,31 +131,17 @@ const BookingForm = () => {
             />
           )}
         </View>
-      </View>
-
-      {/* Contact Information Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Contact Information</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email Address</Text>
-          <TextInput
+        <View>
+          <Text style={styles.label}>Nationality</Text>
+          <TouchableOpacity
             style={styles.input}
-            placeholder="Enter email address"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Phone Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter phone number"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
-          />
+            onPress={() => {
+              setCountryModal(true);
+            }}>
+            <Text style={{color: '#666'}}>
+              {nationality.name ? nationality.name : `Select Your Country`}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -164,7 +157,58 @@ const BookingForm = () => {
             onChangeText={setPassportNumber}
           />
         </View>
+        <View style={styles.nameField}>
+          <Text style={styles.label}>Issued Date</Text>
+          <TouchableOpacity
+            style={{width: '100%'}}
+            onPress={() => setToggleDatePicker(true)}>
+            <TextInput
+              style={styles.input}
+              placeholder="Select Date"
+              placeholderTextColor="#666"
+              editable={false}
+              value={dateOfBirth}
+            />
+          </TouchableOpacity>
+          {toggleDatePicker && (
+            <DateTimePicker
+              value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
+              mode="date"
+              display="default"
+              maximumDate={new Date()}
+              onChange={(
+                event: DateTimePickerEvent,
+                selectedDate: Date | undefined,
+              ) => {
+                setToggleDatePicker(false);
+                if (selectedDate) {
+                  setDateOfBirth(selectedDate.toDateString());
+                }
+              }}
+            />
+          )}
+        </View>
+        <View style={styles.titleField}>
+          <Text style={styles.label}>Issued Country</Text>
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => {
+              setCountryModal(true);
+            }}>
+            <Text style={{color: '#666'}}>
+              {nationality.name ? nationality.name : `Select Your Country`}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
+      <CountryModal
+        visible={countryModal}
+        onSelectCountry={e => {
+          setNationality(e);
+          setCountryModal(false);
+        }}
+        closeModal={() => setCountryModal(false)}
+      />
     </>
   );
 };

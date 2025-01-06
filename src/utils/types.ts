@@ -184,3 +184,14 @@ export type tAccordionItem = {
   style?: any;
   duration?: number;
 };
+
+export type tCountry = {
+  name: string;
+  code: string;
+};
+
+export type tCountryModalProp = {
+  visible: boolean;
+  closeModal: () => void;
+  onSelectCountry: (country: tCountry) => void;
+};
