@@ -50,12 +50,11 @@ const App = () => {
           <View style={styles.menuItemContainer}>
             <TouchableOpacity
               style={styles.menuItem}
-              onPress={() => {
-                dispatch(generatePassengerForm({adults, children, infants}));
-                navigation.navigate('TravellerDetailsScreen');
-              }}
-              // onPress={() => navigation.navigate('LayoutScreen')}
-            >
+              // onPress={() => {
+              //   dispatch(generatePassengerForm({adults, children, infants}));
+              //   navigation.navigate('TravellerDetailsScreen');
+              // }}
+              onPress={() => navigation.navigate('LayoutScreen')}>
               <Image source={icons.Plane} style={styles.menuIcon} />
             </TouchableOpacity>
             <Text style={styles.menuText}>Flight</Text>

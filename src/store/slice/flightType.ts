@@ -12,9 +12,10 @@ const flightTypeSlice = createSlice({
     toggleTripType: (state, action: PayloadAction<tFlightTypes>) => {
       state.tripType = action.payload;
     },
+    resetTripState: () => initialState,
   },
 });
 
-export const {toggleTripType} = flightTypeSlice.actions;
+export const {toggleTripType, resetTripState} = flightTypeSlice.actions;
 
 export default flightTypeSlice.reducer;

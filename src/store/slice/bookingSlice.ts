@@ -177,6 +177,7 @@ const bookingSlice = createSlice({
       const {index, value} = action.payload;
       state.airTravelers[index].NationalID = value;
     },
+    resetBookingForm: () => initialState,
   },
 });
 
@@ -196,6 +197,7 @@ export const {
   setPassportCountry,
   setPassengerNationality,
   setNationalID,
+  resetBookingForm,
 } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

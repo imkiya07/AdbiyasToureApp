@@ -23,10 +23,19 @@ const flightSearchSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    resetSearchResults: state => {
+      state.searchResults = [];
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
 
-export const {searchFlightsStart, searchFlightsSuccess, searchFlightsFailure} =
-  flightSearchSlice.actions;
+export const {
+  searchFlightsStart,
+  searchFlightsSuccess,
+  searchFlightsFailure,
+  resetSearchResults,
+} = flightSearchSlice.actions;
 
 export default flightSearchSlice.reducer;

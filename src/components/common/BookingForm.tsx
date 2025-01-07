@@ -9,7 +9,6 @@ import React, {useEffect, useState} from 'react';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import {useNavigation} from '@react-navigation/native';
 import countries from '@constants/countries.json';
 import CountryModal from './Modal/CountryModal';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
@@ -48,16 +47,6 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
   const [toggleExpiryDatePicker, setToggleExpiryDatePicker] =
     useState<boolean>(false);
 
-  /* const navigation = useNavigation();
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      setDateOfBirth('');
-    });
-
-    return unsubscribe;
-  }, [navigation]); */
-
   useEffect(() => {
     if (Country) {
       countries.find(country => {
@@ -75,7 +64,10 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
       });
     }
 
-    return () => {};
+    return () => {
+      setIssuedCountry('');
+      setNationality('');
+    };
   }, [Country, PassengerNationality]);
 
   return (
