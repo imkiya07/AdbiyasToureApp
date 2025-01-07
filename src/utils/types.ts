@@ -168,9 +168,7 @@ export type tTravelerState = {
 };
 
 export type tBookingState = {
-  flight_id: string;
   CountryCode: string;
-  AreaCode: string;
   PhoneNumber: string;
   Email: string;
   PostCode: string;

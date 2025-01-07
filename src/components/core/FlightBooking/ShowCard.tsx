@@ -16,7 +16,7 @@ import {images} from '../../../constants/index';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {updateCabinClass} from '@store/slice/passengerSlice';
 import {tClassOptions} from '@utils/types';
-import {setPassengers} from '@store/slice/bookingSlice';
+import {generatePassengerForm} from '@store/slice/bookingSlice';
 export const classOptions: tClassOptions[] = [
   {
     label: 'Economy',
@@ -123,7 +123,7 @@ const FlightShowPage = () => {
               <TouchableOpacity
                 onPress={() => {
                   /* Generate Traveler Form Array */
-                  dispatch(setPassengers({adults, children, infants}));
+                  dispatch(generatePassengerForm({adults, children, infants}));
                   navigation.navigate('TravellerDetailsScreen');
                 }}
                 style={styles.bookNowButton}>

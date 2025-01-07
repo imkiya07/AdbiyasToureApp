@@ -11,7 +11,7 @@ import {
 import {icons} from '../constants'; // Ensure icons are correctly imported
 import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
-import {setPassengers} from '@store/slice/bookingSlice';
+import {generatePassengerForm} from '@store/slice/bookingSlice';
 
 const App = () => {
   const navigation = useNavigation();
@@ -51,7 +51,7 @@ const App = () => {
             <TouchableOpacity
               style={styles.menuItem}
               onPress={() => {
-                dispatch(setPassengers({adults, children, infants}));
+                dispatch(generatePassengerForm({adults, children, infants}));
                 navigation.navigate('TravellerDetailsScreen');
               }}
               // onPress={() => navigation.navigate('LayoutScreen')}

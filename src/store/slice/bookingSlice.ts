@@ -1,10 +1,9 @@
+import {GenderList} from '@constants/radioList';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {tBookingState, tTravelerState} from '@utils/types';
 
 const initialState: tBookingState = {
-  flight_id: '',
   CountryCode: '',
-  AreaCode: '',
   PhoneNumber: '',
   Email: '',
   PostCode: '',
@@ -15,14 +14,8 @@ const bookingSlice = createSlice({
   name: 'booking',
   initialState,
   reducers: {
-    setFlightId: (state, action: PayloadAction<string>) => {
-      state.flight_id = action.payload;
-    },
     setCountryCode: (state, action: PayloadAction<string>) => {
       state.CountryCode = action.payload;
-    },
-    setAreaCode: (state, action: PayloadAction<string>) => {
-      state.AreaCode = action.payload;
     },
     setPhoneNumber: (state, action: PayloadAction<string>) => {
       state.PhoneNumber = action.payload;
@@ -33,7 +26,7 @@ const bookingSlice = createSlice({
     setPostCode: (state, action: PayloadAction<string>) => {
       state.PostCode = action.payload;
     },
-    setPassengers: (
+    generatePassengerForm: (
       state,
       action: PayloadAction<{
         adults: number;
@@ -45,7 +38,7 @@ const bookingSlice = createSlice({
       state.airTravelers = [
         ...Array(adults).fill({
           PassengerType: 'ADT',
-          Gender: '',
+          Gender: GenderList[0],
           PassengerName: {
             PassengerTitle: '',
             PassengerFirstName: '',
@@ -62,7 +55,7 @@ const bookingSlice = createSlice({
         } as tTravelerState),
         ...Array(children).fill({
           PassengerType: 'CHD',
-          Gender: '',
+          Gender: GenderList[0],
           PassengerName: {
             PassengerTitle: '',
             PassengerFirstName: '',
@@ -79,7 +72,7 @@ const bookingSlice = createSlice({
         } as tTravelerState),
         ...Array(infants).fill({
           PassengerType: 'INF',
-          Gender: '',
+          Gender: GenderList[0],
           PassengerName: {
             PassengerTitle: '',
             PassengerFirstName: '',
@@ -96,17 +89,113 @@ const bookingSlice = createSlice({
         } as tTravelerState),
       ];
     },
+    setGender: (
+      state,
+      action: PayloadAction<{index: number; value: string}>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].Gender = value;
+    },
+    setPassengerTitle: (
+      state,
+      action: PayloadAction<{
+        index: number;
+        value: string;
+      }>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].PassengerName.PassengerTitle = value;
+    },
+    setPassengerFirstName: (
+      state,
+      action: PayloadAction<{
+        index: number;
+        value: string;
+      }>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].PassengerName.PassengerFirstName = value;
+    },
+    setPassengerLastName: (
+      state,
+      action: PayloadAction<{
+        index: number;
+        value: string;
+      }>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].PassengerName.PassengerLastName = value;
+    },
+    setDateOfBirth: (
+      state,
+      action: PayloadAction<{index: number; value: string}>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].DateOfBirth = value;
+    },
+    setPassportNumber: (
+      state,
+      action: PayloadAction<{
+        index: number;
+        value: string;
+      }>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].Passport.PassportNumber = value;
+    },
+    setPassportExpiryDate: (
+      state,
+      action: PayloadAction<{
+        index: number;
+        value: string;
+      }>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].Passport.ExpiryDate = value;
+    },
+    setPassportCountry: (
+      state,
+      action: PayloadAction<{
+        index: number;
+        value: string;
+      }>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].Passport.Country = value;
+    },
+    setPassengerNationality: (
+      state,
+      action: PayloadAction<{index: number; value: string}>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].PassengerNationality = value;
+    },
+    setNationalID: (
+      state,
+      action: PayloadAction<{index: number; value: string}>,
+    ) => {
+      const {index, value} = action.payload;
+      state.airTravelers[index].NationalID = value;
+    },
   },
 });
 
 export const {
-  setFlightId,
   setCountryCode,
-  setAreaCode,
   setPhoneNumber,
   setEmail,
   setPostCode,
-  setPassengers,
+  generatePassengerForm,
+  setGender,
+  setPassengerTitle,
+  setPassengerFirstName,
+  setPassengerLastName,
+  setDateOfBirth,
+  setPassportNumber,
+  setPassportExpiryDate,
+  setPassportCountry,
+  setPassengerNationality,
+  setNationalID,
 } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

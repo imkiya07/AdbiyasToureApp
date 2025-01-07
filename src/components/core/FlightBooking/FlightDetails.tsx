@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const FlightDetailsScreen = ({route}: {route: any}) => {
   const navigation = useNavigation(); // Hook for navigation
@@ -69,7 +69,7 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
                   {segment.departureAirport}
                 </Text>
                 <Text style={styles.smallText}>
-                  {moment(segment.DepartureDateTime).format('hh:mm A')}
+                  {dayjs(segment.DepartureDateTime).format('hh:mm A')}
                 </Text>
               </View>
               <View style={styles.flightTextContainer}>
@@ -77,7 +77,7 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
                   {segment.arrivalAirport}
                 </Text>
                 <Text style={{...styles.smallText, ...styles.rtlText}}>
-                  {moment(segment.ArrivalDateTime).format('hh:mm A')}
+                  {dayjs(segment.ArrivalDateTime).format('hh:mm A')}
                 </Text>
               </View>
             </View>

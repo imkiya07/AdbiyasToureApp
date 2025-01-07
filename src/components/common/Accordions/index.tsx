@@ -74,7 +74,10 @@ const TravelerAccordion: FC = () => {
               <View style={styles.buttonContainer}>
                 <AnimatedTouchableOpacity
                   style={[styles.accordionButton, borderRadiusStyle]}
-                  onPress={() => toggleItem(index)}>
+                  onPress={() => {
+                    toggleItem(index);
+                    console.warn('Air Traveler: ', index, 'details: ', item);
+                  }}>
                   <Text style={styles.btnText}>
                     Passenger {index + 1 < 10 ? '0' + (index + 1) : index + 1}:
                     {item.PassengerType === 'ADT'
@@ -95,7 +98,7 @@ const TravelerAccordion: FC = () => {
                 <AccordionItem
                   isExpanded={openStates[index]}
                   viewKey={index.toString()}>
-                  <BookingForm />
+                  <BookingForm userIndx={index} />
                 </AccordionItem>
               </View>
             </Animated.View>

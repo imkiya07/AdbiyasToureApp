@@ -10,29 +10,45 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import {useNavigation} from '@react-navigation/native';
-import {tCountry} from '@utils/types';
+import countries from '@constants/countries.json';
 import CountryModal from './Modal/CountryModal';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {
+  setDateOfBirth,
+  setGender,
+  setNationalID,
+  setPassengerFirstName,
+  setPassengerLastName,
+  setPassengerNationality,
+  setPassengerTitle,
+  setPassportCountry,
+  setPassportExpiryDate,
+  setPassportNumber,
+} from '@store/slice/bookingSlice';
+import {GenderList} from '@constants/radioList';
+import dayjs from 'dayjs';
 
-const radioItemList: string[] = ['male', 'female'];
+const BookingForm = ({userIndx}: {userIndx: number}) => {
+  const {PassengerName, Passport, PassengerNationality, Gender, DateOfBirth} =
+    useAppSelector(state => state.bookingSlice.airTravelers[userIndx]);
+  console.log('🚀 ~ BookingForm ~ DateOfBirth:', DateOfBirth);
+  const {PassengerTitle, PassengerFirstName, PassengerLastName} = PassengerName;
+  const {PassportNumber, ExpiryDate, Country} = Passport;
 
-const BookingForm = () => {
+  const dispatch = useAppDispatch();
+
   // States to manage input data
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [nationality, setNationality] = useState<tCountry>({
-    name: '',
-    code: '',
-  });
+  const [issuedCountry, setIssuedCountry] = useState<string>('');
+  const [nationality, setNationality] = useState<string>('');
   const [countryModal, setCountryModal] = useState<boolean>(false);
-  const [gender, setGender] = useState<string>(radioItemList[0]);
-  const [passportNumber, setPassportNumber] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState<string>('');
+  const [passportIssuedCountryModal, setPassportIssuedCountryModal] =
+    useState<boolean>(false);
 
-  const [toggleDatePicker, setToggleDatePicker] = useState<boolean>(false);
+  const [toggleDobPicker, setToggleDobPicker] = useState<boolean>(false);
+  const [toggleExpiryDatePicker, setToggleExpiryDatePicker] =
+    useState<boolean>(false);
 
-  const navigation = useNavigation();
+  /* const navigation = useNavigation();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -40,7 +56,27 @@ const BookingForm = () => {
     });
 
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation]); */
+
+  useEffect(() => {
+    if (Country) {
+      countries.find(country => {
+        if (country.code === Country) {
+          setIssuedCountry(country.name);
+        }
+      });
+    }
+
+    if (PassengerNationality) {
+      countries.find(country => {
+        if (country.code === PassengerNationality) {
+          setNationality(country.name);
+        }
+      });
+    }
+
+    return () => {};
+  }, [Country, PassengerNationality]);
 
   return (
     <>
@@ -53,8 +89,10 @@ const BookingForm = () => {
             <TextInput
               style={styles.input}
               placeholder="Mr. / Mrs. / Ms."
-              value={firstName}
-              onChangeText={setFirstName}
+              value={PassengerTitle}
+              onChangeText={e =>
+                dispatch(setPassengerTitle({index: userIndx, value: e}))
+              }
             />
           </View>
           <View style={styles.nameField}>
@@ -62,8 +100,10 @@ const BookingForm = () => {
             <TextInput
               style={styles.input}
               placeholder="Enter first name"
-              value={firstName}
-              onChangeText={setFirstName}
+              value={PassengerFirstName}
+              onChangeText={e =>
+                dispatch(setPassengerFirstName({index: userIndx, value: e}))
+              }
             />
           </View>
         </View>
@@ -73,17 +113,19 @@ const BookingForm = () => {
           <TextInput
             style={styles.input}
             placeholder="Enter last name"
-            value={lastName}
-            onChangeText={setLastName}
+            value={PassengerLastName}
+            onChangeText={e =>
+              dispatch(setPassengerLastName({index: userIndx, value: e}))
+            }
           />
         </View>
         <View>
           <Text style={styles.label}>Gender</Text>
           <View style={styles.radioGroup}>
-            {radioItemList.map((item, index) => (
+            {GenderList.map((item, index) => (
               <TouchableOpacity
                 onPress={() => {
-                  setGender(item);
+                  dispatch(setGender({index: userIndx, value: item}));
                 }}
                 key={item + index}
                 style={styles.radioBtn}>
@@ -91,7 +133,7 @@ const BookingForm = () => {
                   <View
                     style={[
                       styles.radioInnerCircle,
-                      {transform: [{scale: item === gender ? 1 : 0}]},
+                      {transform: [{scale: item === Gender ? 1 : 0}]},
                     ]}
                   />
                 </View>
@@ -104,18 +146,18 @@ const BookingForm = () => {
           <Text style={styles.label}>Date of Birth</Text>
           <TouchableOpacity
             style={{width: '100%'}}
-            onPress={() => setToggleDatePicker(true)}>
+            onPress={() => setToggleDobPicker(true)}>
             <TextInput
               style={styles.input}
               placeholder="Select Date of birth"
               placeholderTextColor="#666"
               editable={false}
-              value={dateOfBirth}
+              value={dayjs(DateOfBirth).format('ddd MMM DD[,] YYYY')}
             />
           </TouchableOpacity>
-          {toggleDatePicker && (
+          {toggleDobPicker && (
             <DateTimePicker
-              value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
+              value={DateOfBirth ? new Date(DateOfBirth) : new Date()}
               mode="date"
               display="default"
               maximumDate={new Date()}
@@ -123,9 +165,17 @@ const BookingForm = () => {
                 event: DateTimePickerEvent,
                 selectedDate: Date | undefined,
               ) => {
-                setToggleDatePicker(false);
+                const formattedDate = dayjs(selectedDate).format(
+                  'YYYY-MM-DD[T]HH:mm:ss',
+                );
+                setToggleDobPicker(false);
                 if (selectedDate) {
-                  setDateOfBirth(selectedDate.toDateString());
+                  dispatch(
+                    setDateOfBirth({
+                      index: userIndx,
+                      value: formattedDate,
+                    }),
+                  );
                 }
               }}
             />
@@ -139,7 +189,7 @@ const BookingForm = () => {
               setCountryModal(true);
             }}>
             <Text style={{color: '#666'}}>
-              {nationality.name ? nationality.name : `Select Your Country`}
+              {nationality ? nationality : `Select Your Country`}
             </Text>
           </TouchableOpacity>
         </View>
@@ -153,50 +203,63 @@ const BookingForm = () => {
           <TextInput
             style={styles.input}
             placeholder="Enter passport number"
-            value={passportNumber}
-            onChangeText={setPassportNumber}
+            value={PassportNumber}
+            onChangeText={e =>
+              dispatch(setPassportNumber({index: userIndx, value: e}))
+            }
           />
         </View>
-        <View style={styles.nameField}>
-          <Text style={styles.label}>Issued Date</Text>
+        <View style={styles.passportField}>
+          <Text style={styles.label}>Expiry Date</Text>
           <TouchableOpacity
             style={{width: '100%'}}
-            onPress={() => setToggleDatePicker(true)}>
+            onPress={() => setToggleExpiryDatePicker(true)}>
             <TextInput
               style={styles.input}
               placeholder="Select Date"
               placeholderTextColor="#666"
               editable={false}
-              value={dateOfBirth}
+              value={dayjs(ExpiryDate).format('ddd MMM DD[,] YYYY')}
             />
           </TouchableOpacity>
-          {toggleDatePicker && (
+          {toggleExpiryDatePicker && (
             <DateTimePicker
-              value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
+              value={ExpiryDate ? new Date(ExpiryDate) : new Date()}
               mode="date"
               display="default"
-              maximumDate={new Date()}
+              minimumDate={new Date()}
+              maximumDate={
+                new Date(new Date().setFullYear(new Date().getFullYear() + 10))
+              }
               onChange={(
                 event: DateTimePickerEvent,
                 selectedDate: Date | undefined,
               ) => {
-                setToggleDatePicker(false);
+                setToggleExpiryDatePicker(false);
                 if (selectedDate) {
-                  setDateOfBirth(selectedDate.toDateString());
+                  const formattedDate = dayjs(selectedDate).format(
+                    'YYYY-MM-DD[T]HH:mm:ss',
+                  );
+                  dispatch(
+                    setPassportExpiryDate({
+                      index: userIndx,
+                      value: formattedDate,
+                    }),
+                  );
                 }
               }}
             />
           )}
         </View>
-        <View style={styles.titleField}>
+        <View style={styles.passportField}>
           <Text style={styles.label}>Issued Country</Text>
           <TouchableOpacity
             style={styles.input}
             onPress={() => {
-              setCountryModal(true);
+              setPassportIssuedCountryModal(true);
             }}>
             <Text style={{color: '#666'}}>
-              {nationality.name ? nationality.name : `Select Your Country`}
+              {issuedCountry ? issuedCountry : `Select Your Country`}
             </Text>
           </TouchableOpacity>
         </View>
@@ -204,10 +267,19 @@ const BookingForm = () => {
       <CountryModal
         visible={countryModal}
         onSelectCountry={e => {
-          setNationality(e);
+          dispatch(setPassengerNationality({index: userIndx, value: e.code}));
+          dispatch(setNationalID({index: userIndx, value: e.code}));
           setCountryModal(false);
         }}
         closeModal={() => setCountryModal(false)}
+      />
+      <CountryModal
+        visible={passportIssuedCountryModal}
+        onSelectCountry={e => {
+          dispatch(setPassportCountry({index: userIndx, value: e.code}));
+          setPassportIssuedCountryModal(false);
+        }}
+        closeModal={() => setPassportIssuedCountryModal(false)}
       />
     </>
   );
@@ -297,6 +369,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 16,
     width: '100%',
+  },
+  passportField: {
+    width: '48%',
   },
 });
 
