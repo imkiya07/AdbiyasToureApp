@@ -23,7 +23,9 @@ const TravelerAccordion: FC = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const itemLayouts = useRef<{[key: string]: number}>({});
 
-  const openStates = items.map(() => useSharedValue(false));
+  const openStates = items.map((_, index) =>
+    useSharedValue(index === 0 ? true : false),
+  );
 
   const toggleItem = (index: number) => {
     // const isOpening = !openStates[index].value;
@@ -76,7 +78,7 @@ const TravelerAccordion: FC = () => {
                   style={[styles.accordionButton, borderRadiusStyle]}
                   onPress={() => {
                     toggleItem(index);
-                    console.warn('Air Traveler: ', index, 'details: ', item);
+                    console.debug('Air Traveler: ', index, 'details: ', item);
                   }}>
                   <Text style={styles.btnText}>
                     Passenger {index + 1 < 10 ? '0' + (index + 1) : index + 1}:

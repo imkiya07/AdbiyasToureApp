@@ -30,7 +30,6 @@ import dayjs from 'dayjs';
 const BookingForm = ({userIndx}: {userIndx: number}) => {
   const {PassengerName, Passport, PassengerNationality, Gender, DateOfBirth} =
     useAppSelector(state => state.bookingSlice.airTravelers[userIndx]);
-  console.log('🚀 ~ BookingForm ~ DateOfBirth:', DateOfBirth);
   const {PassengerTitle, PassengerFirstName, PassengerLastName} = PassengerName;
   const {PassportNumber, ExpiryDate, Country} = Passport;
 
@@ -141,10 +140,14 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
             onPress={() => setToggleDobPicker(true)}>
             <TextInput
               style={styles.input}
-              placeholder="Select Date of birth"
+              placeholder="Select Date of Birth"
               placeholderTextColor="#666"
               editable={false}
-              value={dayjs(DateOfBirth).format('ddd MMM DD[,] YYYY')}
+              value={
+                DateOfBirth
+                  ? dayjs(DateOfBirth).format('ddd MMM DD[,] YYYY')
+                  : ''
+              }
             />
           </TouchableOpacity>
           {toggleDobPicker && (
@@ -211,7 +214,9 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
               placeholder="Select Date"
               placeholderTextColor="#666"
               editable={false}
-              value={dayjs(ExpiryDate).format('ddd MMM DD[,] YYYY')}
+              value={
+                ExpiryDate ? dayjs(ExpiryDate).format('ddd MMM DD[,] YYYY') : ''
+              }
             />
           </TouchableOpacity>
           {toggleExpiryDatePicker && (

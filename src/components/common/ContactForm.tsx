@@ -1,19 +1,30 @@
 import {View, Text, TextInput, StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
   PhoneNumberInput,
   getCountryByCode,
 } from 'react-native-paper-phone-number-input';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {
+  setCountryCode,
+  setEmail,
+  setPhoneNumber,
+  setPostCode,
+} from '@store/slice/bookingSlice';
 
-const ContactForm = () => {
+const ContactForm: FC = () => {
+  const {Email, PostCode} = useAppSelector(state => state.bookingSlice);
+  const dispatch = useAppDispatch();
+
   // States to manage input data
-  const [email, setEmail] = useState('');
-  const [postCode, setPostCode] = useState('');
-  const [countryCode, setCountryCode] = useState<string>('BD');
-  const [phoneNumber, setPhoneNumber] = useState<string>();
 
-  const {name, flag, dialCode} = getCountryByCode(countryCode);
-  console.log('🚀 ~ ContactForm ~ dialCode:', dialCode);
+  const [isoCode, setIsoCode] = useState<string>('BD');
+  const [phoneState, setPhoneState] = useState<string>('');
+
+  const {dialCode} = getCountryByCode(isoCode);
+
+  dispatch(setCountryCode(dialCode));
+  dispatch(setPhoneNumber(phoneState));
 
   return (
     <View style={styles.formContainer}>
@@ -24,8 +35,8 @@ const ContactForm = () => {
         <TextInput
           style={styles.input}
           placeholder="Enter email address"
-          value={email}
-          onChangeText={setEmail}
+          value={Email}
+          onChangeText={e => dispatch(setEmail(e))}
           keyboardType="email-address"
         />
       </View>
@@ -34,18 +45,18 @@ const ContactForm = () => {
         <TextInput
           style={styles.input}
           placeholder="Enter Post Code"
-          value={postCode}
-          onChangeText={setPostCode}
+          value={PostCode}
+          onChangeText={e => dispatch(setPostCode(e))}
         />
       </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Phone Number</Text>
         <PhoneNumberInput
-          code={countryCode}
-          setCode={setCountryCode}
-          phoneNumber={phoneNumber}
-          setPhoneNumber={setPhoneNumber}
+          code={isoCode}
+          setCode={setIsoCode}
+          phoneNumber={phoneState}
+          setPhoneNumber={setPhoneState}
           // includeCountries={includeCountries}
           style={styles.phoneInput}
         />

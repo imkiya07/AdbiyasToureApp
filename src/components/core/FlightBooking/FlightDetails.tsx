@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import {useAppSelector} from '@utils/hooks';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {tFlightResult} from '@utils/types';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
@@ -12,8 +12,10 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import dayjs from 'dayjs';
+import {generatePassengerForm} from '@store/slice/bookingSlice';
 
 const FlightDetailsScreen = ({route}: {route: any}) => {
+  const dispatch = useAppDispatch();
   const navigation = useNavigation(); // Hook for navigation
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
@@ -41,11 +43,20 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
 
   useEffect(() => {
     fetchFlightDetails();
-    const intervalFetch = setInterval(() => {
-      fetchFlightDetails();
-    }, 30000);
-    return () => {
+    const intervalFetch = setInterval(
+      () => {
+        fetchFlightDetails();
+      },
+      1000 * 60 * 30,
+    );
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.debug('Revalidation Stop on screen change!');
       clearInterval(intervalFetch);
+    });
+    return () => {
+      console.debug('Revalidation Stop on unMount!');
+      clearInterval(intervalFetch);
+      unsubscribe();
     };
   }, []);
 
@@ -114,7 +125,10 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
       {/* Confirm Button */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('TravellerDetailsScreen')}>
+        onPress={() => {
+          dispatch(generatePassengerForm({adults, children, infants}));
+          navigation.navigate('TravellerDetailsScreen');
+        }}>
         <Text style={styles.buttonText}>Confirm Booking</Text>
       </TouchableOpacity>
     </ScrollView>

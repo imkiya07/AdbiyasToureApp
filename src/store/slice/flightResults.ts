@@ -24,6 +24,7 @@ const flightSearchSlice = createSlice({
       state.error = action.payload;
     },
     resetSearchResults: state => {
+      console.debug('Resetting search results');
       state.searchResults = [];
       state.loading = false;
       state.error = null;

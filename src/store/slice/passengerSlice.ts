@@ -27,7 +27,10 @@ const passengerSlice = createSlice({
     updateCabinClass: (state, action: PayloadAction<tClassOptions>) => {
       state.cabinClass = action.payload;
     },
-    resetPassengerState: () => initialState,
+    resetPassengerState: () => {
+      console.debug('Resetting passenger state');
+      return initialState;
+    },
   },
 });
 

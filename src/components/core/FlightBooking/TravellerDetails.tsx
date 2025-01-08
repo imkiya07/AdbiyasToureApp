@@ -1,6 +1,6 @@
 import TravelerAccordion from '@components/common/Accordions';
 import ContactForm from '@components/common/ContactForm';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {resetBookingForm} from '@store/slice/bookingSlice';
 import {resetFlightState} from '@store/slice/flightDestinations';
 import {resetSearchResults} from '@store/slice/flightResults';
@@ -8,7 +8,7 @@ import {resetTripState} from '@store/slice/flightType';
 import {resetPassengerState} from '@store/slice/passengerSlice';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import axios from 'axios';
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -17,14 +17,15 @@ import {
   View,
   SafeAreaView,
   Alert,
+  BackHandler,
 } from 'react-native';
 
 const TravellerDetailsScreen: FC = () => {
   const formBody = useAppSelector(state => state.bookingSlice);
   const {airTravelers, CountryCode, PhoneNumber, Email, PostCode} = formBody;
+  const dispatch = useAppDispatch();
   const [validForm, setValidForm] = useState(false);
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const validContactDetails =
@@ -53,15 +54,25 @@ const TravellerDetailsScreen: FC = () => {
       setValidForm(true);
     }
 
-    const unsubscribe = navigation.addListener('focus', () => {
-      dispatch(resetBookingForm());
-    });
-
     return () => {
       setValidForm(false);
-      unsubscribe();
     };
   }, [airTravelers, CountryCode, PhoneNumber, Email, PostCode]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        dispatch(resetBookingForm());
+        return false; // Return false to allow the default back action
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [dispatch]),
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,7 +89,12 @@ const TravellerDetailsScreen: FC = () => {
           onPress={async () => {
             if (validForm) {
               // Integrate with your booking API here
-              console.debug('🚀 ~ searchFlight ~ payload', formBody);
+              console.debug(
+                '🚀 ~ searchFlight ~ payload',
+                formBody,
+                formBody.airTravelers[0].PassengerName,
+                formBody.airTravelers[0].Passport,
+              );
               try {
                 const response = await axios.post(
                   'https://flightkiya.cosmelic.com/api/b2c/booking',
@@ -106,8 +122,9 @@ const TravellerDetailsScreen: FC = () => {
               } catch (error: any) {
                 Alert.alert(
                   'Sorry!',
-                  `Something went wrong while processing your booking request. \n Please Try Again Later! \n\n Thank you!`,
+                  `Something went wrong while processing your booking request. \nPlease Try Again Later! \n\nThank you!`,
                 );
+                console.warn('🚀 ~ searchFlight ~ error', error);
               }
             } else {
               Alert.alert(

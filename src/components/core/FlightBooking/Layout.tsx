@@ -212,7 +212,7 @@ const LayoutScreen = () => {
               colors={['#009FFD', '#2A2A72']}>
               <TouchableOpacity onPress={() => searchFlight()}>
                 {loading ? (
-                  <ActivityIndicator size="large" color="#ffffff" />
+                  <ActivityIndicator size="small" color="#ffffff" />
                 ) : (
                   <Text style={styles.searchButtonText}>SEARCH FLIGHTS</Text>
                 )}

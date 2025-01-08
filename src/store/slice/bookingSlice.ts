@@ -177,7 +177,10 @@ const bookingSlice = createSlice({
       const {index, value} = action.payload;
       state.airTravelers[index].NationalID = value;
     },
-    resetBookingForm: () => initialState,
+    resetBookingForm: () => {
+      console.debug('Resetting booking form');
+      return initialState;
+    },
   },
 });
 

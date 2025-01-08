@@ -6,7 +6,7 @@ import {
   View,
   TextInput,
 } from 'react-native';
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import PassengerCounter from '@components/core/FlightBooking/PassengerCounter';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {
@@ -17,7 +17,8 @@ import {
 } from '@store/slice/passengerSlice';
 import {classOptions} from '@components/core/FlightBooking/ShowCard';
 import {tClassOptions} from '@utils/types';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {BackHandler} from 'react-native';
 
 const PassengerModal: FC = () => {
   const {cabinClass, infants, children, adults} = useAppSelector(
@@ -27,18 +28,23 @@ const PassengerModal: FC = () => {
   const [showPassengerModal, setShowPassengerModal] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
-  const navigation = useNavigation();
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        dispatch(updateAdults(1));
+        dispatch(updateChildren(0));
+        dispatch(updateInfants(0));
+        dispatch(updateCabinClass(classOptions[0]));
+        return false; // Return false to allow the default back action
+      };
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      dispatch(updateAdults(1));
-      dispatch(updateChildren(0));
-      dispatch(updateInfants(0));
-      dispatch(updateCabinClass(classOptions[0]));
-    });
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-    return unsubscribe;
-  }, [navigation]);
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [dispatch]),
+  );
 
   return (
     <>

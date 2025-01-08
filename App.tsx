@@ -15,6 +15,7 @@ import {TouchableOpacity} from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {resetFlightState} from '@store/slice/flightDestinations';
 import {PaperProvider} from 'react-native-paper';
+import {resetBookingForm} from '@store/slice/bookingSlice';
 
 const Stack = createNativeStackNavigator();
 
@@ -84,10 +85,19 @@ const App: FC = () => {
             <Stack.Screen
               name="TravellerDetailsScreen"
               component={TravellerDetailsScreen}
-              options={{
-                title: 'Traveller Details',
+              options={({navigation}) => ({
+                title: ' Traveller Details',
                 headerShown: true, // Set to false if you want to hide the header
-              }}
+                headerLeft: () => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      dispatch(resetBookingForm());
+                      navigation.goBack();
+                    }}>
+                    <FontAwesome6 name="arrow-left" size={24} color="#000000" />
+                  </TouchableOpacity>
+                ),
+              })}
             />
 
             <Stack.Screen

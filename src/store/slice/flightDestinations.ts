@@ -52,7 +52,10 @@ const flightDestinations = createSlice({
     addDestination: state => {
       state.push({...defaultState});
     },
-    resetFlightState: () => initialState,
+    resetFlightState: () => {
+      console.debug('Resetting flight state');
+      return initialState;
+    },
   },
   extraReducers: builder => {
     builder.addCase(
