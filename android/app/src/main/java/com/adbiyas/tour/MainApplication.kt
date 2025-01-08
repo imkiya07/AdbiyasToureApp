@@ -1,4 +1,4 @@
-package com.adbiyas.flightkiya
+package com.adbiyas.tour
 
 import android.app.Application
 import com.facebook.react.PackageList
