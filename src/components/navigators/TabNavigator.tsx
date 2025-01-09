@@ -7,8 +7,9 @@ import ChatScreen from '@screens/Chat';
 import AccountScreen from '@screens/Account';
 import TabIcon from '@components/common/TabIcon';
 import {icons} from '@constants/index';
+import {tBottomTabParamList} from '@utils/types';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<tBottomTabParamList>();
 const TabNavigator = () => {
   return (
     <Tab.Navigator

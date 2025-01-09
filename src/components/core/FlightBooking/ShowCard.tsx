@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,11 @@ import {
   FlatList,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome6';
-import {useNavigation} from '@react-navigation/native';
+import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
 import {images} from '../../../constants/index';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {updateCabinClass} from '@store/slice/passengerSlice';
-import {tClassOptions} from '@utils/types';
+import {tClassOptions, tFlightShowProps} from '@utils/types';
 import {generatePassengerForm} from '@store/slice/bookingSlice';
 export const classOptions: tClassOptions[] = [
   {
@@ -35,7 +34,7 @@ export const classOptions: tClassOptions[] = [
     value: 'S',
   },
 ];
-const FlightShowPage = () => {
+const FlightShowPage: FC<tFlightShowProps> = ({navigation}) => {
   const {
     cabinClass: selectedClass,
     adults,
@@ -48,7 +47,6 @@ const FlightShowPage = () => {
   );
   const [modalVisible, setModalVisible] = useState(false);
 
-  const navigation = useNavigation(); // Hook for navigation
   const dispatch = useAppDispatch(); // Hook for dispatching actions
   const passengerCount = infants + children + adults;
   return (
@@ -58,7 +56,7 @@ const FlightShowPage = () => {
           <Text style={styles.routeText}>
             {tripStates[0].OriginLocationCode}---
           </Text>
-          <FontAwesome name="plane-departure" size={24} color="#ffffff" />
+          <FontAwesome6Icon name="plane-departure" size={24} color="#ffffff" />
           <Text style={styles.routeText}>
             ---{tripStates[tripStates.length - 1].DestinationLocationCode}
           </Text>
@@ -68,13 +66,13 @@ const FlightShowPage = () => {
         <View style={styles.infoContainer}>
           <View style={styles.datePassenger}>
             <TouchableOpacity style={styles.infoButton}>
-              <FontAwesome name="calendar" size={16} color="#007AFF" />
+              <FontAwesome6Icon name="calendar" size={16} color="#007AFF" />
               <Text style={styles.infoButtonText}>
                 {tripStates[0].DepartureDateTime}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.infoButton}>
-              <FontAwesome name="user" size={16} color="#007AFF" />
+              <FontAwesome6Icon name="user" size={16} color="#007AFF" />
               <Text style={styles.infoButtonText}>
                 {passengerCount} passenger
                 {passengerCount > 1 ? 's' : ''}
@@ -105,7 +103,11 @@ const FlightShowPage = () => {
                   flight.segments[0].ArrivalDateTime,
                 ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
               </Text>
-              <FontAwesome name="plane-departure" size={16} color="#007AFF" />
+              <FontAwesome6Icon
+                name="plane-departure"
+                size={16}
+                color="#007AFF"
+              />
               <Text style={styles.timeText}>
                 {new Date(
                   flight.segments[0].DepartureDateTime,
@@ -124,7 +126,7 @@ const FlightShowPage = () => {
                 onPress={() => {
                   /* Generate Traveler Form Array */
                   dispatch(generatePassengerForm({adults, children, infants}));
-                  navigation.navigate('TravellerDetailsScreen');
+                  navigation.navigate('TravelerDetailsScreen');
                 }}
                 style={styles.bookNowButton}>
                 <Text style={styles.bookNowText}>Book Now</Text>

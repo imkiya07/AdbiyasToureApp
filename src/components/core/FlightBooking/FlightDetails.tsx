@@ -1,8 +1,8 @@
 import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
-import {tFlightResult} from '@utils/types';
+import {tFlightDetailsProps, tFlightResult} from '@utils/types';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -14,9 +14,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import dayjs from 'dayjs';
 import {generatePassengerForm} from '@store/slice/bookingSlice';
 
-const FlightDetailsScreen = ({route}: {route: any}) => {
-  const dispatch = useAppDispatch();
-  const navigation = useNavigation(); // Hook for navigation
+const FlightDetailsScreen: FC<tFlightDetailsProps> = ({route, navigation}) => {
+  const dispatch = useAppDispatch(); // Hook for navigation
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
   );
@@ -127,7 +126,7 @@ const FlightDetailsScreen = ({route}: {route: any}) => {
         style={styles.button}
         onPress={() => {
           dispatch(generatePassengerForm({adults, children, infants}));
-          navigation.navigate('TravellerDetailsScreen');
+          navigation.navigate('TravelerDetailsScreen');
         }}>
         <Text style={styles.buttonText}>Confirm Booking</Text>
       </TouchableOpacity>

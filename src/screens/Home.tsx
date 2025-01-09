@@ -10,17 +10,9 @@ import {
 } from 'react-native';
 import {icons} from '../constants'; // Ensure icons are correctly imported
 import {useNavigation} from '@react-navigation/native';
-import {useAppDispatch, useAppSelector} from '@utils/hooks';
-import {generatePassengerForm} from '@store/slice/bookingSlice';
 
 const App = () => {
   const navigation = useNavigation();
-
-  const {adults, children, infants} = useAppSelector(
-    state => state.passengerSlice,
-  );
-
-  const dispatch = useAppDispatch();
 
   return (
     <ScrollView>
@@ -51,7 +43,7 @@ const App = () => {
             <TouchableOpacity
               onPress={() => {
                 // dispatch(generatePassengerForm({adults, children, infants}));
-                // navigation.navigate('TravellerDetailsScreen');
+                // navigation.navigate('TravelerDetailsScreen');
 
                 navigation.navigate('LayoutScreen');
               }}

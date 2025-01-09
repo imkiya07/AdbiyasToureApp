@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LayoutScreen from '@components/core/FlightBooking/Layout';
 import FlightShow from '@components/core/FlightBooking/ShowCard';
 import FlightDetails from '@components/core/FlightBooking/FlightDetails';
-import TravellerDetailsScreen from '@components/core/FlightBooking/TravellerDetails';
+import TravelerDetailsScreen from '@components/core/FlightBooking/TravellerDetails';
 import LayoutHotel from '@components/core/HotelBooking/HotelBookLayout';
 import LayoutTour from '@components/core/TourBooking/TourBookLayout.';
 import LayoutVisa from '@components/core/VisaBooking/VisaLayout';
@@ -16,8 +16,9 @@ import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {resetFlightState} from '@store/slice/flightDestinations';
 import {PaperProvider} from 'react-native-paper';
 import {resetBookingForm} from '@store/slice/bookingSlice';
+import {tRootStackParamList} from '@utils/types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<tRootStackParamList>();
 
 // Main App component with Stack and Tab navigation
 const App: FC = () => {
@@ -83,8 +84,8 @@ const App: FC = () => {
             />
 
             <Stack.Screen
-              name="TravellerDetailsScreen"
-              component={TravellerDetailsScreen}
+              name="TravelerDetailsScreen"
+              component={TravelerDetailsScreen}
               options={({navigation}) => ({
                 title: ' Traveller Details',
                 headerShown: true, // Set to false if you want to hide the header

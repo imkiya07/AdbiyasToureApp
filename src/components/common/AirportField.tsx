@@ -7,7 +7,7 @@ import {
   Text,
 } from 'react-native';
 import React, {FC, useEffect, useState} from 'react';
-import axios from 'axios';
+import airports from '@constants/airports.json';
 import {tAirport, tFlightForm} from '@utils/types';
 import {useNavigation} from '@react-navigation/native';
 
@@ -16,7 +16,6 @@ const AirportField: FC<tFlightForm> = ({
   selectedAirportCb,
   title,
 }) => {
-  let timeoutId: NodeJS.Timeout;
   const [searchedAirport, setSearchedAirport] = useState<tAirport[]>([]);
   const [inputValue, setInputValue] = useState<string>(selectedAirport);
   const [isBlank, setIsBlank] = useState<boolean>(true);
@@ -47,7 +46,6 @@ const AirportField: FC<tFlightForm> = ({
               country: '',
               name: '',
             });
-            clearTimeout(timeoutId);
             setIsBlank(true);
             setSearchedAirport([]);
           }
@@ -56,25 +54,24 @@ const AirportField: FC<tFlightForm> = ({
           setInputValue(value);
 
           // If there is a timeoutId or the input is empty, clear the timeout
-          if (timeoutId || value === '') {
-            clearTimeout(timeoutId);
-          }
 
           // If the input is not empty and there is no selected airport, fetch the airports
           if (isBlank && selectedAirport === '') {
             // console.debug('fetching', value);
-            timeoutId = setTimeout(async () => {
-              try {
-                const response = await axios.get(
-                  `https://flightkiya.cosmelic.com/api/common/airports?size=25&search=${value}`,
-                );
-                const results = response.data.data;
-                // console.log('🚀 ~ timeoutId=setTimeout ~ results:', results);
-                setSearchedAirport(results);
-              } catch (error) {
-                console.warn('Error while fetching airports', error);
-              }
-            }, 1500);
+
+            if (value.length > 0) {
+              const searchTxt = value.trim().toLowerCase();
+              const results = airports.filter(
+                ({name, city, country, iata}) =>
+                  name.toLowerCase().includes(searchTxt) ||
+                  city.toLowerCase().includes(searchTxt) ||
+                  iata.toLowerCase().includes(searchTxt) ||
+                  country.toLowerCase().includes(searchTxt),
+              );
+              setSearchedAirport(results);
+            } else {
+              setSearchedAirport([]);
+            }
           }
         }}
       />

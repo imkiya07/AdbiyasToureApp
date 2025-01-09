@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {FC, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {images} from '@constants/index';
-import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {toggleTripType} from '@store/slice/flightType';
 import FlightForm from '@components/layout/FlightForm';
@@ -24,19 +23,9 @@ import {
   searchFlightsStart,
   searchFlightsSuccess,
 } from '@store/slice/flightResults';
+import {tLayoutScreenProps} from '@utils/types';
 
-/* const validDepartureDate = new Date('Tue Dec 31 2024');
-departureDate = 2024-12-09
-
-new Date(departureDate) = Mon Dec 09 2024 06:00:00 GMT+0600 (Bangladesh Standard Time)
-
-const departureDateTime =
-  validDepartureDate instanceof Date && !isNaN(validDepartureDate)
-    ? `${validDepartureDate.toISOString().split('T')[0]}T00:00:00`
-    : ''; */
-
-const LayoutScreen = () => {
-  const navigation = useNavigation();
+const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   const formView = useRef<ScrollView>(null);
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
@@ -126,7 +115,7 @@ const LayoutScreen = () => {
   };
 
   const handleSearchError = (error: any) => {
-    console.warn('🚀 ~ searchFlight ~ error', error);
+    console.warn('🚀 ~ searchFlight ~ error', error.toString());
     if (axios.isAxiosError(error)) {
       if (error.response) {
         // Server responded with a status other than 2xx
@@ -135,7 +124,14 @@ const LayoutScreen = () => {
       } else if (error.request) {
         // Request was made but no response received
         dispatch(searchFlightsFailure('No response received from server'));
-        Alert.alert('Error', 'No response received from server');
+        if (error.toString() === 'AxiosError: Network Error') {
+          Alert.alert(
+            'Error',
+            'It Appear you have Internet issue! \nPlease Check your Internet and Try Again.\n Thank You!',
+          );
+        } else {
+          Alert.alert('Error', 'No response received from server');
+        }
       } else {
         // Something happened in setting up the request
         dispatch(searchFlightsFailure(error.message));

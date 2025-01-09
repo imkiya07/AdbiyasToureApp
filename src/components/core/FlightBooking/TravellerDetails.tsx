@@ -1,12 +1,13 @@
 import TravelerAccordion from '@components/common/Accordions';
 import ContactForm from '@components/common/ContactForm';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {resetBookingForm} from '@store/slice/bookingSlice';
 import {resetFlightState} from '@store/slice/flightDestinations';
 import {resetSearchResults} from '@store/slice/flightResults';
 import {resetTripState} from '@store/slice/flightType';
 import {resetPassengerState} from '@store/slice/passengerSlice';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {tMainTabsProps} from '@utils/types';
 import axios from 'axios';
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {
@@ -20,12 +21,11 @@ import {
   BackHandler,
 } from 'react-native';
 
-const TravellerDetailsScreen: FC = () => {
+const TravelerDetailsScreen: FC<tMainTabsProps> = ({navigation}) => {
   const formBody = useAppSelector(state => state.bookingSlice);
   const {airTravelers, CountryCode, PhoneNumber, Email, PostCode} = formBody;
   const dispatch = useAppDispatch();
   const [validForm, setValidForm] = useState(false);
-  const navigation = useNavigation();
 
   useEffect(() => {
     const validContactDetails =
@@ -186,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TravellerDetailsScreen;
+export default TravelerDetailsScreen;

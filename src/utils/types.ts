@@ -1,6 +1,76 @@
+import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {SharedValue} from 'react-native-reanimated';
 
 export type tPassengerType = 'ADT' | 'CHD' | 'INF';
+
+export type tRootStackParamList = {
+  MainTabs: undefined;
+  LayoutScreen: undefined;
+  FlightDetails: tFlightResult;
+  FlightShow: undefined;
+  TravelerDetailsScreen: undefined;
+  LayoutHotel: undefined;
+  LayoutTour: undefined;
+  LayoutVisa: undefined;
+};
+
+export type tBottomTabParamList = {
+  Home: undefined;
+  Deals: undefined;
+  Chat: undefined;
+  Account: undefined;
+};
+
+export type tFlightDetailsProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'FlightDetails'
+>;
+export type tMainTabsProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'MainTabs'
+>;
+
+export type tLayoutScreenProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'LayoutScreen'
+>;
+
+export type tFlightShowProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'FlightShow'
+>;
+
+export type tTravelerDetailsScreenProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'TravelerDetailsScreen'
+>;
+
+export type tLayoutHotelProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'LayoutHotel'
+>;
+
+export type tLayoutTourProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'LayoutTour'
+>;
+
+export type tLayoutVisaProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'LayoutVisa'
+>;
+
+export type tHomeProps = BottomTabScreenProps<tBottomTabParamList, 'Home'>;
+
+export type tDealsProps = BottomTabScreenProps<tBottomTabParamList, 'Deals'>;
+
+export type tChatProps = BottomTabScreenProps<tBottomTabParamList, 'Chat'>;
+
+export type tAccountProps = BottomTabScreenProps<
+  tBottomTabParamList,
+  'Account'
+>;
 
 type tSegment = {
   legIndicator: string;
@@ -147,6 +217,8 @@ export type tAirport = {
   iata: string;
   id: number;
   name: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type tTravelerState = {
