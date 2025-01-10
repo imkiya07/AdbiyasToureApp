@@ -1,77 +1,150 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Modal, FlatList } from 'react-native';
+import React, {FC, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import {images} from '../../../constants/index'
-const FlightShowPage = () => {
-  const [selectedClass, setSelectedClass] = useState('Economy');
+import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
+import {images} from '../../../constants/index';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {updateCabinClass} from '@store/slice/passengerSlice';
+import {tClassOptions, tFlightShowProps} from '@utils/types';
+import {generatePassengerForm} from '@store/slice/bookingSlice';
+export const classOptions: tClassOptions[] = [
+  {
+    label: 'Economy',
+    value: 'Y',
+  },
+  {
+    label: 'Business',
+    value: 'C',
+  },
+  {
+    label: 'First Class',
+    value: 'F',
+  },
+  {
+    label: 'Premium Economy',
+    value: 'S',
+  },
+];
+const FlightShowPage: FC<tFlightShowProps> = ({navigation}) => {
+  const {
+    cabinClass: selectedClass,
+    adults,
+    children,
+    infants,
+  } = useAppSelector(state => state.passengerSlice);
+  const tripStates = useAppSelector(state => state.flightDestinations);
+  const flightSearchResults = useAppSelector(
+    state => state.flightSearchSlice.searchResults,
+  );
   const [modalVisible, setModalVisible] = useState(false);
-  const flightCards = Array.from({ length: 10 });
-  const classOptions = ['Economy', 'Business Class', 'First Class'];
-  
-  const navigation = useNavigation(); // Hook for navigation
 
+  const dispatch = useAppDispatch(); // Hook for dispatching actions
+  const passengerCount = infants + children + adults;
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <LinearGradient colors={['#0b2c5f', '#0b2c5f']} style={styles.background}>
-        
-
         <View style={styles.flightRoute}>
-          <Text style={styles.routeText}>YUL---</Text>
-          <FontAwesome5 name="plane" size={24} color="#000" />
-          <Text style={styles.routeText}>---NRT</Text>
+          <Text style={styles.routeText}>
+            {tripStates[0].OriginLocationCode}---
+          </Text>
+          <FontAwesome6Icon name="plane-departure" size={24} color="#ffffff" />
+          <Text style={styles.routeText}>
+            ---{tripStates[tripStates.length - 1].DestinationLocationCode}
+          </Text>
         </View>
-        <Image
-          source={images.Earth}
-          style={styles.earthImage}
-        />
+        <Image source={images.Earth} style={styles.earthImage} />
 
         <View style={styles.infoContainer}>
           <View style={styles.datePassenger}>
             <TouchableOpacity style={styles.infoButton}>
-              <FontAwesome name="calendar" size={16} color="#007AFF" />
-              <Text style={styles.infoButtonText}> Dec 16th 2024</Text>
+              <FontAwesome6Icon name="calendar" size={16} color="#007AFF" />
+              <Text style={styles.infoButtonText}>
+                {tripStates[0].DepartureDateTime}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.infoButton}>
-              <FontAwesome name="user" size={16} color="#007AFF" />
-              <Text style={styles.infoButtonText}> 1 passenger</Text>
+              <FontAwesome6Icon name="user" size={16} color="#007AFF" />
+              <Text style={styles.infoButtonText}>
+                {passengerCount} passenger
+                {passengerCount > 1 ? 's' : ''}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.classpic}>
-          <TouchableOpacity style={styles.classPicker} onPress={() => setModalVisible(true)}>
-            <LinearGradient colors={['#007AFF', '#1E90FF']} style={styles.classPickerGradient}>
-              <Text style={styles.selectedClassText}>{selectedClass}</Text>
+          <TouchableOpacity
+            style={styles.classPicker}
+            onPress={() => setModalVisible(true)}>
+            <LinearGradient
+              colors={['#007AFF', '#1E90FF']}
+              style={styles.classPickerGradient}>
+              <Text style={styles.selectedClassText}>
+                {selectedClass.label}
+              </Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
 
-        {flightCards.map((_, index) => (
-          <View key={index} style={styles.flightCard}>
+        {flightSearchResults?.map((flight, index) => (
+          <View key={index + flight.flight_id} style={styles.flightCard}>
             <View style={styles.flightDetails}>
-              <Text style={styles.timeText}>7:05 AM</Text>
-              <FontAwesome5 name="plane" size={16} color="#007AFF" />
-              <Text style={styles.timeText}>8:05 PM</Text>
+              <Text style={styles.timeText}>
+                {new Date(
+                  flight.segments[0].ArrivalDateTime,
+                ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+              </Text>
+              <FontAwesome6Icon
+                name="plane-departure"
+                size={16}
+                color="#007AFF"
+              />
+              <Text style={styles.timeText}>
+                {new Date(
+                  flight.segments[0].DepartureDateTime,
+                ).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+              </Text>
             </View>
             <View style={styles.airlineContainer}>
               <Image
-                source={images.Quater}
+                source={{uri: flight.airline_img}}
                 style={styles.airlineLogo}
               />
-              <Text style={styles.flightText}>Qatar Airways</Text>
+              <Text style={styles.flightText}>{flight.airline_name}</Text>
             </View>
             <View style={styles.actionContainer}>
-              <TouchableOpacity onPress={() => navigation.navigate('TravellerDetailsScreen')}  style={styles.bookNowButton}>
+              <TouchableOpacity
+                onPress={() => {
+                  /* Generate Traveler Form Array */
+                  dispatch(generatePassengerForm({adults, children, infants}));
+                  navigation.navigate('TravelerDetailsScreen');
+                }}
+                style={styles.bookNowButton}>
                 <Text style={styles.bookNowText}>Book Now</Text>
               </TouchableOpacity>
-              <Text style={styles.priceText}>$1400</Text>
+              <Text style={styles.priceText}>
+                {flight.fares.Currency + '' + flight.fares.TotalFare}
+              </Text>
             </View>
             <View style={styles.flightFooter}>
-              <Text style={styles.detailsText}>8 LEFT {selectedClass}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('FlightDetails')}>
+              <Text style={styles.detailsText}>
+                {flight.segments[0].SeatsRemaining
+                  ? flight.segments[0].SeatsRemaining +
+                    ' LEFT ' +
+                    selectedClass.label
+                  : ''}
+              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('FlightDetails', flight)}>
                 <Text style={styles.detailsButton}>Details</Text>
               </TouchableOpacity>
             </View>
@@ -83,30 +156,27 @@ const FlightShowPage = () => {
         transparent={true}
         visible={modalVisible}
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Select Class</Text>
             <FlatList
               data={classOptions}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
+              keyExtractor={item => item.value}
+              renderItem={({item}: {item: tClassOptions}) => (
                 <TouchableOpacity
                   style={styles.modalItem}
                   onPress={() => {
-                    setSelectedClass(item);
+                    dispatch(updateCabinClass(item));
                     setModalVisible(false);
-                  }}
-                >
-                  <Text style={styles.modalItemText}>{item}</Text>
+                  }}>
+                  <Text style={styles.modalItemText}>{item.label}</Text>
                 </TouchableOpacity>
               )}
             />
             <TouchableOpacity
               style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
+              onPress={() => setModalVisible(false)}>
               <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -124,7 +194,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 16,
-    
   },
   header: {
     flexDirection: 'row',
@@ -154,7 +223,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginHorizontal: 8,
-    color:"#FFFF"
+    color: '#FFFF',
   },
   datePassenger: {
     flexDirection: 'row',
@@ -192,7 +261,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
@@ -207,7 +276,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,

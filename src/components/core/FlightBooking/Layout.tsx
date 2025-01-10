@@ -1,256 +1,225 @@
-import React, { useState } from 'react';
+import React, {FC, useEffect, useRef} from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   StyleSheet,
   ImageBackground,
   Image,
-  Modal,
   ScrollView,
+  ActivityIndicator,
+  Alert,
+  Keyboard,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { images } from '@constants/index';
-import { useNavigation } from '@react-navigation/native';
+import {images} from '@constants/index';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {toggleTripType} from '@store/slice/flightType';
+import FlightForm from '@components/layout/FlightForm';
+import {resetFlightState} from '@store/slice/flightDestinations';
+import axios from 'axios';
+import {
+  searchFlightsFailure,
+  searchFlightsStart,
+  searchFlightsSuccess,
+} from '@store/slice/flightResults';
+import {tLayoutScreenProps} from '@utils/types';
 
-const LayoutScreen = () => {
-  const navigation = useNavigation();
-  const [tripType, setTripType] = useState<'OneWay' | 'RoundTrip' | 'MultiCity'>('OneWay');
-  const [departureDate, setDepartureDate] = useState<Date | null>(null);
-  const [returnDate, setReturnDate] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showReturnDatePicker, setShowReturnDatePicker] = useState(false);
-  const [showPassengerModal, setShowPassengerModal] = useState(false);
+const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
+  const formView = useRef<ScrollView>(null);
+  const {cabinClass, infants, children, adults} = useAppSelector(
+    state => state.passengerSlice,
+  );
+  const tripStates = useAppSelector(state => state.flightDestinations);
+  const AirTripType = useAppSelector(state => state.flightTypeSlice.tripType);
+  const {loading} = useAppSelector(state => state.flightSearchSlice);
+  const dispatch = useAppDispatch();
 
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
-  const [infants, setInfants] = useState(0);
-  const [cabinClass, setCabinClass] = useState<'Economy' | 'Premium Economy' | 'Business Class' | 'First Class'>('Economy');
+  const searchFlight = async () => {
+    const PassengerTypeQuantities = getPassengerTypeQuantities();
+    const flightDetails = getFlightDetails(PassengerTypeQuantities);
 
-  const [multiCityList, setMultiCityList] = useState([{ from: '', to: '', date: null }]);
-
-  const handleDepartureDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setDepartureDate(selectedDate);
+    if (!loading) {
+      dispatch(searchFlightsStart());
+      console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
+      try {
+        const response = await axios.post(
+          'https://flightkiya.cosmelic.com/api/b2c/search?filter=true',
+          flightDetails,
+        );
+        // console.log('🚀 ~ searchFlight ~ response:', response);
+        handleSearchResponse(response.data);
+      } catch (error: any) {
+        handleSearchError(error);
+      }
     }
   };
 
-  const handleReturnDateChange = (event: any, selectedDate?: Date) => {
-    setShowReturnDatePicker(false);
-    if (selectedDate) {
-      setReturnDate(selectedDate);
+  const getPassengerTypeQuantities = () => {
+    const quantities = [
+      {
+        Code: 'ADT',
+        Quantity: adults,
+      },
+    ];
+    if (children > 0) {
+      quantities.push({
+        Code: 'CHD',
+        Quantity: children,
+      });
+    }
+    if (infants > 0) {
+      quantities.push({
+        Code: 'INF',
+        Quantity: infants,
+      });
+    }
+    return quantities;
+  };
+
+  const getFlightDetails = (PassengerTypeQuantities: any) => {
+    const destinationArr = tripStates.map(destination => {
+      return {
+        DestinationLocationCode: destination.DestinationLocationCode,
+        DepartureDateTime: destination.DepartureDateTime,
+        OriginLocationCode: destination.OriginLocationCode,
+      };
+    });
+
+    return {
+      CabinPreference: cabinClass.value,
+      OriginDestinationInformations: destinationArr,
+      TravelPreferences: {
+        AirTripType,
+      },
+      PricingSourceType: 'Public',
+      PassengerTypeQuantities,
+      RequestOptions: 'Fifty',
+    };
+  };
+
+  const handleSearchResponse = (data: any) => {
+    if (data.success) {
+      if (data.results === 0) {
+        Alert.alert('No flights found');
+        return;
+      } else {
+        dispatch(searchFlightsSuccess(data.results));
+        navigation.navigate('FlightShow');
+      }
+    } else {
+      dispatch(searchFlightsFailure(data.error.message));
+      Alert.alert(`We're Sorry`, data.error.message);
+      console.warn('🚀 ~ searchFlight ~ error', data.error);
     }
   };
 
-  const handleAddCity = () => {
-    if (multiCityList.length < 3) {
-      setMultiCityList([...multiCityList, { from: '', to: '', date: null }]);
+  const handleSearchError = (error: any) => {
+    console.warn('🚀 ~ searchFlight ~ error', error.toString());
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        dispatch(searchFlightsFailure(error.response.data.message));
+        Alert.alert('Error', error.response.data.message);
+      } else if (error.request) {
+        // Request was made but no response received
+        dispatch(searchFlightsFailure('No response received from server'));
+        if (error.toString() === 'AxiosError: Network Error') {
+          Alert.alert(
+            'Error',
+            'It Appear you have Internet issue! \nPlease Check your Internet and Try Again.\n Thank You!',
+          );
+        } else {
+          Alert.alert('Error', 'No response received from server');
+        }
+      } else {
+        // Something happened in setting up the request
+        dispatch(searchFlightsFailure(error.message));
+        Alert.alert('Error', error.message);
+      }
+    } else {
+      // Handle other errors
+      dispatch(searchFlightsFailure('An unexpected error occurred'));
+      Alert.alert('Error', error.message);
     }
   };
 
-  const handleMultiCityInputChange = (index: number, field: string, value: any) => {
-    const updatedCities = [...multiCityList];
-    updatedCities[index][field] = value;
-    setMultiCityList(updatedCities);
-  };
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      formView?.current?.scrollToEnd({animated: true});
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      formView?.current?.scrollTo({y: 0, animated: true});
+    });
 
-  const handlePassengerChange = (type: string, action: 'increase' | 'decrease') => {
-    if (type === 'adult') {
-      setAdults((prev) => Math.max(1, prev + (action === 'increase' ? 1 : -1)));
-    } else if (type === 'child') {
-      setChildren((prev) => Math.max(0, prev + (action === 'increase' ? 1 : -1)));
-    } else if (type === 'infant') {
-      setInfants((prev) => Math.max(0, prev + (action === 'increase' ? 1 : -1)));
-    }
-  };
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   return (
     <ImageBackground source={images.Cover} style={styles.backgroundImage}>
-      <LinearGradient colors={['#0b2c5f', '#ffffff']} style={styles.gradientContainer}>
-        <ScrollView>
+      <LinearGradient
+        colors={['#0b2c5f', '#ffffff']}
+        style={styles.gradientContainer}>
+        <ScrollView
+          ref={formView}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive">
           <Image source={images.Plane} style={styles.planeImage} />
           <View style={styles.container}>
             <Text style={styles.title}>Book Your Flight</Text>
 
             <View style={styles.buttonGroup}>
               <TouchableOpacity
-                style={[styles.button, tripType === 'OneWay' && styles.selectedButton]}
-                onPress={() => setTripType('OneWay')}
-              >
+                style={[
+                  styles.button,
+                  AirTripType === 'OneWay' && styles.selectedButton,
+                ]}
+                onPress={() => {
+                  dispatch(toggleTripType('OneWay'));
+                  dispatch(resetFlightState());
+                }}>
                 <Text style={styles.buttonText}>One Way</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, tripType === 'RoundTrip' && styles.selectedButton]}
-                onPress={() => setTripType('RoundTrip')}
-              >
+                style={[
+                  styles.button,
+                  AirTripType === 'Return' && styles.selectedButton,
+                ]}
+                onPress={() => dispatch(toggleTripType('Return'))}>
                 <Text style={styles.buttonText}>Round Trip</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, tripType === 'MultiCity' && styles.selectedButton]}
-                onPress={() => setTripType('MultiCity')}
-              >
+                style={[
+                  styles.button,
+                  AirTripType === 'OpenJaw' && styles.selectedButton,
+                ]}
+                onPress={() => dispatch(toggleTripType('OpenJaw'))}>
                 <Text style={styles.buttonText}>Multi City</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.form}>
-              <TextInput style={styles.input} placeholder="From" placeholderTextColor="#666" />
-              <TextInput style={styles.input} placeholder="To" placeholderTextColor="#666" />
 
-              {tripType === 'RoundTrip' && (
-                <>
-                  <TouchableOpacity onPress={() => setShowReturnDatePicker(true)}>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Return Date"
-                      placeholderTextColor="#666"
-                      editable={false}
-                      value={returnDate ? returnDate.toDateString() : ''}
-                    />
-                  </TouchableOpacity>
-                  {showReturnDatePicker && (
-                    <DateTimePicker
-                      value={returnDate || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={handleReturnDateChange}
-                    />
-                  )}
-                </>
-              )}
+            <FlightForm />
 
-              <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Departure"
-                  placeholderTextColor="#666"
-                  editable={false}
-                  value={departureDate ? departureDate.toDateString() : ''}
-                />
-              </TouchableOpacity>
-              {showDatePicker && (
-                <DateTimePicker
-                  value={departureDate || new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleDepartureDateChange}
-                />
-              )}
-
-              <TouchableOpacity onPress={() => setShowPassengerModal(true)}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Passenger"
-                  placeholderTextColor="#666"
-                  editable={false}
-                  value={`${adults} Adult, ${children} Children, ${infants} Infants, ${cabinClass}`}
-                />
-              </TouchableOpacity>
-            </View>
-
-            {tripType === 'MultiCity' &&
-              multiCityList.map((city, index) => (
-                <View key={index} style={styles.multiCityInput}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder={`From City ${index + 1}`}
-                    placeholderTextColor="#666"
-                    value={city.from}
-                    onChangeText={(value) => handleMultiCityInputChange(index, 'from', value)}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    placeholder={`To City ${index + 1}`}
-                    placeholderTextColor="#666"
-                    value={city.to}
-                    onChangeText={(value) => handleMultiCityInputChange(index, 'to', value)}
-                  />
-                  <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Date"
-                      placeholderTextColor="#666"
-                      editable={false}
-                      value={city.date ? city.date.toDateString() : ''}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
-            {tripType === 'MultiCity' && multiCityList.length < 3 && (
-              <TouchableOpacity onPress={handleAddCity}>
-                <Text style={styles.addCityText}>+ Add City</Text>
-              </TouchableOpacity>
-            )}
-
-            <LinearGradient style={styles.searchButton} colors={['#009FFD', '#2A2A72']}>
-              <TouchableOpacity onPress={() => navigation.navigate('FlightShow')}>
-                <Text style={styles.searchButtonText}>SEARCH FLIGHTS</Text>
+            <LinearGradient
+              style={styles.searchButton}
+              colors={['#009FFD', '#2A2A72']}>
+              <TouchableOpacity onPress={() => searchFlight()}>
+                {loading ? (
+                  <ActivityIndicator size="small" color="#ffffff" />
+                ) : (
+                  <Text style={styles.searchButtonText}>SEARCH FLIGHTS</Text>
+                )}
               </TouchableOpacity>
             </LinearGradient>
           </View>
         </ScrollView>
-
-        {/* Passenger Modal */}
-        <Modal visible={showPassengerModal} transparent={true} animationType="slide">
-          <View style={styles.modalBackground}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Select Passengers</Text>
-
-              {/* Adult Section */}
-              <PassengerCounter
-                title="Adults"
-                count={adults}
-                onIncrease={() => handlePassengerChange('adult', 'increase')}
-                onDecrease={() => handlePassengerChange('adult', 'decrease')}
-              />
-
-              {/* Child Section */}
-              <PassengerCounter
-                title="Children"
-                count={children}
-                onIncrease={() => handlePassengerChange('child', 'increase')}
-                onDecrease={() => handlePassengerChange('child', 'decrease')}
-              />
-
-              {/* Infant Section */}
-              <PassengerCounter
-                title="Infants"
-                count={infants}
-                onIncrease={() => handlePassengerChange('infant', 'increase')}
-                onDecrease={() => handlePassengerChange('infant', 'decrease')}
-              />
-
-              <TouchableOpacity
-                style={styles.confirmButton}
-                onPress={() => setShowPassengerModal(false)}
-              >
-                <Text style={styles.confirmButtonText}>CONFIRM</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
       </LinearGradient>
     </ImageBackground>
   );
 };
-
-// Reusable component for passenger counter
-const PassengerCounter = ({ title, count, onIncrease, onDecrease }: any) => (
-  <View style={styles.counterContainer}>
-    <Text style={styles.counterTitle}>{title}</Text>
-    <View style={styles.counterButtonGroup}>
-      <TouchableOpacity onPress={onDecrease} style={styles.counterButton}>
-        <Text style={styles.counterButtonText}>-</Text>
-      </TouchableOpacity>
-      <Text style={styles.counterValue}>{count}</Text>
-      <TouchableOpacity onPress={onIncrease} style={styles.counterButton}>
-        <Text style={styles.counterButtonText}>+</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
 
 const styles = StyleSheet.create({
   backgroundImage: {
@@ -299,26 +268,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
-  form: {
-    marginBottom: 20,
-  },
-  input: {
-    backgroundColor: '#f1f1f1',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-    color: '#333',
-  },
-  multiCityInput: {
-    marginBottom: 10,
-  },
-  addCityText: {
-    color: '#007BFF',
-    textAlign: 'center',
-    marginBottom: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
   searchButton: {
     padding: 15,
     borderRadius: 10,
@@ -329,64 +278,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: 300,
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  confirmButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  counterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  counterTitle: {
-    fontSize: 16,
-  },
-  counterButtonGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  counterButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#007BFF',
-    borderRadius: 20,
-  },
-  counterButtonText: {
-    color: 'white',
-    fontSize: 20,
-  },
-  counterValue: {
-    fontSize: 16,
-    marginHorizontal: 10,
   },
 });
 

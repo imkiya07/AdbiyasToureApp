@@ -15,6 +15,7 @@ module.exports = {
           '@store': './src/store',
         },
       },
-    ],
+    ], ['react-native-paper/babel'],
+    'react-native-reanimated/plugin',
   ],
 };

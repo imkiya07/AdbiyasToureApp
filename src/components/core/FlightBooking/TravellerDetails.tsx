@@ -1,119 +1,157 @@
-import React, { FC, useState } from 'react';
+import TravelerAccordion from '@components/common/Accordions';
+import ContactForm from '@components/common/ContactForm';
+import {useFocusEffect} from '@react-navigation/native';
+import {resetBookingForm} from '@store/slice/bookingSlice';
+import {resetFlightState} from '@store/slice/flightDestinations';
+import {resetSearchResults} from '@store/slice/flightResults';
+import {resetTripState} from '@store/slice/flightType';
+import {resetPassengerState} from '@store/slice/passengerSlice';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {tMainTabsProps} from '@utils/types';
+import axios from 'axios';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {
-  View,
   Text,
   StyleSheet,
   ScrollView,
-  TextInput,
   TouchableOpacity,
-  Platform,
+  View,
+  SafeAreaView,
+  Alert,
+  BackHandler,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const TravellerDetailsScreen: FC = () => {
-  // States to manage input data
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [passportNumber, setPassportNumber] = useState('');
+const TravelerDetailsScreen: FC<tMainTabsProps> = ({navigation}) => {
+  const formBody = useAppSelector(state => state.bookingSlice);
+  const {airTravelers, CountryCode, PhoneNumber, Email, PostCode} = formBody;
+  const dispatch = useAppDispatch();
+  const [validForm, setValidForm] = useState(false);
+
+  useEffect(() => {
+    const validContactDetails =
+      CountryCode.length > 0 &&
+      PhoneNumber.length > 0 &&
+      Email.length > 0 &&
+      PostCode.length > 0;
+
+    const validTravelers =
+      airTravelers.length > 0 &&
+      airTravelers.every(traveler => {
+        const {PassengerName, DateOfBirth, Passport, PassengerNationality} =
+          traveler;
+        return (
+          PassengerName.PassengerFirstName.length > 0 &&
+          PassengerName.PassengerLastName.length > 0 &&
+          DateOfBirth.length > 0 &&
+          Passport.PassportNumber.length > 0 &&
+          Passport.ExpiryDate.length > 0 &&
+          Passport.Country.length > 0 &&
+          PassengerNationality.length > 0
+        );
+      });
+
+    if (validContactDetails && validTravelers) {
+      setValidForm(true);
+    }
+
+    return () => {
+      setValidForm(false);
+    };
+  }, [airTravelers, CountryCode, PhoneNumber, Email, PostCode]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        dispatch(resetBookingForm());
+        return false; // Return false to allow the default back action
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [dispatch]),
+  );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.headerText}>Traveller Details</Text>
-
-      {/* Personal Information Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Personal Information</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>First Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter first name"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Last Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter last name"
-            value={lastName}
-            onChangeText={setLastName}
-          />
-        </View>
-      </View>
-
-      {/* Contact Information Section */}
-      <View style={styles.section}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
         <Text style={styles.sectionTitle}>Contact Information</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email Address</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter email address"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Phone Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter phone number"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
-          />
-        </View>
-      </View>
-
-      {/* Passport Information Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Passport Information</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Passport Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter passport number"
-            value={passportNumber}
-            onChangeText={setPassportNumber}
-          />
-        </View>
-      </View>
+        <ContactForm />
+        <Text style={styles.sectionTitle}>Passenger Information</Text>
+        <TravelerAccordion />
+      </ScrollView>
 
       {/* Confirm Button */}
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Proceed to Booking</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      <View style={styles.buttonWrapper}>
+        <TouchableOpacity
+          onPress={async () => {
+            if (validForm) {
+              // Integrate with your booking API here
+              console.debug(
+                '🚀 ~ searchFlight ~ payload',
+                formBody,
+                formBody.airTravelers[0].PassengerName,
+                formBody.airTravelers[0].Passport,
+              );
+              try {
+                const response = await axios.post(
+                  'https://flightkiya.cosmelic.com/api/b2c/booking',
+                  formBody,
+                );
+                // console.log('🚀 ~ searchFlight ~ response:', response);
+                Alert.alert(
+                  'Thank You!',
+                  `Your Booking Request was successfully received. \n\n Thank you!`,
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        navigation.navigate('MainTabs');
+                        // Redirect to Home Page
+                        dispatch(resetBookingForm());
+                        dispatch(resetFlightState());
+                        dispatch(resetSearchResults());
+                        dispatch(resetTripState());
+                        dispatch(resetPassengerState());
+                      },
+                    },
+                  ],
+                );
+              } catch (error: any) {
+                Alert.alert(
+                  'Sorry!',
+                  `Something went wrong while processing your booking request. \nPlease Try Again Later! \n\nThank you!`,
+                );
+                console.warn('🚀 ~ searchFlight ~ error', error);
+              }
+            } else {
+              Alert.alert(
+                'Missing Information!',
+                `Please fill in all fields of each traveler and contact information. \n\n Thank you!`,
+              );
+            }
+          }}
+          style={[
+            styles.button,
+            {
+              backgroundColor: validForm ? '#009FFD' : '#C4C4C4',
+            },
+          ]}>
+          <Text style={styles.buttonText}>Proceed to Booking</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#F5F5F5',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  section: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
+    backgroundColor: '#FFFFFF',
+    minHeight: '100%',
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 18,
@@ -121,24 +159,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: '#333',
   },
-  inputContainer: {
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 14,
-    color: '#555',
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
     marginBottom: 5,
   },
-  input: {
-    backgroundColor: '#F5F5F5',
-    padding: 10,
-    borderRadius: 8,
-    borderColor: '#CCC',
-    borderWidth: 1,
-    fontSize: 16,
+  buttonWrapper: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    padding: 20,
+    backgroundColor: '#FFFFFF',
   },
   button: {
-    backgroundColor: '#009FFD',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -151,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TravellerDetailsScreen;
+export default TravelerDetailsScreen;
