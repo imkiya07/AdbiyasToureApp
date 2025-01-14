@@ -260,8 +260,11 @@ export type tCountry = {
   code: string;
 };
 
-export type tCountryModalProp = {
+export type tModalProp = {
   visible: boolean;
   closeModal: () => void;
+};
+
+export type tCountryModalProp = tModalProp & {
   onSelectCountry: (country: tCountry) => void;
 };

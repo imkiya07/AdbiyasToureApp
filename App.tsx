@@ -17,6 +17,7 @@ import {resetFlightState} from '@store/slice/flightDestinations';
 import {PaperProvider} from 'react-native-paper';
 import {resetBookingForm} from '@store/slice/bookingSlice';
 import {tRootStackParamList} from '@utils/types';
+import './src/styles/global.css';
 
 const Stack = createNativeStackNavigator<tRootStackParamList>();
 

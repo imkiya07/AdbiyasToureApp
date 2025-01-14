@@ -7,7 +7,7 @@ import {resetSearchResults} from '@store/slice/flightResults';
 import {resetTripState} from '@store/slice/flightType';
 import {resetPassengerState} from '@store/slice/passengerSlice';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
-import {tMainTabsProps} from '@utils/types';
+import {tTravelerDetailsScreenProps} from '@utils/types';
 import axios from 'axios';
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {
@@ -21,7 +21,9 @@ import {
   BackHandler,
 } from 'react-native';
 
-const TravelerDetailsScreen: FC<tMainTabsProps> = ({navigation}) => {
+const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
+  navigation,
+}) => {
   const formBody = useAppSelector(state => state.bookingSlice);
   const {airTravelers, CountryCode, PhoneNumber, Email, PostCode} = formBody;
   const dispatch = useAppDispatch();
