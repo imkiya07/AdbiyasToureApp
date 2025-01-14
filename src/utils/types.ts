@@ -8,9 +8,13 @@ export type tPassengerType = 'ADT' | 'CHD' | 'INF';
 export type tRootStackParamList = {
   MainTabs: undefined;
   LayoutScreen: undefined;
-  FlightDetails: tFlightResult;
+  FlightDetails: undefined;
   FlightShow: undefined;
   TravelerDetailsScreen: undefined;
+  Revalidation: {
+    flightId: string;
+    redirectScreen: 'FlightDetails' | 'TravelerDetailsScreen' | 'MainTabs';
+  };
   LayoutHotel: undefined;
   LayoutTour: undefined;
   LayoutVisa: undefined;
@@ -29,6 +33,11 @@ export type tMenuItems = {
   id: string;
   route: keyof tRootStackParamList;
 };
+
+export type tRevalidationProps = NativeStackScreenProps<
+  tRootStackParamList,
+  'Revalidation'
+>;
 
 export type tFlightDetailsProps = NativeStackScreenProps<
   tRootStackParamList,

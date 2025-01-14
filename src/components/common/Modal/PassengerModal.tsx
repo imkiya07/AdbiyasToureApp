@@ -17,7 +17,7 @@ import {
 } from '@store/slice/passengerSlice';
 import {classOptions} from '@components/core/FlightBooking/ShowCard';
 import {tClassOptions} from '@utils/types';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {BackHandler} from 'react-native';
 
 const PassengerModal: FC = () => {
@@ -53,6 +53,7 @@ const PassengerModal: FC = () => {
           style={styles.input}
           placeholder="Passenger"
           placeholderTextColor="#666"
+          onPress={() => setShowPassengerModal(true)}
           editable={false}
           value={`${adults} Adult, ${children} Children, ${infants} Infants, ${cabinClass.label}`}
         />

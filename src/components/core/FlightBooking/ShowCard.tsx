@@ -15,7 +15,6 @@ import {images} from '../../../constants/index';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {updateCabinClass} from '@store/slice/passengerSlice';
 import {tClassOptions, tFlightShowProps} from '@utils/types';
-import {generatePassengerForm} from '@store/slice/bookingSlice';
 export const classOptions: tClassOptions[] = [
   {
     label: 'Economy',
@@ -51,7 +50,9 @@ const FlightShowPage: FC<tFlightShowProps> = ({navigation}) => {
   const passengerCount = infants + children + adults;
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <LinearGradient colors={['#0b2c5f', '#0b2c5f']} style={styles.background}>
+      <LinearGradient
+        colors={['#0b2c5f', '#0b2c5f']}
+        className="android:p-4 ios:p-0 items-center flex-1 flex flex-col ">
         <View style={styles.flightRoute}>
           <Text style={styles.routeText}>
             {tripStates[0].OriginLocationCode}---
@@ -83,12 +84,18 @@ const FlightShowPage: FC<tFlightShowProps> = ({navigation}) => {
 
         <View style={styles.classpic}>
           <TouchableOpacity
-            style={styles.classPicker}
+            className="w-full mt-3 rounded-lg overflow-hidden"
             onPress={() => setModalVisible(true)}>
             <LinearGradient
               colors={['#007AFF', '#1E90FF']}
-              style={styles.classPickerGradient}>
-              <Text style={styles.selectedClassText}>
+              style={{
+                shadowColor: '#000',
+                shadowOffset: {width: 0, height: 2},
+                shadowOpacity: 0.3,
+                shadowRadius: 4,
+              }}
+              className="">
+              <Text className="py-3 px-4 font-bold color-white text-center ">
                 {selectedClass.label}
               </Text>
             </LinearGradient>
@@ -97,7 +104,7 @@ const FlightShowPage: FC<tFlightShowProps> = ({navigation}) => {
 
         {flightSearchResults?.map((flight, index) => (
           <View key={index + flight.flight_id} style={styles.flightCard}>
-            <View style={styles.flightDetails}>
+            <View className="flex-row justify-between flex items-center mb-2 ">
               <Text style={styles.timeText}>
                 {new Date(
                   flight.segments[0].ArrivalDateTime,
@@ -124,9 +131,10 @@ const FlightShowPage: FC<tFlightShowProps> = ({navigation}) => {
             <View style={styles.actionContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  /* Generate Traveler Form Array */
-                  dispatch(generatePassengerForm({adults, children, infants}));
-                  navigation.navigate('TravelerDetailsScreen');
+                  navigation.navigate('Revalidation', {
+                    flightId: flight.flight_id,
+                    redirectScreen: 'TravelerDetailsScreen',
+                  });
                 }}
                 style={styles.bookNowButton}>
                 <Text style={styles.bookNowText}>Book Now</Text>
@@ -144,7 +152,12 @@ const FlightShowPage: FC<tFlightShowProps> = ({navigation}) => {
                   : ''}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('FlightDetails', flight)}>
+                onPress={() =>
+                  navigation.navigate('Revalidation', {
+                    flightId: flight.flight_id,
+                    redirectScreen: 'FlightDetails',
+                  })
+                }>
                 <Text style={styles.detailsButton}>Details</Text>
               </TouchableOpacity>
             </View>
@@ -190,11 +203,6 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
   },
-  background: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 16,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -214,10 +222,14 @@ const styles = StyleSheet.create({
   infoContainer: {
     alignItems: 'center',
     marginBottom: 16,
+    justifyContent: 'center',
+    display: 'flex',
+    width: '100%',
   },
   flightRoute: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   routeText: {
     fontSize: 24,
@@ -228,9 +240,7 @@ const styles = StyleSheet.create({
   datePassenger: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 25,
     width: '100%',
-    paddingHorizontal: 40,
     marginTop: 30,
   },
   infoButton: {
@@ -240,7 +250,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 40,
     borderRadius: 7,
-    marginHorizontal: 5,
   },
   infoButtonText: {
     color: '#007AFF',
@@ -254,20 +263,6 @@ const styles = StyleSheet.create({
   classPicker: {
     width: '100%',
     marginTop: 10,
-  },
-  classPickerGradient: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 7,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  selectedClassText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
   flightCard: {
     width: '100%',

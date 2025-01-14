@@ -28,21 +28,9 @@ const TravelerAccordion: FC = () => {
   );
 
   const toggleItem = (index: number) => {
-    // const isOpening = !openStates[index].value;
     openStates.forEach((state, i) => {
       state.value = i === index ? !state.value : false;
     });
-
-    // if (
-    //   isOpening &&
-    //   scrollViewRef.current &&
-    //   itemLayouts.current[items[index].id]
-    // ) {
-    //   scrollViewRef.current.scrollTo({
-    //     y: itemLayouts.current[items[index].id],
-    //     animated: true,
-    //   });
-    // }
   };
 
   const getBorderRadiusStyle = (isOpen: SharedValue<boolean>) => {

@@ -1,8 +1,6 @@
-import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
-import {tFlightDetailsProps, tFlightResult} from '@utils/types';
-import axios from 'axios';
-import React, {FC, useEffect, useState} from 'react';
+import {tFlightDetailsProps} from '@utils/types';
+import React, {FC} from 'react';
 import {
   View,
   Text,
@@ -19,45 +17,9 @@ const FlightDetailsScreen: FC<tFlightDetailsProps> = ({route, navigation}) => {
   const {cabinClass, infants, children, adults} = useAppSelector(
     state => state.passengerSlice,
   );
-  const flight: tFlightResult = route.params;
-  console.log('🚀 ~ FlightDetailsScreen ~ flight:', flight);
-  const [flightDetails, setFlightDetails] = useState<any>();
-  const [totalDuration, setTotalDuration] = useState(0);
-
-  const fetchFlightDetails = async () => {
-    try {
-      const response = await axios.get(
-        `https://flightkiya.cosmelic.com/api/b2c/revalidated/${flight.flight_id}`,
-      );
-      setFlightDetails(response.data.data);
-      let durationCount = 0;
-      response.data.data.flights[0].flightSegments.forEach((segment: any) => {
-        durationCount += segment.JourneyDuration;
-      });
-      setTotalDuration(durationCount);
-    } catch (error) {
-      console.error('🚀 ~ FlightDetailsScreen ~ error', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchFlightDetails();
-    const intervalFetch = setInterval(
-      () => {
-        fetchFlightDetails();
-      },
-      1000 * 60 * 30,
-    );
-    const unsubscribe = navigation.addListener('focus', () => {
-      console.debug('Revalidation Stop on screen change!');
-      clearInterval(intervalFetch);
-    });
-    return () => {
-      console.debug('Revalidation Stop on unMount!');
-      clearInterval(intervalFetch);
-      unsubscribe();
-    };
-  }, []);
+  const {flightDetails, totalDuration} = useAppSelector(
+    state => state.flightSlice,
+  );
 
   const hours = Math.floor(totalDuration / 60);
   const minutes = totalDuration % 60;

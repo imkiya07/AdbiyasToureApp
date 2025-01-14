@@ -18,6 +18,7 @@ import {PaperProvider} from 'react-native-paper';
 import {resetBookingForm} from '@store/slice/bookingSlice';
 import {tRootStackParamList} from '@utils/types';
 import './src/styles/global.css';
+import Revalidation from '@screens/Revalidation';
 
 const Stack = createNativeStackNavigator<tRootStackParamList>();
 
@@ -61,10 +62,19 @@ const App: FC = () => {
             <Stack.Screen
               name="FlightDetails"
               component={FlightDetails}
-              options={{
-                title: 'Flight Details',
+              options={({navigation}) => ({
+                title: ' Flight Details',
                 headerShown: true, // Set to false if you want to hide the header
-              }}
+                headerLeft: () => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      dispatch(resetBookingForm());
+                      navigation.popTo('FlightShow');
+                    }}>
+                    <FontAwesome6 name="arrow-left" size={24} color="#000000" />
+                  </TouchableOpacity>
+                ),
+              })}
             />
             <Stack.Screen
               name="FlightShow"
@@ -88,18 +98,25 @@ const App: FC = () => {
               name="TravelerDetailsScreen"
               component={TravelerDetailsScreen}
               options={({navigation}) => ({
-                title: ' Traveller Details',
+                title: ' Travelers Details',
                 headerShown: true, // Set to false if you want to hide the header
                 headerLeft: () => (
                   <TouchableOpacity
                     onPress={() => {
                       dispatch(resetBookingForm());
-                      navigation.goBack();
+                      navigation.popTo('FlightShow');
                     }}>
                     <FontAwesome6 name="arrow-left" size={24} color="#000000" />
                   </TouchableOpacity>
                 ),
               })}
+            />
+            <Stack.Screen
+              name="Revalidation"
+              component={Revalidation}
+              options={{
+                headerShown: false, // Set to false if you want to hide the header
+              }}
             />
 
             <Stack.Screen
