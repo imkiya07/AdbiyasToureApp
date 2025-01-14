@@ -1,9 +1,8 @@
-import {StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import React, {FC, useEffect, useState} from 'react';
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {useNavigation} from '@react-navigation/native';
+import dayjs from 'dayjs';
 
 type tFlightDate = {
   initialValue: string;
@@ -18,9 +17,21 @@ const FlightDatePicker: FC<tFlightDate> = ({
   updateStateCb,
   placeholder,
 }) => {
-  const [toggleDatePicker, setToggleDatePicker] = useState<boolean>(false);
-
   const navigation = useNavigation();
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date: Date) => {
+    updateStateCb(date.toDateString());
+    hideDatePicker();
+  };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -31,32 +42,24 @@ const FlightDatePicker: FC<tFlightDate> = ({
   }, [navigation]);
   return (
     <>
-      <TouchableOpacity onPress={() => setToggleDatePicker(true)}>
+      <TouchableOpacity onPress={showDatePicker}>
         <TextInput
           style={styles.input}
           placeholder={placeholder}
           placeholderTextColor="#666"
           editable={false}
+          onPress={showDatePicker}
           value={initialValue ?? ''}
         />
       </TouchableOpacity>
-      {toggleDatePicker && (
-        <DateTimePicker
-          value={new Date(initialValue)}
-          mode="date"
-          display="default"
-          minimumDate={minimumValue}
-          onChange={(
-            event: DateTimePickerEvent,
-            selectedDate: Date | undefined,
-          ) => {
-            setToggleDatePicker(false);
-            if (selectedDate) {
-              updateStateCb(selectedDate.toDateString());
-            }
-          }}
-        />
-      )}
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        date={initialValue ? new Date(initialValue) : new Date()}
+        minimumDate={minimumValue}
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
     </>
   );
 };

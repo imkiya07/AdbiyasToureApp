@@ -26,6 +26,7 @@ import {
 } from '@store/slice/bookingSlice';
 import {GenderList} from '@constants/radioList';
 import dayjs from 'dayjs';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const BookingForm = ({userIndx}: {userIndx: number}) => {
   const {PassengerName, Passport, PassengerNationality, Gender, DateOfBirth} =
@@ -150,31 +151,27 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
               }
             />
           </TouchableOpacity>
-          {toggleDobPicker && (
-            <DateTimePicker
-              value={DateOfBirth ? new Date(DateOfBirth) : new Date()}
-              mode="date"
-              display="default"
-              maximumDate={new Date()}
-              onChange={(
-                event: DateTimePickerEvent,
-                selectedDate: Date | undefined,
-              ) => {
-                const formattedDate = dayjs(selectedDate).format(
-                  'YYYY-MM-DD[T]HH:mm:ss',
+          <DateTimePickerModal
+            isVisible={toggleDobPicker}
+            mode="date"
+            date={DateOfBirth ? new Date(DateOfBirth) : new Date()}
+            maximumDate={new Date()}
+            onConfirm={(selectedDate: Date) => {
+              const formattedDate = dayjs(selectedDate).format(
+                'YYYY-MM-DD[T]HH:mm:ss',
+              );
+              if (selectedDate) {
+                dispatch(
+                  setDateOfBirth({
+                    index: userIndx,
+                    value: formattedDate,
+                  }),
                 );
-                setToggleDobPicker(false);
-                if (selectedDate) {
-                  dispatch(
-                    setDateOfBirth({
-                      index: userIndx,
-                      value: formattedDate,
-                    }),
-                  );
-                }
-              }}
-            />
-          )}
+              }
+              setToggleDobPicker(false);
+            }}
+            onCancel={() => setToggleDobPicker(false)}
+          />
         </View>
         <View>
           <Text style={styles.label}>Nationality</Text>
@@ -219,34 +216,30 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
               }
             />
           </TouchableOpacity>
-          {toggleExpiryDatePicker && (
-            <DateTimePicker
-              value={ExpiryDate ? new Date(ExpiryDate) : new Date()}
-              mode="date"
-              display="default"
-              minimumDate={new Date()}
-              maximumDate={
-                new Date(new Date().setFullYear(new Date().getFullYear() + 10))
+          <DateTimePickerModal
+            isVisible={toggleExpiryDatePicker}
+            mode="date"
+            date={ExpiryDate ? new Date(ExpiryDate) : new Date()}
+            minimumDate={new Date()}
+            maximumDate={
+              new Date(new Date().setFullYear(new Date().getFullYear() + 10))
+            }
+            onConfirm={(selectedDate: Date) => {
+              setToggleExpiryDatePicker(false);
+              if (selectedDate) {
+                const formattedDate = dayjs(selectedDate).format(
+                  'YYYY-MM-DD[T]HH:mm:ss',
+                );
+                dispatch(
+                  setPassportExpiryDate({
+                    index: userIndx,
+                    value: formattedDate,
+                  }),
+                );
               }
-              onChange={(
-                event: DateTimePickerEvent,
-                selectedDate: Date | undefined,
-              ) => {
-                setToggleExpiryDatePicker(false);
-                if (selectedDate) {
-                  const formattedDate = dayjs(selectedDate).format(
-                    'YYYY-MM-DD[T]HH:mm:ss',
-                  );
-                  dispatch(
-                    setPassportExpiryDate({
-                      index: userIndx,
-                      value: formattedDate,
-                    }),
-                  );
-                }
-              }}
-            />
-          )}
+            }}
+            onCancel={() => setToggleDobPicker(false)}
+          />
         </View>
         <View style={styles.passportField}>
           <Text style={styles.label}>Issued Country</Text>

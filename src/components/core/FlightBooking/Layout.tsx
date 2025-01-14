@@ -24,6 +24,7 @@ import {
   searchFlightsSuccess,
 } from '@store/slice/flightResults';
 import {tLayoutScreenProps} from '@utils/types';
+import dayjs from 'dayjs';
 
 const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   const formView = useRef<ScrollView>(null);
@@ -47,7 +48,6 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
           'https://flightkiya.cosmelic.com/api/b2c/search?filter=true',
           flightDetails,
         );
-        // console.log('🚀 ~ searchFlight ~ response:', response);
         handleSearchResponse(response.data);
       } catch (error: any) {
         handleSearchError(error);
@@ -81,7 +81,9 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
     const destinationArr = tripStates.map(destination => {
       return {
         DestinationLocationCode: destination.DestinationLocationCode,
-        DepartureDateTime: destination.DepartureDateTime,
+        DepartureDateTime: dayjs(destination.DepartureDateTime).format(
+          'YYYY-MM-DD[T]HH:mm:ss',
+        ),
         OriginLocationCode: destination.OriginLocationCode,
       };
     });

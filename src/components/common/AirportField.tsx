@@ -35,7 +35,7 @@ const AirportField: FC<tFlightForm> = ({
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder={title}
+        placeholder={title + '\xa0(Please enter 3 characters)'}
         placeholderTextColor="#666"
         value={inputValue}
         onKeyPress={({nativeEvent}) => {
@@ -59,15 +59,17 @@ const AirportField: FC<tFlightForm> = ({
           if (isBlank && selectedAirport === '') {
             // console.debug('fetching', value);
 
-            if (value.length > 0) {
+            if (value.length > 2) {
               const searchTxt = value.trim().toLowerCase();
-              const results = airports.filter(
-                ({name, city, country, iata}) =>
-                  name.toLowerCase().includes(searchTxt) ||
-                  city.toLowerCase().includes(searchTxt) ||
-                  iata.toLowerCase().includes(searchTxt) ||
-                  country.toLowerCase().includes(searchTxt),
-              );
+              const results = airports.filter(({name, country, city, iata}) => {
+                const searchTxtLower = searchTxt.toLowerCase();
+                return (
+                  name.toLowerCase().includes(searchTxtLower) ||
+                  country.toLowerCase().includes(searchTxtLower) ||
+                  city.toLowerCase().includes(searchTxtLower) ||
+                  iata.toLowerCase().includes(searchTxtLower)
+                );
+              });
               setSearchedAirport(results);
             } else {
               setSearchedAirport([]);
