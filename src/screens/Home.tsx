@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,46 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {icons} from '../constants'; // Ensure icons are correctly imported
-import {useNavigation} from '@react-navigation/native';
+import {tMainTabsProps, tMenuItems} from '@utils/types';
 
-const App = () => {
-  const navigation = useNavigation();
+const menuItems: tMenuItems[] = [
+  {
+    route: 'LayoutScreen',
+    icon: icons.Plane,
+    title: 'Flight',
+    id: 'LayoutScreenFlightPlane',
+  },
+  {
+    route: 'LayoutHotel',
+    icon: icons.Hotel,
+    title: 'Hotel',
+    id: 'LayoutHotelHotel',
+  },
+  {
+    route: 'LayoutVisa',
+    icon: icons.Visa,
+    title: 'Visa',
+    id: 'LayoutVisaVisa',
+  },
+  {
+    route: 'LayoutTour',
+    icon: icons.Tour,
+    title: 'Tour',
+    id: 'LayoutTourTour',
+  },
+];
 
+const App: FC<tMainTabsProps> = ({navigation}) => {
   return (
-    <ScrollView>
-      <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-[#E0F7FA] ">
+      <ScrollView>
         {/* Header Section */}
-        <View style={styles.header}>
-          <View style={styles.userSection}>
+        <View className="flex-row justify-between items-center p-7 ">
+          <View className="flex-row items-center ">
             <Image source={icons.Profile} style={styles.iconSize} />
-            <Text style={styles.userName}>Guest</Text>
+            <Text className="font-bold text-lg text-[#333333] ml-3 ">
+              Guest
+            </Text>
           </View>
           <Image source={icons.Bell} style={styles.iconSize} />
         </View>
@@ -38,47 +65,22 @@ const App = () => {
         {/* <TestRedux /> */}
 
         {/* Menu Section */}
-        <View style={styles.menuSection}>
-          <View style={styles.menuItemContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                // dispatch(generatePassengerForm({adults, children, infants}));
-                // navigation.navigate('TravelerDetailsScreen');
+        <View className="flex-row my-10 justify-evenly ">
+          {menuItems.map(item => (
+            <View key={item.id} style={styles.menuItemContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  // dispatch(generatePassengerForm({adults, children, infants}));
+                  // navigation.navigate('TravelerDetailsScreen');
 
-                navigation.navigate('LayoutScreen');
-              }}
-              style={styles.menuItem}>
-              <Image source={icons.Plane} style={styles.menuIcon} />
-            </TouchableOpacity>
-            <Text style={styles.menuText}>Flight</Text>
-          </View>
-
-          <View style={styles.menuItemContainer}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigation.navigate('LayoutHotel')}>
-              <Image source={icons.Hotel} style={styles.menuIcon} />
-            </TouchableOpacity>
-            <Text style={styles.menuText}>Hotel</Text>
-          </View>
-
-          <View style={styles.menuItemContainer}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigation.navigate('LayoutVisa')}>
-              <Image source={icons.Visa} style={styles.menuIcon} />
-            </TouchableOpacity>
-            <Text style={styles.menuText}>Visa</Text>
-          </View>
-
-          <View style={styles.menuItemContainer}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigation.navigate('LayoutTour')}>
-              <Image source={icons.Tour} style={styles.menuIcon} />
-            </TouchableOpacity>
-            <Text style={styles.menuText}>Tour</Text>
-          </View>
+                  navigation.navigate(item.route as any);
+                }}
+                className="items-center bg-white rounded-full justify-center w-24 h-24 ">
+                <Image source={item.icon} style={styles.menuIcon} />
+              </TouchableOpacity>
+              <Text style={styles.menuText}>{item.title}</Text>
+            </View>
+          ))}
         </View>
 
         {/* Explore Destination */}
@@ -153,26 +155,12 @@ const App = () => {
             <Text style={styles.destinationSubText}>UAE - 4.5 ⭐⭐⭐⭐</Text>
           </TouchableOpacity>
         </ScrollView>
-      </SafeAreaView>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E0F7FA',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 30,
-  },
-  userSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   userName: {
     fontSize: 18,
     marginLeft: 10,

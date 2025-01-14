@@ -159,72 +159,79 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   }, []);
 
   return (
-    <ImageBackground source={images.Cover} style={styles.backgroundImage}>
+    <ImageBackground
+      source={images.Cover}
+      className="flex-1 h-screen w-screen relative ">
       <LinearGradient
         colors={['#0b2c5f', '#ffffff']}
-        style={styles.gradientContainer}>
-        <ScrollView
-          ref={formView}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="interactive">
-          <Image source={images.Plane} style={styles.planeImage} />
-          <View style={styles.container}>
-            <Text style={styles.title}>Book Your Flight</Text>
+        className="w-screen h-screen bottom-0 left-0 absolute "
+      />
+      <ScrollView
+        ref={formView}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive">
+        <Image source={images.Plane} style={styles.planeImage} />
+        <View style={styles.container}>
+          <Text style={styles.title}>Book Your Flight</Text>
 
-            <View style={styles.buttonGroup}>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  AirTripType === 'OneWay' && styles.selectedButton,
-                ]}
-                onPress={() => {
-                  dispatch(toggleTripType('OneWay'));
-                  dispatch(resetFlightState());
-                }}>
-                <Text style={styles.buttonText}>One Way</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  AirTripType === 'Return' && styles.selectedButton,
-                ]}
-                onPress={() => dispatch(toggleTripType('Return'))}>
-                <Text style={styles.buttonText}>Round Trip</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  AirTripType === 'OpenJaw' && styles.selectedButton,
-                ]}
-                onPress={() => dispatch(toggleTripType('OpenJaw'))}>
-                <Text style={styles.buttonText}>Multi City</Text>
-              </TouchableOpacity>
-            </View>
-
-            <FlightForm />
-
-            <LinearGradient
-              style={styles.searchButton}
-              colors={['#009FFD', '#2A2A72']}>
-              <TouchableOpacity onPress={() => searchFlight()}>
-                {loading ? (
-                  <ActivityIndicator size="small" color="#ffffff" />
-                ) : (
-                  <Text style={styles.searchButtonText}>SEARCH FLIGHTS</Text>
-                )}
-              </TouchableOpacity>
-            </LinearGradient>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                AirTripType === 'OneWay' && styles.selectedButton,
+              ]}
+              onPress={() => {
+                dispatch(toggleTripType('OneWay'));
+                dispatch(resetFlightState());
+              }}>
+              <Text style={styles.buttonText}>One Way</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                AirTripType === 'Return' && styles.selectedButton,
+              ]}
+              onPress={() => dispatch(toggleTripType('Return'))}>
+              <Text style={styles.buttonText}>Round Trip</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                AirTripType === 'OpenJaw' && styles.selectedButton,
+              ]}
+              onPress={() => dispatch(toggleTripType('OpenJaw'))}>
+              <Text style={styles.buttonText}>Multi City</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-      </LinearGradient>
+
+          <FlightForm />
+
+          <TouchableOpacity
+            className="rounded-xl overflow-hidden mt-3"
+            onPress={() => searchFlight()}>
+            <LinearGradient
+              colors={['#009FFD', '#2A2A72']}
+              className="android:p-4 ios:p-0">
+              {loading ? (
+                <ActivityIndicator
+                  size="small"
+                  color="#ffffff"
+                  className="ios:p-4 android:p-0"
+                />
+              ) : (
+                <Text className="text-white font-bold text-lg ios:p-4 android:p-0 text-center ">
+                  SEARCH FLIGHTS
+                </Text>
+              )}
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-  },
   gradientContainer: {
     flex: 1,
     paddingHorizontal: 20,
@@ -240,6 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 10,
     padding: 20,
+    margin: 20,
   },
   title: {
     fontSize: 24,
@@ -273,11 +281,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 10,
-  },
-  searchButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 

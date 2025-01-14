@@ -1,5 +1,6 @@
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {ImageSourcePropType} from 'react-native';
 import {SharedValue} from 'react-native-reanimated';
 
 export type tPassengerType = 'ADT' | 'CHD' | 'INF';
@@ -20,6 +21,13 @@ export type tBottomTabParamList = {
   Deals: undefined;
   Chat: undefined;
   Account: undefined;
+};
+
+export type tMenuItems = {
+  icon: ImageSourcePropType;
+  title: string;
+  id: string;
+  route: keyof tRootStackParamList;
 };
 
 export type tFlightDetailsProps = NativeStackScreenProps<
