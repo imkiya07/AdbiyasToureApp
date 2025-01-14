@@ -4,6 +4,7 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import DateTimePicker, {
@@ -100,7 +101,7 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
           </View>
         </View>
 
-        <View>
+        <View className="w-full">
           <Text style={styles.label}>Last Name</Text>
           <TextInput
             style={styles.input}
@@ -134,56 +135,58 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
             ))}
           </View>
         </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Date of Birth</Text>
-          <TouchableOpacity
-            style={{width: '100%'}}
-            onPress={() => setToggleDobPicker(true)}>
-            <TextInput
-              style={styles.input}
-              placeholder="Select Date of Birth"
-              placeholderTextColor="#666"
-              editable={false}
-              value={
-                DateOfBirth
-                  ? dayjs(DateOfBirth).format('ddd MMM DD[,] YYYY')
-                  : ''
-              }
-            />
-          </TouchableOpacity>
-          <DateTimePickerModal
-            isVisible={toggleDobPicker}
-            mode="date"
-            date={DateOfBirth ? new Date(DateOfBirth) : new Date()}
-            maximumDate={new Date()}
-            onConfirm={(selectedDate: Date) => {
-              const formattedDate = dayjs(selectedDate).format(
-                'YYYY-MM-DD[T]HH:mm:ss',
-              );
-              if (selectedDate) {
-                dispatch(
-                  setDateOfBirth({
-                    index: userIndx,
-                    value: formattedDate,
-                  }),
+        <View className="flex flex-row justify-between items-center mb-4 w-full ">
+          <View className="w-[47%]">
+            <Text style={styles.label}>Date of Birth</Text>
+            <TouchableOpacity
+              style={{width: '100%'}}
+              onPress={() => setToggleDobPicker(true)}>
+              <TextInput
+                style={styles.input}
+                placeholder="Select Date of Birth"
+                placeholderTextColor="#666"
+                editable={false}
+                value={
+                  DateOfBirth
+                    ? dayjs(DateOfBirth).format('ddd MMM DD[,] YYYY')
+                    : ''
+                }
+              />
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={toggleDobPicker}
+              mode="date"
+              date={DateOfBirth ? new Date(DateOfBirth) : new Date()}
+              maximumDate={new Date()}
+              onConfirm={(selectedDate: Date) => {
+                const formattedDate = dayjs(selectedDate).format(
+                  'YYYY-MM-DD[T]HH:mm:ss',
                 );
-              }
-              setToggleDobPicker(false);
-            }}
-            onCancel={() => setToggleDobPicker(false)}
-          />
-        </View>
-        <View>
-          <Text style={styles.label}>Nationality</Text>
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => {
-              setCountryModal(true);
-            }}>
-            <Text style={{color: '#666'}}>
-              {nationality ? nationality : `Select Your Country`}
-            </Text>
-          </TouchableOpacity>
+                if (selectedDate) {
+                  dispatch(
+                    setDateOfBirth({
+                      index: userIndx,
+                      value: formattedDate,
+                    }),
+                  );
+                }
+                setToggleDobPicker(false);
+              }}
+              onCancel={() => setToggleDobPicker(false)}
+            />
+          </View>
+          <View className="w-[47%]">
+            <Text style={styles.label}>Nationality</Text>
+            <TouchableOpacity
+              style={styles.input}
+              onPress={() => {
+                setCountryModal(true);
+              }}>
+              <Text style={{color: '#666'}}>
+                {nationality ? nationality : `Select Your Country`}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -241,7 +244,7 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
             onCancel={() => setToggleDobPicker(false)}
           />
         </View>
-        <View style={styles.passportField}>
+        <View className="w-full">
           <Text style={styles.label}>Issued Country</Text>
           <TouchableOpacity
             style={styles.input}
@@ -249,7 +252,7 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
               setPassportIssuedCountryModal(true);
             }}>
             <Text style={{color: '#666'}}>
-              {issuedCountry ? issuedCountry : `Select Your Country`}
+              {issuedCountry ? issuedCountry : `Select Passport Issued Country`}
             </Text>
           </TouchableOpacity>
         </View>
@@ -279,6 +282,7 @@ const styles = StyleSheet.create({
   section: {
     borderRadius: 10,
     marginBottom: 15,
+    padding: Platform.OS === 'ios' ? 15 : 0,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: {width: 0, height: 4},
@@ -293,6 +297,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
+    width: '100%',
   },
   nameContainer: {
     flexDirection: 'row',
@@ -343,13 +348,11 @@ const styles = StyleSheet.create({
     color: '#333',
     textTransform: 'capitalize',
   },
-  inputContainer: {
-    marginBottom: 15,
-  },
   label: {
     fontSize: 14,
     color: '#555',
     marginBottom: 5,
+    width: '100%',
   },
   input: {
     backgroundColor: '#F5F5F5',
@@ -359,6 +362,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 16,
     width: '100%',
+    height: 40,
   },
   passportField: {
     width: '48%',

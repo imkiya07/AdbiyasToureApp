@@ -2,9 +2,9 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {tClassOptions, tPassengerState} from '@utils/types';
 
 const initialState: tPassengerState = {
-  adults: 1,
-  children: 0,
-  infants: 0,
+  adults: 3,
+  children: 1,
+  infants: 1,
   cabinClass: {
     value: 'Y',
     label: 'Economy',

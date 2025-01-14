@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
+  Platform,
 } from 'react-native';
 import Animated, {
   SharedValue,
@@ -23,7 +24,7 @@ const TravelerAccordion: FC = () => {
   const itemLayouts = useRef<{[key: string]: number}>({});
 
   const openStates = items.map((_, index) =>
-    useSharedValue(index === 0 ? true : false),
+    useSharedValue(index === 0 && Platform.OS === 'android' ? true : false),
   );
 
   const toggleItem = (index: number) => {
@@ -125,6 +126,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginHorizontal: Platform.OS === 'ios' ? 16 : 0,
   },
   btnText: {
     color: '#fff',

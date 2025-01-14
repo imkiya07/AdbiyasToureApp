@@ -16,7 +16,7 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
 
   useEffect(() => {
     if (flightId) {
-      console.debug('Flight ID:', BASE_URL + `/b2c/revalidated/` + flightId);
+      console.debug('Revalidation API:', BASE_URL + `/revalidated/` + flightId);
       axios
         .get(BASE_URL + `/revalidated/` + flightId)
         .then(response => {

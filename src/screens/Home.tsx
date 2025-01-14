@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import {icons} from '../constants'; // Ensure icons are correctly imported
 import {tMainTabsProps, tMenuItems} from '@utils/types';
+import {useAppDispatch, useAppSelector} from '@utils/hooks';
+import {generatePassengerForm} from '@store/slice/bookingSlice';
 
 const menuItems: tMenuItems[] = [
   {
-    route: 'LayoutScreen',
+    route: 'TravelerDetailsScreen',
     icon: icons.Plane,
     title: 'Flight',
     id: 'LayoutScreenFlightPlane',
@@ -39,6 +41,11 @@ const menuItems: tMenuItems[] = [
 ];
 
 const App: FC<tMainTabsProps> = ({navigation}) => {
+  const {adults, children, infants} = useAppSelector(
+    state => state.passengerSlice,
+  );
+  const dispatch = useAppDispatch();
+
   return (
     <SafeAreaView className="flex-1 bg-[#E0F7FA] ">
       <ScrollView>
@@ -70,9 +77,7 @@ const App: FC<tMainTabsProps> = ({navigation}) => {
             <View key={item.id} style={styles.menuItemContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  // dispatch(generatePassengerForm({adults, children, infants}));
-                  // navigation.navigate('TravelerDetailsScreen');
-
+                  dispatch(generatePassengerForm({adults, children, infants}));
                   navigation.navigate(item.route as any);
                 }}
                 className="items-center bg-white rounded-full justify-center w-24 h-24 ">

@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import React, {FC} from 'react';
 import Animated, {
   Easing,
@@ -34,7 +34,8 @@ const AccordionItem: FC<tAccordionItem> = ({
       style={[styles.animatedView, bodyStyle, style]}>
       <View
         onLayout={e => {
-          height.value = e.nativeEvent.layout.height;
+          const additionalHeight = Platform.OS === 'ios' ? 550 : 0;
+          height.value = e.nativeEvent.layout.height + additionalHeight;
         }}
         style={styles.wrapper}>
         {children}
