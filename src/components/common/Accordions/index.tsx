@@ -2,7 +2,6 @@ import React, {FC, useRef} from 'react';
 import {
   StyleSheet,
   View,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Text,
@@ -49,53 +48,51 @@ const TravelerAccordion: FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView ref={scrollViewRef}>
-        {items.map((item, index) => {
-          const borderRadiusStyle = getBorderRadiusStyle(openStates[index]);
-          const rotateStyle = getRotateStyle(openStates[index]);
+    <ScrollView ref={scrollViewRef} style={styles.container}>
+      {items.map((item, index) => {
+        const borderRadiusStyle = getBorderRadiusStyle(openStates[index]);
+        const rotateStyle = getRotateStyle(openStates[index]);
 
-          return (
-            <Animated.View
-              key={index}
-              onLayout={e => {
-                itemLayouts.current[index] = e.nativeEvent.layout.y;
-              }}>
-              <View style={styles.buttonContainer}>
-                <AnimatedTouchableOpacity
-                  style={[styles.accordionButton, borderRadiusStyle]}
-                  onPress={() => {
-                    toggleItem(index);
-                    console.debug('Air Traveler: ', index, 'details: ', item);
-                  }}>
-                  <Text style={styles.btnText}>
-                    Passenger {index + 1 < 10 ? '0' + (index + 1) : index + 1}:
-                    {item.PassengerType === 'ADT'
-                      ? ' Adult'
-                      : item.PassengerType === 'CHD'
-                        ? ' Child'
-                        : ' Infant'}
-                  </Text>
-                  <Animated.View style={rotateStyle}>
-                    <FontAwesome6Icon
-                      name="chevron-down"
-                      size={20}
-                      color={'#ffffff'}
-                    />
-                  </Animated.View>
-                </AnimatedTouchableOpacity>
+        return (
+          <Animated.View
+            key={index}
+            onLayout={e => {
+              itemLayouts.current[index] = e.nativeEvent.layout.y;
+            }}>
+            <View style={styles.buttonContainer}>
+              <AnimatedTouchableOpacity
+                style={[styles.accordionButton, borderRadiusStyle]}
+                onPress={() => {
+                  toggleItem(index);
+                  console.debug('Air Traveler: ', index, 'details: ', item);
+                }}>
+                <Text style={styles.btnText}>
+                  Passenger {index + 1 < 10 ? '0' + (index + 1) : index + 1}:
+                  {item.PassengerType === 'ADT'
+                    ? ' Adult'
+                    : item.PassengerType === 'CHD'
+                      ? ' Child'
+                      : ' Infant'}
+                </Text>
+                <Animated.View style={rotateStyle}>
+                  <FontAwesome6Icon
+                    name="chevron-down"
+                    size={20}
+                    color={'#ffffff'}
+                  />
+                </Animated.View>
+              </AnimatedTouchableOpacity>
 
-                <AccordionItem
-                  isExpanded={openStates[index]}
-                  viewKey={index.toString()}>
-                  <BookingForm userIndx={index} />
-                </AccordionItem>
-              </View>
-            </Animated.View>
-          );
-        })}
-      </ScrollView>
-    </SafeAreaView>
+              <AccordionItem
+                isExpanded={openStates[index]}
+                viewKey={index.toString()}>
+                <BookingForm userIndx={index} />
+              </AccordionItem>
+            </View>
+          </Animated.View>
+        );
+      })}
+    </ScrollView>
   );
 };
 
@@ -105,7 +102,6 @@ const AnimatedTouchableOpacity =
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     paddingBottom: 120,
   },
   buttonContainer: {

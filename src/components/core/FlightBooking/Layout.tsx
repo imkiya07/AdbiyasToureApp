@@ -25,6 +25,7 @@ import {
 } from '@store/slice/flightResults';
 import {tLayoutScreenProps} from '@utils/types';
 import dayjs from 'dayjs';
+import {BASE_URL} from '@env';
 
 const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   const formView = useRef<ScrollView>(null);
@@ -45,7 +46,7 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
       console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
       try {
         const response = await axios.post(
-          'https://flightkiya.cosmelic.com/api/b2c/search?filter=true',
+          BASE_URL + '/search?filter=true',
           flightDetails,
         );
         handleSearchResponse(response.data);

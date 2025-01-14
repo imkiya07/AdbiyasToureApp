@@ -20,6 +20,7 @@ import {
   Alert,
   BackHandler,
 } from 'react-native';
+import {BASE_URL} from '@env';
 
 const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
   navigation,
@@ -99,7 +100,7 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
               );
               try {
                 const response = await axios.post(
-                  'https://flightkiya.cosmelic.com/api/b2c/booking',
+                  BASE_URL + '/booking',
                   formBody,
                 );
                 // console.log('🚀 ~ searchFlight ~ response:', response);

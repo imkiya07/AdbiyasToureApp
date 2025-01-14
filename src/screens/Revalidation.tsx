@@ -5,6 +5,7 @@ import axios from 'axios';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {setFlightDetails, setTotalDuration} from '@store/slice/flightSlice';
 import {generatePassengerForm} from '@store/slice/bookingSlice';
+import {BASE_URL} from '@env';
 
 const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
   const {adults, children, infants} = useAppSelector(
@@ -15,9 +16,9 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
 
   useEffect(() => {
     if (flightId) {
-      console.log('Flight ID:', flightId);
+      console.debug('Flight ID:', BASE_URL + `/b2c/revalidated/` + flightId);
       axios
-        .get(`https://flightkiya.cosmelic.com/api/b2c/revalidated/${flightId}`)
+        .get(BASE_URL + `/revalidated/` + flightId)
         .then(response => {
           dispatch(setFlightDetails(response.data.data));
           let durationCount = 0;
@@ -37,7 +38,7 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
           }, 500);
         })
         .catch(error => {
-          console.error('🚀 ~ FlightDetailsScreen ~ error', error);
+          console.error('🚀 ~ FlightDetailsScreen ~ error', error.toString());
           navigation.popTo('FlightShow');
         });
     } else {
