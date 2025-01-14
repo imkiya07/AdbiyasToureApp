@@ -15,7 +15,7 @@ import {generatePassengerForm} from '@store/slice/bookingSlice';
 
 const menuItems: tMenuItems[] = [
   {
-    route: 'TravelerDetailsScreen',
+    route: 'LayoutScreen',
     icon: icons.Plane,
     title: 'Flight',
     id: 'LayoutScreenFlightPlane',
