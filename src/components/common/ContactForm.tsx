@@ -19,12 +19,12 @@ const ContactForm: FC = () => {
   // States to manage input data
 
   const [isoCode, setIsoCode] = useState<string>('BD');
-  const [phoneState, setPhoneState] = useState<string>('');
+  const [phoneState, setPhoneState] = useState<string>();
 
   const {dialCode} = getCountryByCode(isoCode);
 
   dispatch(setCountryCode(dialCode));
-  dispatch(setPhoneNumber(phoneState));
+  dispatch(setPhoneNumber(phoneState ?? ''));
 
   return (
     <View style={styles.formContainer}>

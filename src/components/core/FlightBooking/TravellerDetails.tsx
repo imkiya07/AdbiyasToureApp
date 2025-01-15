@@ -93,7 +93,9 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
             if (validForm) {
               // Integrate with your booking API here
               console.debug(
-                '🚀 ~ searchFlight ~ payload',
+                'API:',
+                BASE_URL + '/booking',
+                '~ payload: ',
                 formBody,
                 formBody.airTravelers[0].PassengerName,
                 formBody.airTravelers[0].Passport,
