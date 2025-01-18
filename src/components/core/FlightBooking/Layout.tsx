@@ -43,12 +43,15 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
 
     if (!loading) {
       dispatch(searchFlightsStart());
-      console.debug('🚀 ~ searchFlight ~ payload', flightDetails);
+      console.debug(
+        'base URL: ',
+        BASE_URL + '/search',
+        '🚀 ~ searchFlight ~ payload',
+        flightDetails,
+      );
+
       try {
-        const response = await axios.post(
-          BASE_URL + '/search?filter=true',
-          flightDetails,
-        );
+        const response = await axios.post(BASE_URL + '/search', flightDetails);
         handleSearchResponse(response.data);
       } catch (error: any) {
         handleSearchError(error);
@@ -118,7 +121,11 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   };
 
   const handleSearchError = (error: any) => {
-    console.warn('🚀 ~ searchFlight ~ error', error.toString());
+    console.warn(
+      '🚀 ~ searchFlight ~ error',
+      error.toJSON(),
+      error.toJson().config.headers,
+    );
     if (axios.isAxiosError(error)) {
       if (error.response) {
         // Server responded with a status other than 2xx

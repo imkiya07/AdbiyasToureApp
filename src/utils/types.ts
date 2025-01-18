@@ -153,13 +153,13 @@ export type tFlightResult = {
   fareSourceCode: string;
 };
 
-type tAirlineFilter = {
+export type tArrayObj = {
   value: string;
   label: string;
 };
 
 type tFilter = {
-  airlines: tAirlineFilter[];
+  airlines: tArrayObj[];
   flight_numbers: string[];
   stops: number[];
 };
@@ -261,7 +261,7 @@ export type tBookingState = {
   PhoneNumber: string;
   Email: string;
   PostCode: string;
-  airTravelers: tTravelerState[];
+  AirTravelers: tTravelerState[];
 };
 
 export type tAccordionItem = {

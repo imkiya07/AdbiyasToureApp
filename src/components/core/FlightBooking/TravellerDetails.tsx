@@ -26,7 +26,7 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
   navigation,
 }) => {
   const formBody = useAppSelector(state => state.bookingSlice);
-  const {airTravelers, CountryCode, PhoneNumber, Email, PostCode} = formBody;
+  const {AirTravelers, CountryCode, PhoneNumber, Email, PostCode} = formBody;
   const dispatch = useAppDispatch();
   const [validForm, setValidForm] = useState(false);
 
@@ -38,11 +38,12 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
       PostCode.length > 0;
 
     const validTravelers =
-      airTravelers.length > 0 &&
-      airTravelers.every(traveler => {
+      AirTravelers.length > 0 &&
+      AirTravelers.every(traveler => {
         const {PassengerName, DateOfBirth, Passport, PassengerNationality} =
           traveler;
         return (
+          PassengerName.PassengerTitle.length > 0 &&
           PassengerName.PassengerFirstName.length > 0 &&
           PassengerName.PassengerLastName.length > 0 &&
           DateOfBirth.length > 0 &&
@@ -60,7 +61,7 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
     return () => {
       setValidForm(false);
     };
-  }, [airTravelers, CountryCode, PhoneNumber, Email, PostCode]);
+  }, [AirTravelers, CountryCode, PhoneNumber, Email, PostCode]);
 
   useFocusEffect(
     useCallback(() => {
@@ -92,20 +93,50 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
           onPress={async () => {
             if (validForm) {
               // Integrate with your booking API here
+
+              const formData = {...formBody};
+              const toUpperCaseDeep = (obj: any): any => {
+                if (typeof obj === 'string') {
+                  const convertedValue = obj.toUpperCase();
+                  if (convertedValue.includes('.')) {
+                    return convertedValue.replace(/\./g, '');
+                  } else {
+                    return convertedValue;
+                  }
+                } else if (Array.isArray(obj)) {
+                  return obj.map(toUpperCaseDeep);
+                } else if (typeof obj === 'object' && obj !== null) {
+                  return Object.keys(obj).reduce((acc, key) => {
+                    acc[key] = toUpperCaseDeep(obj[key]);
+                    return acc;
+                  }, {} as any);
+                }
+                return obj;
+              };
+
+              formData.AirTravelers = formData.AirTravelers.map(
+                (traveler: any) => toUpperCaseDeep(traveler),
+              );
+              formData.CountryCode = formData.CountryCode.toUpperCase();
+              formData.PhoneNumber = formData.PhoneNumber.toUpperCase();
+              formData.Email = formData.Email.toUpperCase();
+              formData.PostCode = formData.PostCode.toUpperCase();
+
               console.debug(
                 'API:',
                 BASE_URL + '/booking',
                 '~ payload: ',
-                formBody,
-                formBody.airTravelers[0].PassengerName,
-                formBody.airTravelers[0].Passport,
+                formData,
+                formData.AirTravelers[0].PassengerName,
+                formData.AirTravelers[0].Passport,
               );
+
               try {
                 const response = await axios.post(
                   BASE_URL + '/booking',
-                  formBody,
+                  formData,
                 );
-                // console.log('🚀 ~ searchFlight ~ response:', response);
+                console.log('🚀 ~ searchFlight ~ response:', response);
                 Alert.alert(
                   'Thank You!',
                   `Your Booking Request was successfully received. \n\n Thank you!`,
@@ -113,13 +144,15 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                     {
                       text: 'OK',
                       onPress: () => {
-                        navigation.navigate('MainTabs');
                         // Redirect to Home Page
                         dispatch(resetBookingForm());
                         dispatch(resetFlightState());
                         dispatch(resetSearchResults());
                         dispatch(resetTripState());
                         dispatch(resetPassengerState());
+                        setTimeout(() => {
+                          navigation.navigate('MainTabs');
+                        }, 500);
                       },
                     },
                   ],
@@ -129,7 +162,25 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                   'Sorry!',
                   `Something went wrong while processing your booking request. \nPlease Try Again Later! \n\nThank you!`,
                 );
-                console.warn('🚀 ~ searchFlight ~ error', error);
+                if (error.response) {
+                  // The request was made and the server responded with a status code
+                  // that falls out of the range of 2xx
+                  console.debug(error.response.data);
+                  console.debug(error.response.status);
+                  console.debug(error.response.headers);
+                } else if (error.request) {
+                  // The request was made but no response was received
+                  // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                  // http.ClientRequest in node.js
+                  console.debug(error.request);
+                } else {
+                  // Something happened in setting up the request that triggered an Error
+                  console.debug(
+                    'Something happened in setting up the request that triggered an Error',
+                    error.message,
+                  );
+                }
+                console.debug(error.config);
               }
             } else {
               Alert.alert(

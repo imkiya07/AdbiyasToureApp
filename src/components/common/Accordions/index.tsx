@@ -19,7 +19,7 @@ import {useAppSelector} from '@utils/hooks';
 import AccordionItem from './AccordionItem';
 
 const TravelerAccordion: FC = () => {
-  const {airTravelers: items} = useAppSelector(state => state.bookingSlice);
+  const {AirTravelers: items} = useAppSelector(state => state.bookingSlice);
   const scrollViewRef = useRef<ScrollView>(null);
   const itemLayouts = useRef<{[key: string]: number}>({});
 

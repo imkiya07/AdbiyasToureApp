@@ -7,7 +7,7 @@ const initialState: tBookingState = {
   PhoneNumber: '',
   Email: '',
   PostCode: '',
-  airTravelers: [],
+  AirTravelers: [],
 };
 
 const bookingSlice = createSlice({
@@ -35,10 +35,10 @@ const bookingSlice = createSlice({
       }>,
     ) => {
       const {adults, children, infants} = action.payload;
-      state.airTravelers = [
+      state.AirTravelers = [
         ...Array(adults).fill({
           PassengerType: 'ADT',
-          Gender: GenderList[0],
+          Gender: GenderList[0].value,
           PassengerName: {
             PassengerTitle: '',
             PassengerFirstName: '',
@@ -55,7 +55,7 @@ const bookingSlice = createSlice({
         } as tTravelerState),
         ...Array(children).fill({
           PassengerType: 'CHD',
-          Gender: GenderList[0],
+          Gender: GenderList[0].value,
           PassengerName: {
             PassengerTitle: '',
             PassengerFirstName: '',
@@ -72,7 +72,7 @@ const bookingSlice = createSlice({
         } as tTravelerState),
         ...Array(infants).fill({
           PassengerType: 'INF',
-          Gender: GenderList[0],
+          Gender: GenderList[0].value,
           PassengerName: {
             PassengerTitle: '',
             PassengerFirstName: '',
@@ -94,7 +94,7 @@ const bookingSlice = createSlice({
       action: PayloadAction<{index: number; value: string}>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].Gender = value;
+      state.AirTravelers[index].Gender = value;
     },
     setPassengerTitle: (
       state,
@@ -104,7 +104,7 @@ const bookingSlice = createSlice({
       }>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].PassengerName.PassengerTitle = value;
+      state.AirTravelers[index].PassengerName.PassengerTitle = value;
     },
     setPassengerFirstName: (
       state,
@@ -114,7 +114,7 @@ const bookingSlice = createSlice({
       }>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].PassengerName.PassengerFirstName = value;
+      state.AirTravelers[index].PassengerName.PassengerFirstName = value;
     },
     setPassengerLastName: (
       state,
@@ -124,14 +124,14 @@ const bookingSlice = createSlice({
       }>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].PassengerName.PassengerLastName = value;
+      state.AirTravelers[index].PassengerName.PassengerLastName = value;
     },
     setDateOfBirth: (
       state,
       action: PayloadAction<{index: number; value: string}>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].DateOfBirth = value;
+      state.AirTravelers[index].DateOfBirth = value;
     },
     setPassportNumber: (
       state,
@@ -141,7 +141,7 @@ const bookingSlice = createSlice({
       }>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].Passport.PassportNumber = value;
+      state.AirTravelers[index].Passport.PassportNumber = value;
     },
     setPassportExpiryDate: (
       state,
@@ -151,7 +151,7 @@ const bookingSlice = createSlice({
       }>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].Passport.ExpiryDate = value;
+      state.AirTravelers[index].Passport.ExpiryDate = value;
     },
     setPassportCountry: (
       state,
@@ -161,21 +161,21 @@ const bookingSlice = createSlice({
       }>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].Passport.Country = value;
+      state.AirTravelers[index].Passport.Country = value;
     },
     setPassengerNationality: (
       state,
       action: PayloadAction<{index: number; value: string}>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].PassengerNationality = value;
+      state.AirTravelers[index].PassengerNationality = value;
     },
     setNationalID: (
       state,
       action: PayloadAction<{index: number; value: string}>,
     ) => {
       const {index, value} = action.payload;
-      state.airTravelers[index].NationalID = value;
+      state.AirTravelers[index].NationalID = value;
     },
     resetBookingForm: () => {
       console.debug('Resetting booking form');

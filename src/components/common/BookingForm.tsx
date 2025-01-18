@@ -7,9 +7,6 @@ import {
   Platform,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
 import countries from '@constants/countries.json';
 import CountryModal from './Modal/CountryModal';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
@@ -31,7 +28,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const BookingForm = ({userIndx}: {userIndx: number}) => {
   const {PassengerName, Passport, PassengerNationality, Gender, DateOfBirth} =
-    useAppSelector(state => state.bookingSlice.airTravelers[userIndx]);
+    useAppSelector(state => state.bookingSlice.AirTravelers[userIndx]);
   const {PassengerTitle, PassengerFirstName, PassengerLastName} = PassengerName;
   const {PassportNumber, ExpiryDate, Country} = Passport;
 
@@ -118,19 +115,19 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
             {GenderList.map((item, index) => (
               <TouchableOpacity
                 onPress={() => {
-                  dispatch(setGender({index: userIndx, value: item}));
+                  dispatch(setGender({index: userIndx, value: item.value}));
                 }}
-                key={item + index}
+                key={item.label + index}
                 style={styles.radioBtn}>
                 <View style={styles.radioOuterCircle}>
                   <View
                     style={[
                       styles.radioInnerCircle,
-                      {transform: [{scale: item === Gender ? 1 : 0}]},
+                      {transform: [{scale: item.value === Gender ? 1 : 0}]},
                     ]}
                   />
                 </View>
-                <Text style={styles.radioTxt}>{item} </Text>
+                <Text style={styles.radioTxt}>{item.label} </Text>
               </TouchableOpacity>
             ))}
           </View>
