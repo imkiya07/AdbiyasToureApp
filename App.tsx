@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LayoutScreen from '@components/core/FlightBooking/Layout';
 import FlightShow from '@components/core/FlightBooking/ShowCard';
 import FlightDetails from '@components/core/FlightBooking/FlightDetails';
-import TravelerDetailsScreen from '@components/core/FlightBooking/TravellerDetails';
+import TravelerDetailsScreen from '@components/core/FlightBooking/TravelerDetails';
 import LayoutHotel from '@components/core/HotelBooking/HotelBookLayout';
 import LayoutTour from '@components/core/TourBooking/TourBookLayout.';
 import LayoutVisa from '@components/core/VisaBooking/VisaLayout';
@@ -19,23 +19,24 @@ import {resetBookingForm} from '@store/slice/bookingSlice';
 import {tRootStackParamList} from '@utils/types';
 import './src/styles/global.css';
 import Revalidation from '@screens/Revalidation';
+import * as Sentry from '@sentry/react-native';
+import {SENTRY_DNS} from '@env';
+
+Sentry.init({
+  dsn: SENTRY_DNS,
+  // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+  // We recommend adjusting this value in production.
+  tracesSampleRate: 1.0,
+  // profilesSampleRate is relative to tracesSampleRate.
+  // Here, we'll capture profiles for 100% of transactions.
+  profilesSampleRate: 1.0,
+});
 
 const Stack = createNativeStackNavigator<tRootStackParamList>();
 
 // Main App component with Stack and Tab navigation
 const App: FC = () => {
-  /* useEffect(() => {
-    axios
-      .get('https://flightkiya.cosmelic.com/api/common/session-id')
-      .then(res => {
-        console.debug('Session ID:', res.data.data.session_id);
-        axios.defaults.headers.common['sessionId'] = res.data.data.session_id;
-      });
-  }, []); */
   const dispatch = rootStore.dispatch;
-  // const tripStates = rootStore.getState().flightDestinations;
-  // const flightTypeStates = rootStore.getState().flightTypeSlice;
-  // const passengerStates = rootStore.getState().passengerSlice;
 
   return (
     <Provider store={rootStore}>
@@ -152,4 +153,4 @@ const App: FC = () => {
   );
 };
 
-export default App;
+export default Sentry.wrap(App);
