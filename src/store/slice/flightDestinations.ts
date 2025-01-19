@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {toggleTripType} from './flightType';
+import {resetAllState, toggleTripType} from './flightType';
 import {
   tDestination,
   tDestinationPayload,
@@ -74,6 +74,10 @@ const flightDestinations = createSlice({
         }
       },
     );
+
+    builder.addCase(resetAllState, state => {
+      return initialState;
+    });
   },
 });
 

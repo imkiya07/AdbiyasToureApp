@@ -1,4 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {resetAllState} from './flightType';
 
 interface FlightState {
   flightDetails: any;
@@ -20,6 +21,11 @@ const flightSlice = createSlice({
     setTotalDuration(state, action: PayloadAction<number>) {
       state.totalDuration = action.payload;
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(resetAllState, state => {
+      return initialState;
+    });
   },
 });
 

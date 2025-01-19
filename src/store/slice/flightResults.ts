@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {tFlightResult, tFlightSearchState} from '@utils/types';
+import {resetAllState} from './flightType';
 
 const initialState: tFlightSearchState = {
   searchResults: [],
@@ -29,6 +30,11 @@ const flightSearchSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(resetAllState, state => {
+      return initialState;
+    });
   },
 });
 

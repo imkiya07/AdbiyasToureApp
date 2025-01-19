@@ -13,14 +13,13 @@ import {Provider} from 'react-redux';
 import rootStore from '@store/index';
 import {TouchableOpacity} from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import {resetFlightState} from '@store/slice/flightDestinations';
 import {PaperProvider} from 'react-native-paper';
-import {resetBookingForm} from '@store/slice/bookingSlice';
 import {tRootStackParamList} from '@utils/types';
 import './src/styles/global.css';
 import Revalidation from '@screens/Revalidation';
 import * as Sentry from '@sentry/react-native';
 import {SENTRY_DNS} from '@env';
+import {resetAllState} from '@store/slice/flightType';
 
 const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: true,
@@ -79,7 +78,7 @@ const App: FC = () => {
                 headerLeft: () => (
                   <TouchableOpacity
                     onPress={() => {
-                      dispatch(resetBookingForm());
+                      dispatch(resetAllState());
                       navigation.popTo('FlightShow');
                     }}>
                     <FontAwesome6 name="arrow-left" size={24} color="#000000" />
@@ -96,7 +95,7 @@ const App: FC = () => {
                 headerLeft: () => (
                   <TouchableOpacity
                     onPress={() => {
-                      dispatch(resetFlightState());
+                      dispatch(resetAllState());
                       navigation.goBack();
                     }}>
                     <FontAwesome6 name="arrow-left" size={24} color="#000000" />
@@ -114,7 +113,7 @@ const App: FC = () => {
                 headerLeft: () => (
                   <TouchableOpacity
                     onPress={() => {
-                      dispatch(resetBookingForm());
+                      dispatch(resetAllState());
                       navigation.popTo('FlightShow');
                     }}>
                     <FontAwesome6 name="arrow-left" size={24} color="#000000" />

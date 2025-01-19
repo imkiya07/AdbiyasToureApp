@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {tClassOptions, tPassengerState} from '@utils/types';
+import {resetAllState} from './flightType';
 
 const initialState: tPassengerState = {
   adults: 1,
@@ -31,6 +32,11 @@ const passengerSlice = createSlice({
       console.debug('Resetting passenger state');
       return initialState;
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(resetAllState, state => {
+      return initialState;
+    });
   },
 });
 

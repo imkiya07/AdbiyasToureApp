@@ -2,10 +2,6 @@ import TravelerAccordion from '@components/common/Accordions';
 import ContactForm from '@components/common/ContactForm';
 import {useFocusEffect} from '@react-navigation/native';
 import {resetBookingForm} from '@store/slice/bookingSlice';
-import {resetFlightState} from '@store/slice/flightDestinations';
-import {resetSearchResults} from '@store/slice/flightResults';
-import {resetTripState} from '@store/slice/flightType';
-import {resetPassengerState} from '@store/slice/passengerSlice';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {tTravelerDetailsScreenProps} from '@utils/types';
 import axios from 'axios';
@@ -167,18 +163,9 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                       text: 'OK',
                       onPress: () => {
                         // Redirect to Home Page
-                        dispatch(resetBookingForm());
-                        dispatch(resetFlightState());
-                        dispatch(resetSearchResults());
-                        dispatch(resetTripState());
-                        dispatch(resetPassengerState());
-                        Sentry.captureEvent({
-                          message: 'Booking Request Successful',
-                          level: 'info',
-                          extra: {...response},
-                        });
+                        Sentry.captureException('Booking Request Successful');
                         setTimeout(() => {
-                          navigation.navigate('MainTabs');
+                          navigation.popToTop();
                         }, 500);
                       },
                     },

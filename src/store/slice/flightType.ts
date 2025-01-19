@@ -17,9 +17,15 @@ const flightTypeSlice = createSlice({
 
       return initialState;
     },
+    resetAllState: () => {
+      console.debug('Resetting all state');
+
+      return initialState;
+    },
   },
 });
 
-export const {toggleTripType, resetTripState} = flightTypeSlice.actions;
+export const {toggleTripType, resetTripState, resetAllState} =
+  flightTypeSlice.actions;
 
 export default flightTypeSlice.reducer;

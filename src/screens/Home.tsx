@@ -12,6 +12,7 @@ import {icons} from '../constants'; // Ensure icons are correctly imported
 import {tMainTabsProps, tMenuItems} from '@utils/types';
 import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {generatePassengerForm} from '@store/slice/bookingSlice';
+import {resetAllState} from '@store/slice/flightType';
 
 const menuItems: tMenuItems[] = [
   {
@@ -77,7 +78,7 @@ const App: FC<tMainTabsProps> = ({navigation}) => {
             <View key={item.id} style={styles.menuItemContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  dispatch(generatePassengerForm({adults, children, infants}));
+                  dispatch(resetAllState());
                   navigation.navigate(item.route as any);
                 }}
                 className="items-center bg-white rounded-full justify-center w-24 h-24 ">

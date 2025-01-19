@@ -1,6 +1,7 @@
 import {GenderList} from '@constants/radioList';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {tBookingState, tTravelerState} from '@utils/types';
+import {resetAllState} from './flightType';
 
 const initialState: tBookingState = {
   CountryCode: '',
@@ -181,6 +182,11 @@ const bookingSlice = createSlice({
       console.debug('Resetting booking form');
       return initialState;
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(resetAllState, state => {
+      return initialState;
+    });
   },
 });
 

@@ -1,4 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {resetAllState} from './flightType';
 
 interface SessionState {
   sessionId: string;
@@ -18,6 +19,11 @@ const sessionSlice = createSlice({
     clearSessionId(state) {
       state.sessionId = '';
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(resetAllState, state => {
+      return initialState;
+    });
   },
 });
 
