@@ -70,6 +70,13 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
             console.debug(error.response.data);
             console.debug(error.response.status);
             console.debug(error.response.headers);
+            Sentry.addBreadcrumb({
+              category: 'API Error',
+              type: 'Error',
+              message: 'Flight Booking Error with Response',
+              level: 'error',
+              data: {...error.response},
+            });
             Sentry.captureException(error.response.data.message, {
               level: 'fatal',
               extra: {
@@ -84,6 +91,17 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
             // http.ClientRequest in node.js
             console.debug(error.request);
             if (error.message === 'Network Error') {
+              Sentry.addBreadcrumb({
+                category: 'API Error',
+                type: 'Warn',
+                message: 'Flight booking Network Error',
+                level: 'warning',
+                data: {...error},
+              });
+              Sentry.captureException(error.message, {
+                level: 'error',
+                extra: {...error.request},
+              });
               Alert.alert(
                 'Error',
                 'It Appear you have Internet issue! \nPlease Check your Internet and Try Again.\n Thank You!',
@@ -96,11 +114,18 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
                   },
                 ],
               );
-              Sentry.captureException(error.message, {
-                level: 'error',
-                extra: {...error.request},
-              });
             } else {
+              Sentry.addBreadcrumb({
+                category: 'API Error',
+                type: 'Error',
+                message: 'Flight booking Error on Request',
+                level: 'warning',
+                data: {...error},
+              });
+              Sentry.captureException('No response received from server', {
+                level: 'warning',
+                extra: {...error},
+              });
               Alert.alert('Error', 'No response received from server', [
                 {
                   text: 'OK',
@@ -109,13 +134,20 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
                   },
                 },
               ]);
-              Sentry.captureException('No response received from server', {
-                level: 'warning',
-                extra: {...error},
-              });
             }
           } else {
             // Something happened in setting up the request that triggered an Error
+            Sentry.addBreadcrumb({
+              category: 'API Error',
+              type: 'Error',
+              message: 'Flight booking Error with setting up the request',
+              level: 'error',
+              data: {...error},
+            });
+            Sentry.captureException(error.message, {
+              level: 'error',
+              data: {...error},
+            });
             console.debug(
               'Something happened in setting up the request that triggered an Error',
               error.message,
@@ -133,12 +165,6 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
               ],
             );
           }
-          Sentry.captureException(error.message, {
-            level: 'error',
-            data: {...error},
-          });
-          console.debug(error.config);
-          navigation.popTo('FlightShow');
         });
     } else {
       navigation.popTo('LayoutScreen');

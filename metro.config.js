@@ -6,8 +6,6 @@ const { withNativeWind } = require('nativewind/metro');
 
 const { withSentryConfig } = require('@sentry/react-native/metro');
 
-const { withSentryConfig } = require('@sentry/react-native/metro');
-
 /**
  * Metro configuration
  * https://reactnative.dev/docs/metro

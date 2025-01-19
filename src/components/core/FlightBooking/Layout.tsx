@@ -46,12 +46,6 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
 
     if (!loading) {
       dispatch(searchFlightsStart());
-      console.debug(
-        'base URL: ',
-        apiUrl,
-        '🚀 ~ searchFlight ~ payload',
-        flightDetails,
-      );
 
       try {
         Sentry.addBreadcrumb({
@@ -62,6 +56,9 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
           data: {
             apiEndPoint: apiUrl,
             flightDetails,
+            OriginDestinationInformations:
+              flightDetails.OriginDestinationInformations,
+            PassengerTypeQuantities: flightDetails.PassengerTypeQuantities,
           },
         });
         const response = await axios.post(apiUrl, flightDetails);
@@ -141,16 +138,18 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   };
 
   const handleSearchError = (error: any) => {
-    console.warn(
-      '🚀 ~ searchFlight ~ error',
-      error.toJSON(),
-      error.toJson().config.headers,
-    );
     if (axios.isAxiosError(error)) {
       if (error.response) {
         // Server responded with a status other than 2xx
         dispatch(searchFlightsFailure(error.response.data.message));
         Alert.alert('Error', error.response.data.message);
+        Sentry.addBreadcrumb({
+          category: 'API Error',
+          type: 'Error',
+          message: 'Flight search Error with Response',
+          level: 'error',
+          data: {...error.response},
+        });
         Sentry.captureException(error.response.data.message, {
           level: 'fatal',
           extra: {
@@ -166,22 +165,44 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
             'Error',
             'It Appear you have Internet issue! \nPlease Check your Internet and Try Again.\n Thank You!',
           );
+          Sentry.addBreadcrumb({
+            category: 'API Error',
+            type: 'Warn',
+            message: 'Flight search Network Error',
+            level: 'warning',
+            data: {...error},
+          });
           Sentry.captureException(error.message, {
             level: 'error',
-            extra: {...error.request},
+            extra: {error},
           });
         } else {
           Alert.alert('Error', 'No response received from server');
+          Sentry.addBreadcrumb({
+            category: 'API Error',
+            type: 'Error',
+            message: 'Flight search Error on Request',
+            level: 'warning',
+            data: {...error},
+          });
           Sentry.captureException('No response received from server', {
             level: 'warning',
-            extra: {...error},
+            extra: {error},
           });
         }
       } else {
         // Something happened in setting up the request
         dispatch(searchFlightsFailure(error.message));
+        Sentry.addBreadcrumb({
+          category: 'API Error',
+          type: 'Error',
+          message: 'Flight search Error with setting up the request',
+          level: 'error',
+          data: {...error},
+        });
         Sentry.captureException(error.message, {
           level: 'error',
+          extra: {error},
         });
         Alert.alert('Error', error.message);
       }

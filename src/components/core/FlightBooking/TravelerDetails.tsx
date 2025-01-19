@@ -131,15 +131,6 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
               formData.Email = formData.Email.toUpperCase();
               formData.PostCode = formData.PostCode.toUpperCase();
 
-              console.debug(
-                'API:',
-                apiUrl,
-                '~ payload: ',
-                formData,
-                formData.AirTravelers[0].PassengerName,
-                formData.AirTravelers[0].Passport,
-              );
-
               Sentry.addBreadcrumb({
                 category: 'API Logging',
                 type: 'info',
@@ -156,6 +147,7 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                   data: {
                     apiEndPoint: apiUrl,
                     formData,
+                    AirTravelers: formData.AirTravelers,
                   },
                 });
                 const response = await axios.post(apiUrl, formData);
@@ -180,6 +172,11 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                         dispatch(resetSearchResults());
                         dispatch(resetTripState());
                         dispatch(resetPassengerState());
+                        Sentry.captureEvent({
+                          message: 'Booking Request Successful',
+                          level: 'info',
+                          extra: {...response},
+                        });
                         setTimeout(() => {
                           navigation.navigate('MainTabs');
                         }, 500);
@@ -195,9 +192,16 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                 if (error.response) {
                   // The request was made and the server responded with a status code
                   // that falls out of the range of 2xx
-                  console.debug(error.response.data);
-                  console.debug(error.response.status);
-                  console.debug(error.response.headers);
+                  // console.debug(error.response.data);
+                  // console.debug(error.response.status);
+                  // console.debug(error.response.headers);
+                  Sentry.addBreadcrumb({
+                    category: 'API Error',
+                    type: 'Error',
+                    message: 'Flight booking Error with Response',
+                    level: 'error',
+                    data: {...error.response},
+                  });
                   Sentry.captureException(error.response.data.message, {
                     level: 'fatal',
                     extra: {
@@ -216,12 +220,26 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                       'Error',
                       'It Appear you have Internet issue! \nPlease Check your Internet and Try Again.\n Thank You!',
                     );
+                    Sentry.addBreadcrumb({
+                      category: 'API Error',
+                      type: 'Warn',
+                      message: 'Flight search Network Error',
+                      level: 'warning',
+                      data: {...error},
+                    });
                     Sentry.captureException(error.message, {
                       level: 'error',
                       extra: {...error.request},
                     });
                   } else {
                     Alert.alert('Error', 'No response received from server');
+                    Sentry.addBreadcrumb({
+                      category: 'API Error',
+                      type: 'Error',
+                      message: 'Flight search Error on Request',
+                      level: 'error',
+                      data: {...error},
+                    });
                     Sentry.captureException(
                       'No response received from server',
                       {
@@ -232,16 +250,16 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                   }
                 } else {
                   // Something happened in setting up the request that triggered an Error
-                  console.debug(
-                    'Something happened in setting up the request that triggered an Error',
-                    error.message,
-                  );
+                  // console.debug(
+                  //   'Something happened in setting up the request that triggered an Error',
+                  //   error.message,
+                  // );
+                  Sentry.captureException(error.message, {
+                    level: 'error',
+                    data: {...error},
+                  });
                 }
-                Sentry.captureException(error.message, {
-                  level: 'error',
-                  data: {...error},
-                });
-                console.debug(error.config);
+                // console.debug(error.config);
               }
             } else {
               Alert.alert(
