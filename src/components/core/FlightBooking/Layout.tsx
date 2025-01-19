@@ -26,6 +26,9 @@ import {
 import {tLayoutScreenProps} from '@utils/types';
 import dayjs from 'dayjs';
 import {BASE_URL} from '@env';
+import * as Sentry from '@sentry/react-native';
+
+const apiUrl = BASE_URL + '/search';
 
 const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   const formView = useRef<ScrollView>(null);
@@ -45,13 +48,30 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
       dispatch(searchFlightsStart());
       console.debug(
         'base URL: ',
-        BASE_URL + '/search',
+        apiUrl,
         '🚀 ~ searchFlight ~ payload',
         flightDetails,
       );
 
       try {
-        const response = await axios.post(BASE_URL + '/search', flightDetails);
+        Sentry.addBreadcrumb({
+          category: 'API Logging',
+          type: 'info',
+          message: 'Searching for flights',
+          level: 'debug',
+          data: {
+            apiEndPoint: apiUrl,
+            flightDetails,
+          },
+        });
+        const response = await axios.post(apiUrl, flightDetails);
+        Sentry.addBreadcrumb({
+          category: 'API Logging',
+          type: 'info',
+          message: 'Flight search successful',
+          level: 'debug',
+          data: response.data,
+        });
         handleSearchResponse(response.data);
       } catch (error: any) {
         handleSearchError(error);
@@ -131,25 +151,49 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
         // Server responded with a status other than 2xx
         dispatch(searchFlightsFailure(error.response.data.message));
         Alert.alert('Error', error.response.data.message);
+        Sentry.captureException(error.response.data.message, {
+          level: 'fatal',
+          extra: {
+            status: error.response.status,
+            data: error.response.data,
+          },
+        });
       } else if (error.request) {
         // Request was made but no response received
         dispatch(searchFlightsFailure('No response received from server'));
-        if (error.toString() === 'AxiosError: Network Error') {
+        if (error.message === 'Network Error') {
           Alert.alert(
             'Error',
             'It Appear you have Internet issue! \nPlease Check your Internet and Try Again.\n Thank You!',
           );
+          Sentry.captureException(error.message, {
+            level: 'error',
+            extra: {...error.request},
+          });
         } else {
           Alert.alert('Error', 'No response received from server');
+          Sentry.captureException('No response received from server', {
+            level: 'warning',
+            extra: {...error},
+          });
         }
       } else {
         // Something happened in setting up the request
         dispatch(searchFlightsFailure(error.message));
+        Sentry.captureException(error.message, {
+          level: 'error',
+        });
         Alert.alert('Error', error.message);
       }
     } else {
       // Handle other errors
       dispatch(searchFlightsFailure('An unexpected error occurred'));
+      Sentry.captureException('An unexpected error occurred', {
+        level: 'error',
+        extra: {
+          error,
+        },
+      });
       Alert.alert('Error', error.message);
     }
   };

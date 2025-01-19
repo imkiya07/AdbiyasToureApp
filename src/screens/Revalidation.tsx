@@ -1,4 +1,4 @@
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Alert, Text, View} from 'react-native';
 import React, {FC, useEffect} from 'react';
 import {tRevalidationProps} from '@utils/types';
 import axios from 'axios';
@@ -6,6 +6,9 @@ import {useAppDispatch, useAppSelector} from '@utils/hooks';
 import {setFlightDetails, setTotalDuration} from '@store/slice/flightSlice';
 import {generatePassengerForm} from '@store/slice/bookingSlice';
 import {BASE_URL} from '@env';
+import * as Sentry from '@sentry/react-native';
+
+const apiUrl = BASE_URL + '/revalidated/';
 
 const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
   const {adults, children, infants} = useAppSelector(
@@ -16,9 +19,19 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
 
   useEffect(() => {
     if (flightId) {
-      console.debug('Revalidation API:', BASE_URL + `/revalidated/` + flightId);
+      const apiUrlWithId = apiUrl + flightId;
+      console.debug('Revalidation API:', apiUrlWithId);
+      Sentry.addBreadcrumb({
+        category: 'API Logging',
+        type: 'info',
+        message: 'Revalidating flight',
+        level: 'info',
+        data: {
+          apiEndPoint: apiUrlWithId,
+        },
+      });
       axios
-        .get(BASE_URL + `/revalidated/` + flightId)
+        .get(apiUrlWithId)
         .then(response => {
           dispatch(setFlightDetails(response.data.data));
           let durationCount = 0;
@@ -28,9 +41,22 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
             },
           );
           dispatch(setTotalDuration(durationCount));
+          Sentry.addBreadcrumb({
+            category: 'API Logging',
+            type: 'info',
+            message: 'Revalidation successful',
+            level: 'debug',
+            data: {...response.data.data},
+          });
         })
         .then(() => {
           dispatch(generatePassengerForm({adults, children, infants}));
+          Sentry.addBreadcrumb({
+            category: 'API Logging',
+            type: 'info',
+            message: 'Generated passenger form',
+            level: 'info',
+          });
         })
         .then(() => {
           setTimeout(() => {
@@ -38,7 +64,80 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
           }, 500);
         })
         .catch(error => {
-          console.error('🚀 ~ FlightDetailsScreen ~ error', error.toString());
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.debug(error.response.data);
+            console.debug(error.response.status);
+            console.debug(error.response.headers);
+            Sentry.captureException(error.response.data.message, {
+              level: 'fatal',
+              extra: {
+                status: error.response.status,
+                data: error.response.data,
+                headers: error.response.headers,
+              },
+            });
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            console.debug(error.request);
+            if (error.message === 'Network Error') {
+              Alert.alert(
+                'Error',
+                'It Appear you have Internet issue! \nPlease Check your Internet and Try Again.\n Thank You!',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      navigation.popTo('FlightShow');
+                    },
+                  },
+                ],
+              );
+              Sentry.captureException(error.message, {
+                level: 'error',
+                extra: {...error.request},
+              });
+            } else {
+              Alert.alert('Error', 'No response received from server', [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    navigation.popTo('FlightShow');
+                  },
+                },
+              ]);
+              Sentry.captureException('No response received from server', {
+                level: 'warning',
+                extra: {...error},
+              });
+            }
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.debug(
+              'Something happened in setting up the request that triggered an Error',
+              error.message,
+            );
+            Alert.alert(
+              'Oops!',
+              'Something happened in setting up the request that triggered an Error',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    navigation.popTo('FlightShow');
+                  },
+                },
+              ],
+            );
+          }
+          Sentry.captureException(error.message, {
+            level: 'error',
+            data: {...error},
+          });
+          console.debug(error.config);
           navigation.popTo('FlightShow');
         });
     } else {

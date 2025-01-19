@@ -22,6 +22,10 @@ import Revalidation from '@screens/Revalidation';
 import * as Sentry from '@sentry/react-native';
 import {SENTRY_DNS} from '@env';
 
+const navigationIntegration = Sentry.reactNavigationIntegration({
+  enableTimeToInitialDisplay: true,
+});
+
 Sentry.init({
   dsn: SENTRY_DNS,
   // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
@@ -30,18 +34,24 @@ Sentry.init({
   // profilesSampleRate is relative to tracesSampleRate.
   // Here, we'll capture profiles for 100% of transactions.
   profilesSampleRate: 1.0,
+  integrations: [navigationIntegration],
 });
 
 const Stack = createNativeStackNavigator<tRootStackParamList>();
 
 // Main App component with Stack and Tab navigation
 const App: FC = () => {
+  const containerRef = React.useRef(null);
   const dispatch = rootStore.dispatch;
 
   return (
     <Provider store={rootStore}>
       <PaperProvider>
-        <NavigationContainer>
+        <NavigationContainer
+          ref={containerRef}
+          onReady={() => {
+            navigationIntegration.registerNavigationContainer(containerRef);
+          }}>
           <Stack.Navigator>
             {/* Main Tab Navigation */}
             <Stack.Screen

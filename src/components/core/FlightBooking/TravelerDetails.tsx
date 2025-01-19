@@ -21,6 +21,9 @@ import {
   BackHandler,
 } from 'react-native';
 import {BASE_URL} from '@env';
+import * as Sentry from '@sentry/react-native';
+
+const apiUrl = BASE_URL + '/booking';
 
 const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
   navigation,
@@ -95,6 +98,12 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
               // Integrate with your booking API here
 
               const formData = {...formBody};
+              Sentry.addBreadcrumb({
+                category: 'API Logging',
+                type: 'info',
+                message: 'Clone the formBody store for API request to formData',
+                level: 'info',
+              });
               const toUpperCaseDeep = (obj: any): any => {
                 if (typeof obj === 'string') {
                   const convertedValue = obj.toUpperCase();
@@ -124,18 +133,39 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
 
               console.debug(
                 'API:',
-                BASE_URL + '/booking',
+                apiUrl,
                 '~ payload: ',
                 formData,
                 formData.AirTravelers[0].PassengerName,
                 formData.AirTravelers[0].Passport,
               );
 
+              Sentry.addBreadcrumb({
+                category: 'API Logging',
+                type: 'info',
+                message: 'Formatted the formData store for API request',
+                level: 'info',
+              });
+
               try {
-                const response = await axios.post(
-                  BASE_URL + '/booking',
-                  formData,
-                );
+                Sentry.addBreadcrumb({
+                  category: 'API Logging',
+                  type: 'info',
+                  message: 'Creating a Flight Booking Request',
+                  level: 'debug',
+                  data: {
+                    apiEndPoint: apiUrl,
+                    formData,
+                  },
+                });
+                const response = await axios.post(apiUrl, formData);
+                Sentry.addBreadcrumb({
+                  category: 'API Logging',
+                  type: 'info',
+                  message: 'Flight Booking Request Successful',
+                  level: 'debug',
+                  data: {...response},
+                });
                 console.log('🚀 ~ searchFlight ~ response:', response);
                 Alert.alert(
                   'Thank You!',
@@ -168,11 +198,38 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                   console.debug(error.response.data);
                   console.debug(error.response.status);
                   console.debug(error.response.headers);
+                  Sentry.captureException(error.response.data.message, {
+                    level: 'fatal',
+                    extra: {
+                      status: error.response.status,
+                      data: error.response.data,
+                      headers: error.response.headers,
+                    },
+                  });
                 } else if (error.request) {
                   // The request was made but no response was received
                   // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
                   // http.ClientRequest in node.js
                   console.debug(error.request);
+                  if (error.message === 'Network Error') {
+                    Alert.alert(
+                      'Error',
+                      'It Appear you have Internet issue! \nPlease Check your Internet and Try Again.\n Thank You!',
+                    );
+                    Sentry.captureException(error.message, {
+                      level: 'error',
+                      extra: {...error.request},
+                    });
+                  } else {
+                    Alert.alert('Error', 'No response received from server');
+                    Sentry.captureException(
+                      'No response received from server',
+                      {
+                        level: 'warning',
+                        extra: {...error},
+                      },
+                    );
+                  }
                 } else {
                   // Something happened in setting up the request that triggered an Error
                   console.debug(
@@ -180,6 +237,10 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                     error.message,
                   );
                 }
+                Sentry.captureException(error.message, {
+                  level: 'error',
+                  data: {...error},
+                });
                 console.debug(error.config);
               }
             } else {
