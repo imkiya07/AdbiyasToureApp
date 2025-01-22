@@ -1,4 +1,4 @@
-package com.adbiyas.tour
+package com.adbiyastour
 
 import android.app.Application
 import com.facebook.react.PackageList

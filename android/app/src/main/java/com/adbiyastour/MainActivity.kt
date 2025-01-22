@@ -1,4 +1,4 @@
-package com.adbiyas.tour
+package com.adbiyastour
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity
