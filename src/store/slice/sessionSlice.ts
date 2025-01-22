@@ -22,6 +22,7 @@ const sessionSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(resetAllState, state => {
+      console.log('Resetting session state');
       return initialState;
     });
   },

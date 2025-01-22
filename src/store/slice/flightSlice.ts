@@ -24,6 +24,7 @@ const flightSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(resetAllState, state => {
+      console.log('Resetting flight state');
       return initialState;
     });
   },

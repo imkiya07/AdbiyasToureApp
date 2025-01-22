@@ -20,7 +20,7 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
   useEffect(() => {
     if (flightId) {
       const apiUrlWithId = apiUrl + flightId;
-      console.debug('Revalidation API:', apiUrlWithId);
+      // console.debug('Revalidation API:', apiUrlWithId);
       Sentry.addBreadcrumb({
         category: 'API Logging',
         type: 'info',
@@ -67,9 +67,9 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
           if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
-            console.debug(error.response.data);
-            console.debug(error.response.status);
-            console.debug(error.response.headers);
+            // console.debug(error.response.data);
+            // console.debug(error.response.status);
+            // console.debug(error.response.headers);
             Sentry.addBreadcrumb({
               category: 'API Error',
               type: 'Error',
@@ -89,7 +89,7 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
-            console.debug(error.request);
+            // console.debug(error.request);
             if (error.message === 'Network Error') {
               Sentry.addBreadcrumb({
                 category: 'API Error',
@@ -148,10 +148,10 @@ const Revalidation: FC<tRevalidationProps> = ({route, navigation}) => {
               level: 'error',
               data: {...error},
             });
-            console.debug(
-              'Something happened in setting up the request that triggered an Error',
-              error.message,
-            );
+            // console.debug(
+            //   'Something happened in setting up the request that triggered an Error',
+            //   error.message,
+            // );
             Alert.alert(
               'Oops!',
               'Something happened in setting up the request that triggered an Error',

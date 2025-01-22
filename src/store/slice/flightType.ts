@@ -19,7 +19,7 @@ const flightTypeSlice = createSlice({
     },
     resetAllState: () => {
       console.debug('Resetting all state');
-
+      console.debug('Resetting trip state');
       return initialState;
     },
   },

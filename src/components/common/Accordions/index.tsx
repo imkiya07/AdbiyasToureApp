@@ -65,7 +65,7 @@ const TravelerAccordion: FC = () => {
                 style={[styles.accordionButton, borderRadiusStyle]}
                 onPress={() => {
                   toggleItem(index);
-                  console.debug('Air Traveler: ', index, 'details: ', item);
+                  // console.debug('Air Traveler: ', index, 'details: ', item);
                 }}>
                 <Text style={styles.btnText}>
                   Passenger {index + 1 < 10 ? '0' + (index + 1) : index + 1}:

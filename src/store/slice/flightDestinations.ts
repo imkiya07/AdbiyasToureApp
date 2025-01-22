@@ -53,7 +53,7 @@ const flightDestinations = createSlice({
       state.push({...defaultState});
     },
     resetFlightState: () => {
-      console.debug('Resetting flight state');
+      console.log('Resetting flight state');
       return initialState;
     },
   },
@@ -76,6 +76,7 @@ const flightDestinations = createSlice({
     );
 
     builder.addCase(resetAllState, state => {
+      console.log('Resetting flight state');
       return initialState;
     });
   },

@@ -179,12 +179,13 @@ const bookingSlice = createSlice({
       state.AirTravelers[index].NationalID = value;
     },
     resetBookingForm: () => {
-      console.debug('Resetting booking form');
+      console.log('Resetting booking form');
       return initialState;
     },
   },
   extraReducers: builder => {
     builder.addCase(resetAllState, state => {
+      console.log('Resetting booking form');
       return initialState;
     });
   },

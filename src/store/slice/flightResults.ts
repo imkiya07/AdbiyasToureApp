@@ -33,6 +33,7 @@ const flightSearchSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(resetAllState, state => {
+      console.debug('Resetting search results');
       return initialState;
     });
   },

@@ -35,6 +35,7 @@ const passengerSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(resetAllState, state => {
+      console.debug('Resetting passenger state');
       return initialState;
     });
   },

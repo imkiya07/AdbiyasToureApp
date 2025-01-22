@@ -42,7 +42,9 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
         const {PassengerName, DateOfBirth, Passport, PassengerNationality} =
           traveler;
         return (
-          PassengerName.PassengerTitle.length > 0 &&
+          ['mr', 'mrs', 'ms', 'ms.', 'mr.', 'mrs.'].includes(
+            PassengerName.PassengerTitle.toLocaleLowerCase(),
+          ) &&
           PassengerName.PassengerFirstName.length > 0 &&
           PassengerName.PassengerLastName.length > 0 &&
           DateOfBirth.length > 0 &&
@@ -154,7 +156,7 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                   level: 'debug',
                   data: {...response},
                 });
-                console.log('🚀 ~ searchFlight ~ response:', response);
+                // console.log('🚀 ~ searchFlight ~ response:', response);
                 Alert.alert(
                   'Thank You!',
                   `Your Booking Request was successfully received. \n\n Thank you!`,
@@ -163,7 +165,11 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                       text: 'OK',
                       onPress: () => {
                         // Redirect to Home Page
-                        Sentry.captureException('Booking Request Successful');
+                        Sentry.captureEvent({
+                          message: 'Booking Request Successful',
+                          level: 'info',
+                          extra: {...response},
+                        });
                         setTimeout(() => {
                           navigation.popToTop();
                         }, 500);
@@ -201,7 +207,7 @@ const TravelerDetailsScreen: FC<tTravelerDetailsScreenProps> = ({
                   // The request was made but no response was received
                   // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
                   // http.ClientRequest in node.js
-                  console.debug(error.request);
+                  // console.debug(error.request);
                   if (error.message === 'Network Error') {
                     Alert.alert(
                       'Error',
