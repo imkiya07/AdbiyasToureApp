@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useRef} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
   ActivityIndicator,
   Alert,
   Keyboard,
+  Linking,
+  Modal,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {images} from '@constants/index';
@@ -40,9 +42,25 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   const {loading} = useAppSelector(state => state.flightSearchSlice);
   const dispatch = useAppDispatch();
 
+  const [validForm, setValidForm] = useState(false);
+
   const searchFlight = async () => {
     const PassengerTypeQuantities = getPassengerTypeQuantities();
     const flightDetails = getFlightDetails(PassengerTypeQuantities);
+
+    const invalidForm = flightDetails.OriginDestinationInformations.every(
+      destination =>
+        destination.DestinationLocationCode.length <= 0 &&
+        destination.OriginLocationCode.length <= 0,
+    );
+
+    if (invalidForm) {
+      Alert.alert(
+        'Sorry!',
+        'In Order to Show you the latest prices \n of your desired route,\n We need to know a specific information. \n \n Please fill in all the fields! \n Thank You!',
+      );
+      return false;
+    }
 
     if (!loading) {
       dispatch(searchFlightsStart());
@@ -142,7 +160,12 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
       if (error.response) {
         // Server responded with a status other than 2xx
         dispatch(searchFlightsFailure(error.response.data.message));
-        Alert.alert('Error', error.response.data.message);
+        Alert.alert(
+          'Sorry',
+          'It Seems there was an error processing your request.\n Please Try Again Later.\n ' +
+            error.response.data.message +
+            '\n Thank You!',
+        );
         Sentry.addBreadcrumb({
           category: 'API Error',
           type: 'Error',
@@ -234,75 +257,86 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   }, []);
 
   return (
-    <ImageBackground
-      source={images.Cover}
-      className="flex-1 h-screen w-screen relative ">
-      <LinearGradient
-        colors={['#0b2c5f', '#ffffff']}
-        className="w-screen h-screen bottom-0 left-0 absolute "
-      />
-      <ScrollView
-        ref={formView}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="interactive">
-        <Image source={images.Plane} style={styles.planeImage} />
-        <View style={styles.container}>
-          <Text style={styles.title}>Book Your Flight</Text>
+    <>
+      <ImageBackground
+        source={images.Cover}
+        className="flex-1 h-screen w-screen relative ">
+        <LinearGradient
+          colors={['#0b2c5f', '#ffffff']}
+          className="w-screen h-screen bottom-0 left-0 absolute "
+        />
+        <ScrollView
+          ref={formView}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive">
+          <Image source={images.Plane} style={styles.planeImage} />
+          <View style={styles.container}>
+            <Text style={styles.title}>Book Your Flight</Text>
 
-          <View style={styles.buttonGroup}>
+            <View style={styles.buttonGroup}>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  AirTripType === 'OneWay' && styles.selectedButton,
+                ]}
+                onPress={() => {
+                  dispatch(toggleTripType('OneWay'));
+                  dispatch(resetFlightState());
+                }}>
+                <Text style={styles.buttonText}>One Way</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  AirTripType === 'Return' && styles.selectedButton,
+                ]}
+                onPress={() => dispatch(toggleTripType('Return'))}>
+                <Text style={styles.buttonText}>Round Trip</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  AirTripType === 'OpenJaw' && styles.selectedButton,
+                ]}
+                onPress={() => dispatch(toggleTripType('OpenJaw'))}>
+                <Text style={styles.buttonText}>Multi City</Text>
+              </TouchableOpacity>
+            </View>
+
+            <FlightForm />
+
             <TouchableOpacity
-              style={[
-                styles.button,
-                AirTripType === 'OneWay' && styles.selectedButton,
-              ]}
-              onPress={() => {
-                dispatch(toggleTripType('OneWay'));
-                dispatch(resetFlightState());
-              }}>
-              <Text style={styles.buttonText}>One Way</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                AirTripType === 'Return' && styles.selectedButton,
-              ]}
-              onPress={() => dispatch(toggleTripType('Return'))}>
-              <Text style={styles.buttonText}>Round Trip</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                AirTripType === 'OpenJaw' && styles.selectedButton,
-              ]}
-              onPress={() => dispatch(toggleTripType('OpenJaw'))}>
-              <Text style={styles.buttonText}>Multi City</Text>
+              className="rounded-xl overflow-hidden mt-3"
+              onPress={() => searchFlight()}>
+              <LinearGradient
+                colors={['#009FFD', '#2A2A72']}
+                className="android:p-4 ios:p-0">
+                {loading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="#ffffff"
+                    className="ios:p-4 android:p-0"
+                  />
+                ) : (
+                  <Text className="text-white font-bold text-lg ios:p-4 android:p-0 text-center ">
+                    SEARCH FLIGHTS
+                  </Text>
+                )}
+              </LinearGradient>
             </TouchableOpacity>
           </View>
-
-          <FlightForm />
-
           <TouchableOpacity
-            className="rounded-xl overflow-hidden mt-3"
-            onPress={() => searchFlight()}>
-            <LinearGradient
-              colors={['#009FFD', '#2A2A72']}
-              className="android:p-4 ios:p-0">
-              {loading ? (
-                <ActivityIndicator
-                  size="small"
-                  color="#ffffff"
-                  className="ios:p-4 android:p-0"
-                />
-              ) : (
-                <Text className="text-white font-bold text-lg ios:p-4 android:p-0 text-center ">
-                  SEARCH FLIGHTS
-                </Text>
-              )}
-            </LinearGradient>
+            className="mt-3"
+            onPress={async () => {
+              await Linking.openURL('https://adbiyastour.com/privacy-policy');
+            }}>
+            <Text className="text-xl font-bold text-center">
+              Privacy Policy
+            </Text>
           </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </ImageBackground>
+        </ScrollView>
+      </ImageBackground>
+    </>
   );
 };
 

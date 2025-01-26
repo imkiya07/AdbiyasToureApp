@@ -5,10 +5,6 @@ import LayoutScreen from '@components/core/FlightBooking/Layout';
 import FlightShow from '@components/core/FlightBooking/ShowCard';
 import FlightDetails from '@components/core/FlightBooking/FlightDetails';
 import TravelerDetailsScreen from '@components/core/FlightBooking/TravelerDetails';
-import LayoutHotel from '@components/core/HotelBooking/HotelBookLayout';
-import LayoutTour from '@components/core/TourBooking/TourBookLayout.';
-import LayoutVisa from '@components/core/VisaBooking/VisaLayout';
-import TabNavigator from '@components/navigators/TabNavigator';
 import {Provider} from 'react-redux';
 import rootStore from '@store/index';
 import {TouchableOpacity} from 'react-native';
@@ -53,11 +49,11 @@ const App: FC = () => {
           }}>
           <Stack.Navigator>
             {/* Main Tab Navigation */}
-            <Stack.Screen
+            {/* <Stack.Screen
               name="MainTabs"
               component={TabNavigator}
               options={{headerShown: false}}
-            />
+            /> */}
 
             {/* Flight Book Layout, not part of tabs */}
             <Stack.Screen
@@ -65,7 +61,7 @@ const App: FC = () => {
               component={LayoutScreen}
               options={{
                 title: 'Flight Booking',
-                headerShown: true, // Set to false if you want to hide the header
+                headerShown: true,
               }}
             />
 
@@ -74,7 +70,7 @@ const App: FC = () => {
               component={FlightDetails}
               options={({navigation}) => ({
                 title: ' Flight Details',
-                headerShown: true, // Set to false if you want to hide the header
+                headerShown: true,
                 headerLeft: () => (
                   <TouchableOpacity
                     onPress={() => {
@@ -91,7 +87,7 @@ const App: FC = () => {
               component={FlightShow}
               options={({navigation}) => ({
                 title: ' Select Your Flight',
-                headerShown: true, // Set to false if you want to hide the header
+                headerShown: true,
                 headerLeft: () => (
                   <TouchableOpacity
                     onPress={() => {
@@ -109,7 +105,7 @@ const App: FC = () => {
               component={TravelerDetailsScreen}
               options={({navigation}) => ({
                 title: ' Travelers Details',
-                headerShown: true, // Set to false if you want to hide the header
+                headerShown: true,
                 headerLeft: () => (
                   <TouchableOpacity
                     onPress={() => {
@@ -125,16 +121,18 @@ const App: FC = () => {
               name="Revalidation"
               component={Revalidation}
               options={{
-                headerShown: false, // Set to false if you want to hide the header
+                headerShown: false,
               }}
             />
 
-            <Stack.Screen
+            {/* Incomplete Screens */}
+
+            {/*   <Stack.Screen
               name="LayoutHotel"
               component={LayoutHotel}
               options={{
                 title: 'Hello Hotel',
-                headerShown: true, // Set to false if you want to hide the header
+                headerShown: true, 
               }}
             />
 
@@ -143,7 +141,7 @@ const App: FC = () => {
               component={LayoutTour}
               options={{
                 title: 'Hello Tour',
-                headerShown: true, // Set to false if you want to hide the header
+                headerShown: true, 
               }}
             />
 
@@ -152,9 +150,9 @@ const App: FC = () => {
               component={LayoutVisa}
               options={{
                 title: ' Hello Visa',
-                headerShown: true, // Set to false if you want to hide the header
+                headerShown: true, 
               }}
-            />
+            /> */}
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
