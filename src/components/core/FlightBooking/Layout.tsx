@@ -42,16 +42,15 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
   const {loading} = useAppSelector(state => state.flightSearchSlice);
   const dispatch = useAppDispatch();
 
-  const [validForm, setValidForm] = useState(false);
-
   const searchFlight = async () => {
     const PassengerTypeQuantities = getPassengerTypeQuantities();
     const flightDetails = getFlightDetails(PassengerTypeQuantities);
 
     const invalidForm = flightDetails.OriginDestinationInformations.every(
       destination =>
-        destination.DestinationLocationCode.length <= 0 &&
-        destination.OriginLocationCode.length <= 0,
+        destination.DestinationLocationCode.length <= 0 ||
+        destination.OriginLocationCode.length <= 0 ||
+        destination.DepartureDateTime.length <= 0,
     );
 
     if (invalidForm) {
@@ -79,6 +78,12 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
             PassengerTypeQuantities: flightDetails.PassengerTypeQuantities,
           },
         });
+        console.log(
+          '🚀 ~ searchFlight ~ apiUrl: \n',
+          apiUrl,
+          '\n payload: \n',
+          flightDetails,
+        );
         const response = await axios.post(apiUrl, flightDetails);
         Sentry.addBreadcrumb({
           category: 'API Logging',
@@ -120,9 +125,12 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
     const destinationArr = tripStates.map(destination => {
       return {
         DestinationLocationCode: destination.DestinationLocationCode,
-        DepartureDateTime: dayjs(destination.DepartureDateTime).format(
-          'YYYY-MM-DD[T]HH:mm:ss',
-        ),
+        DepartureDateTime:
+          destination.DepartureDateTime.length > 0
+            ? dayjs(destination.DepartureDateTime).format(
+                'YYYY-MM-DD[T]HH:mm:ss',
+              )
+            : '',
         OriginLocationCode: destination.OriginLocationCode,
       };
     });
@@ -151,7 +159,6 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
     } else {
       dispatch(searchFlightsFailure(data.error.message));
       Alert.alert(`We're Sorry`, data.error.message);
-      console.warn('🚀 ~ searchFlight ~ error', data.error);
     }
   };
 
@@ -181,6 +188,7 @@ const LayoutScreen: FC<tLayoutScreenProps> = ({navigation}) => {
           },
         });
       } else if (error.request) {
+        console.debug('Error: ', error.request);
         // Request was made but no response received
         dispatch(searchFlightsFailure('No response received from server'));
         if (error.message === 'Network Error') {
