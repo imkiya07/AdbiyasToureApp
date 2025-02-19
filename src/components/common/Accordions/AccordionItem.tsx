@@ -34,7 +34,7 @@ const AccordionItem: FC<tAccordionItem> = ({
       style={[styles.animatedView, bodyStyle, style]}>
       <View
         onLayout={e => {
-          const additionalHeight = Platform.OS === 'ios' ? 550 : 0;
+          const additionalHeight = Platform.OS === 'ios' ? 600 : 0;
           height.value = e.nativeEvent.layout.height + additionalHeight;
         }}
         style={styles.wrapper}>

@@ -143,6 +143,7 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
                 placeholder="Select Date of Birth"
                 placeholderTextColor="#666"
                 editable={false}
+                onPress={() => setToggleDobPicker(true)}
                 value={
                   DateOfBirth
                     ? dayjs(DateOfBirth).format('ddd MMM DD[,] YYYY')
@@ -190,7 +191,7 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
       {/* Passport Information Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Passport Information</Text>
-        <View style={styles.inputContainer}>
+        <View style={styles.passportField}>
           <Text style={styles.label}>Passport Number</Text>
           <TextInput
             style={styles.input}
@@ -203,11 +204,13 @@ const BookingForm = ({userIndx}: {userIndx: number}) => {
         </View>
         <View style={styles.passportField}>
           <Text style={styles.label}>Expiry Date</Text>
+
           <TouchableOpacity
             style={{width: '100%'}}
             onPress={() => setToggleExpiryDatePicker(true)}>
             <TextInput
               style={styles.input}
+              onPress={() => setToggleExpiryDatePicker(true)}
               placeholder="Select Date"
               placeholderTextColor="#666"
               editable={false}
@@ -362,7 +365,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   passportField: {
-    width: '48%',
+    width: '46%',
   },
 });
 
